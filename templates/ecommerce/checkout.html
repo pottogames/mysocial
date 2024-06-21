@@ -1,0 +1,54 @@
+{% load static %}
+<link rel="shortcut icon" type="image/x-icon" href="{% static 'icon.ico' %}">
+{% block content %}
+<div>
+    <!-- Your campaign details here -->
+    <h1>Campaign Checkout</h1>
+    <p>Price: $10</p>
+    <button id="paypal-button"></button>
+</div>
+<script src="https://www.paypal.com/sdk/js?client-id={{ paypal_client_id }}"></script>
+
+<!-- Render the PayPal button -->
+<div id="paypal-button-container"></div>
+
+<script>
+  // Define the checkout URL using Django template variable
+var checkoutUrl = "{% url 'checkout' campaign.id %}";
+
+// Render the PayPal button
+paypal.Buttons({
+    // Set up the transaction
+    createOrder: function(data, actions) {
+        return actions.order.create({
+            purchase_units: [{
+                amount: {
+                    value: '10.00', // Set the amount here
+                    currency_code: 'USD' // Set the currency code here
+                }
+            }]
+        });
+    },
+    // Finalize the transaction
+    onApprove: function(data, actions) {
+        return actions.order.capture().then(function(details) {
+            // Call the checkout URL to complete the transaction
+            fetch(checkoutUrl, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Redirect to the waiting page after successful payment
+                    window.location.href = '{% url 'waiting' campaign.id %}';
+                } else {
+                    console.error('Failed to complete the transaction.');
+                }
+            });
+        });
+    }
+}).render('#paypal-button-container');
+</script>
+{% endblock %}

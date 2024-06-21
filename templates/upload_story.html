@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Story</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <form method="post" enctype="multipart/form-data" class="upload-form">
+            {% csrf_token %}
+            <label for="author">Daily  title:</label>
+            <input type="text" id="author" name="author" required><br><br>
+            
+            <label for="media_file">Media File:</label>
+            <input type="file" id="media_file" name="media_file" accept="image/*,video/*" required><br><br>
+
+            <label for="media_type">Media Type:</label>
+            <select id="media_type" name="media_type" required>
+                <option value="image">Image</option>
+                <option value="video">Video</option>
+            </select><br><br>
+
+            <button type="submit">Upload</button>
+        </form>
+    </div>
+</body>
+</html>
+
+<style>
+    body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+/*
+* Created with https://www.css-gradient.com
+* Gradient link: https://www.css-gradient.com/?c1=ef5f03&c2=ffffff&gt=c&gd=dtl
+*/
+background: #EF5F03;
+background: conic-gradient(from 315deg, #EF5F03, #FFFFFF);    overflow: hidden;
+}
+
+.container {
+    position: relative;
+    width: 80%;
+    max-width: 600px;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.upload-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+label {
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+input[type="text"],
+input[type="file"],
+select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #ff4800;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0057b3;
+}
+
+</style>

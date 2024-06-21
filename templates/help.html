@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en" >
+  {% load static %}
+  <link rel="shortcut icon" type="image/x-icon" href="{% static 'icon.ico' %}">
+<head>
+  <meta charset="UTF-8">
+    <script src="https://cpwebassets.codepen.io/assets/common/stopExecutionOnTimeout-2c7831bb44f98c1391d6a4ffda0e1fd302503391ca806e7fcc7b9b87197aec26.js"></script>
+  <title>Help - Documentation Page</title>
+<style>
+/* * =============== FONTS api's =============== */
+/* font-family: 'Segoe UI Regular';
+font-family: 'Segoe UI Italic';
+font-family: 'Segoe UI Bold';
+font-family: 'Segoe UI Bold Italic'; */
+
+/* ? =============== VARIABLES CSS ===============*/
+:root {
+  /* * ========== Colors ==========*/
+  --color-white: #f3f3f3;
+  --color-background: #363449;
+  --color-title: rgb(65, 183, 238);
+  --color-subtitle: rgb(65, 85, 238);
+  --color-grey: rgb(146, 146, 146);
+
+  /* * ========== Font ==========*/
+  --body-font: 'Segoe UI Regular';
+}
+
+/* ? =============== BASE ===============*/
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-image: linear-gradient(75deg, #363449, #1c262c);
+  color: var(--color-white);
+  font-family: var(--body-font);
+  overflow-x: hidden;
+}
+
+a {
+  text-decoration: none;
+  color: var(--color-white);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ? =============== REUSABLE CSS CLASSES ===============*/
+
+.header {
+  text-align: center;
+  color: var(--color-white);
+}
+
+.main-section {
+  padding: 10px 20px 10px 10px;
+  border-bottom: 2px solid hsl(219, 8%, 20%);
+}
+
+.section-groups {
+  margin-bottom: 50px;
+}
+
+.text-blue {
+  color: var(--color-title);
+}
+
+.sub-section {
+  color: var(--color-subtitle);
+}
+
+.paragraph-section {
+  color: #e4e4e4d0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 400;
+}
+
+.titles-section {
+  color: #6b64a5;
+}
+
+.subtitle-section {
+  font-size: 1.2rem;
+  color: #9a2de8;
+}
+.text-purple {
+  color: #9a2de8;
+}
+.text-grey {
+  color: var(--color-grey);
+}
+
+.code-group {
+  background-color: var(--color-background);
+  padding: 20px;
+  border-radius: 15px;
+  width: 80%;
+}
+
+.code-in {
+  display: block;
+}
+
+.not {
+  color: rgb(192, 192, 192);
+}
+
+/* ? ===============  COMPONENTS ===============*/
+
+.row-doc {
+  column-gap: 4rem;
+}
+
+#navbar {
+  width: 305px;
+  height: 100%;
+  position: fixed;
+  border-right: 2px solid var(--color-background);
+  padding-bottom: 100px;
+}
+
+#header {
+  background-color: var(--color-background);
+  color: var(--color-white);
+  padding: 10px;
+  margin: 10px;
+  border-radius: 0.5rem;
+}
+
+.title-header {
+  font-size: 1.7rem;
+  margin-bottom: 0;
+}
+.sub-header {
+  font-size: 0.9rem;
+  color: var(--color-grey);
+}
+
+#navbar .group-list {
+  height: 88%;
+  padding: 40px 10px 10px 30px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.list {
+  display: flex;
+  align-items: center;
+  column-gap: 0.4rem;
+}
+
+.icon-list {
+  font-size: 1.5rem;
+  background-color: var(--color-white);
+  border-radius: 0.5rem;
+  box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.357);
+  padding: 4px;
+  color: var(--color-title);
+  margin: 10px 0;
+}
+
+.list-ui {
+  font-size: 1rem;
+  padding: 4px 9px;
+}
+
+.nav-link {
+  text-decoration: none;
+  font-weight: bold;
+  transition: 0.3s;
+  margin: 10px 0;
+  color: #fff;
+}
+.nav-link:hover {
+  color: var(--color-title);
+}
+
+.nav-links {
+  text-decoration: none;
+  color: rgba(160, 159, 159, 0.802);
+  font-weight: 400;
+  transition: 0.3s;
+  margin: 0 0 10px;
+}
+
+.icon-lists {
+  color: #6b64a5;
+  font-size: 1rem;
+  margin: 0 0 10px 45px;
+}
+
+.img-tailwind {
+  border-radius: 1rem;
+  margin: 0 auto;
+  display: block;
+}
+
+.link-react {
+  color: var(--color-background);
+  background-color: rgba(25, 255, 255, 0.248);
+}
+.link-react:hover {
+  color: var(--color-white);
+}
+
+#footer {
+  margin: 15px 0 30px;
+  padding: 0 20px;
+  justify-content: space-between;
+  display: flex;
+  color: var(--color-grey);
+}
+
+#footer .copyr {
+  column-gap: 0.6rem;
+  display: block;
+}
+
+.link-footer {
+  font-size: 1.5rem;
+  color: var(--color-grey);
+}
+.link-footer:hover {
+  color: var(--color-white);
+}
+
+/* ? ========== Scrool Bar ========== */
+::-webkit-scrollbar {
+  width: 0.6rem;
+  border-radius: 0.5rem;
+  background-color: hsl(219, 8%, 36%);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: hsl(219, 8%, 26%);
+  border-radius: 0.5rem;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: hsl(219, 8%, 20%);
+}
+
+/* ? ===============  RESPONSIVE BREAKPOINT ===============*/
+@media (min-width: 1200px) {
+  #navbar {
+    width: 445px;
+  }
+
+  .row-doc {
+    column-gap: 7rem;
+  }
+
+  .main-section {
+    padding: 10px 80px 10px 10px;
+  }
+}
+
+@media (max-width: 992px) {
+  #navbar {
+    top: 0;
+  }
+}
+
+@media (max-width: 815px) {
+  #navbar {
+    position: absolute !important;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    margin: 20px auto 0;
+    width: 90%;
+    max-height: 375px;
+    z-index: 1;
+    border-left: 2px solid var(--color-background);
+  }
+
+  .main-section {
+    padding: 0px 30px;
+  }
+
+  .nav-group {
+    background-color: #6b64a5;
+  }
+
+  .section-groups {
+    margin-top: 500px;
+  }
+}
+
+@media (max-width: 567px) {
+  .code-group {
+    margin: 0 auto 15px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    width: 90%;
+    max-height: 300px;
+  }
+
+  #footer {
+    justify-content: center;
+    flex-direction: column;
+    margin-bottom: 10px;
+  }
+
+  .copyr {
+    flex-direction: column;
+    margin-bottom: 15px;
+  }
+}
+
+@media (max-width: 385px) {
+  .section-groups {
+    margin-top: 450px;
+  }
+}
+</style>
+
+  
+  
+  
+</head>
+
+<body translate="no">
+  <!-- 
+
+Hello Camper!
+
+Please read the README below in the JS Editor before beginning. Feel free to delete this message once you have read it. Good luck and Happy Coding! 
+
+- The freeCodeCamp Team 
+
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- ? =============== FAVICON =============== -->
+   
+    <!-- ? =============== BOX_ICON =============== -->
+
+    <!-- ? =============== MY-CSS =============== -->
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/font/segoeUI.css" />
+
+    <!-- ? =============== USING bootstrap-v5.1 =============== -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous" />
+  </head>
+  <body>
+    <!-- here -->
+      
+    <!-- Todo =============== Documentation Page ===============-->
+      <div class="row row-doc">
+        <div class="col-lg-3 col-md-4 nav-group">
+          <nav id="navbar">
+              <header id="header">
+                <i class="bx bxs-leaf"></i>
+                    <img src="/static/images/logo-transparent.png" alt="">
+                <p style="margin-left: 23px;" class="sub-header">Get Ready for the next future</p>
+              </header>
+              
+                <ul class="group-list">
+                    <li class="list">
+                      <i class="bx bxs-info-circle icon-list">AIS</i>
+                      <a href="#allinsocial" class="nav-link text-white">All in Social</a>
+                    </li>
+                    <li class="list">
+                      <i class='bx bxs-log-in-circle icon-lists'></i>
+                      <a href="#editor_setup" class="nav-links">about platforms</a>
+                    </li>
+                    <li class="list">
+                      <i class='bx bxs-log-in-circle icon-lists'></i>
+                      <a href="#" class="nav-links text-secondary">who we are</a>
+                    </li>
+                    <li class="list">
+                      <i class='bx bxs-log-in-circle icon-lists'></i>
+                      <a href="#" class="nav-links text-secondary">how many platforms we have?</a>
+                    </li>
+      
+                    <li class="list">
+                      <i class='bx bxl-tailwind-css icon-list'>EPC</i>
+                      <a href="#Tailwind" class="nav-link text-white">Elias Port Channels</a>
+                    </li>
+                    <li class="list">
+                      <i class='bx bxs-log-in-circle icon-lists'></i>
+                      <a href="#utility_fundamental" class="nav-links">what is elias port?</a>
+                    </li>
+                    <li class="list">
+                      <i class='bx bxs-log-in-circle icon-lists'></i>
+                      <a href="#" class="nav-links text-secondary">why i need it</a>
+                    </li>
+                    <li class="list">
+                      <i class='bx bxs-log-in-circle icon-lists'></i>
+                      <a href="#" class="nav-links text-secondary">what do i need to do to get it?</a>
+      
+                    <li class="list">
+                      <i class='bx bxl-bootstrap icon-list'>ES</i>
+                      <a href="#Bootstrap" class="nav-link text-white">Elias Store</a>
+                    </li>
+                    <li class="list">
+                      <i class='bx bxs-log-in-circle icon-lists'></i>
+                      <a href="#accessibility" class="nav-links">How much commission do we take on each sale</a>
+                    </li>
+                
+                    <li class="list">
+                      <i class='bx bxs-log-in-circle icon-lists'></i>
+                      <a href="#" class="nav-links text-secondary">How much does a campaign cost?</a>
+                    </li>
+      
+                    <li class="list">
+                      <span class="icon-list list-ui">EVP</span>
+                      <a href="#Next_UI" class="nav-link text-white">Elias Video Presentation</a>
+                    </li>
+                    <li class="list">
+                      <i class='bx bxs-log-in-circle icon-lists'></i>
+                      <a href="#wride_less_code" class="nav-links">What is Elias Video Presentation
+                    </a>
+                    </li>
+                    <li class="list">
+                      <i class='bx bxs-log-in-circle icon-lists'></i>
+                      <a href="#stitches_uttilities" class="nav-links">How It Works</a>
+                    </li>
+              
+                    <li class="list">
+                      <i class='bx bx-atom icon-list'>ES</i>
+                      <a href="#React_JS" class="nav-link text-white">Elias Social</a>
+                    </li>
+                    <li class="list">
+                      <i class='bx bxs-log-in-circle icon-lists'></i>
+                      <a href="#learn_react" class="nav-links">How To Upload Posts?</a>
+                    </li>
+                    <li class="list">
+                      <i class='bx bxs-log-in-circle icon-lists'></i>
+                      <a href="#what_is_react" class="nav-links">How To find People?</a>
+                    </li>
+                    <li class="list">
+                      <i class='bx bxs-log-in-circle icon-lists'></i>
+                      <a href="#" class="nav-links text-secondary">What is Remember and Unremember?</a>
+                    </li>
+                </ul>
+          </nav>
+        </div>
+
+        <div class="col-md">
+          <main id="main-doc">
+            <div class="section-groups">
+              <!-- Getting-Started -->
+              <section class="main-section" id="#allinsocial">
+                <header class="fs-2 mb-4 fw-bold text-blue">All in Social</header>
+
+                <h3 class="sub-section">
+                    about platforms
+                </h3>
+
+                <p class="paragraph-section">
+                    Our social network platform is different from all other social networks on our platform you will be able to use wide tools and on a variety of platforms where you will have to be a user of your social network to enjoy the tools                </p>
+                <h3 class="sub-section">
+                    who we are
+                
+                </h3>
+                <p class="paragraph-section">
+                    We managers of the social network do everything so that you as a user will have the freedom and success and here is the rest of the other platforms!                </p>
+                <h3 class="sub-section">
+                    how many platforms we have?                
+                </h3>
+            
+                <p class="paragraph-section">
+                    Our social network has 6 powerful tools and these are Elias social, this is our social network, Elias Group and private channels is our private and group chat interface!, Elias Store is your way to create a store to make money or buy like everyone else!, Elias Food is an interface that allows users Talk and chat about food Elias AI is an AI interface where you can talk to an AI chatbot and create unlimited photos
+                </p>
+
+
+
+            </section>
+
+  
+
+              <!-- Tailwind -->
+              <section class="main-section" id="Tailwind">
+                <header class="fs-2 mb-4 fw-bold text-blue">Elias Port Channels</header>
+
+                <h3 class="sub-section"><i class="bx bx-collapse-alt"></i>What is elias port?</h3>
+                <p class="paragraph-section">
+                    Elias port channel is the user's option to change platforms in a social network!
+                </p>
+                <h3 class="sub-section"><i class="bx bx-collapse-alt"></i>Why i need it?</h3>
+                <p class="paragraph-section">
+                    Without elias port channel you won't be able to switch between platforms, this is very useful!                </p>
+                <h3 class="sub-section"><i class="bx bx-collapse-alt"></i>what do i need to do to get it?</h3>
+             
+            </li>
+            <p class="paragraph-section">
+                All you have to do to get Elias Port Channel and access to the other platforms is to simply connect with your social network user and after connecting you will have access to everything for free!            
+              </section>
+
+              <!-- Bootstrap -->
+              <section class="main-section" id="Bootstrap">
+                <header class="fs-2 mb-4 fw-bold text-blue">Elias Store</header>
+
+                <h3 class="sub-section"><i class="bx bx-collapse-alt"></i>How much commission do we take on each sale</h3>
+                <p class="paragraph-section">
+                    When you make money with us and upload a product and someone buys the same product, 97% of the product goes to the person who uploaded the product and three percent to us, but be careful because currently it's a way of dropshipping and you want to make money and not lose, so you need to calculate the cost of the product +3% and leave with profit and not with financial loss                    </p>
+                <p class="paragraph-section">
+                   </p>
+                <h3 class="sub-section"><i class="bx bx-collapse-alt"></i>How much does a campaign cost?</h3>
+                <p class="paragraph-section">
+                    When you are already trading on our dropshipping platform and you want to run a campaign the campaign will cost you a total of $10.00 and everyone will be able to see your campaign on the big banner
+
+                  </p>
+              </section>
+
+              <!-- Next Ui -->
+              <section class="main-section" id="Next_UI">
+                <header class="fs-2 mb-4 fw-bold text-blue">Elias Video Presentation</header>
+
+
+                <h3 class="sub-section"><i class="bx bx-collapse-alt"></i>What is Elias Video Presentation</h3>
+                <p class="paragraph-section">
+                    Elias Video Presentation is like an Instagram reel that is not algorithm-based but category-based, where users choose categories they want to see according to the categories users have uploaded, users can switch between categories and have a free experience without an algorithm deciding what to expect
+                </p>
+
+                <h3 class="sub-section"><i class="bx bx-collapse-alt"></i>How It Works?</h3>
+                <p class="paragraph-section">
+                    With us, when the user uploads a video, he chooses a category or creates one and then also uploads a video and a photo, and then the video will be uploaded and users will be able to watch your video and other people's videos in other categories!
+                </p>
+
+                </div>
+              </section>
+
+              <!-- React.js -->
+              <section class="main-section" id="React_JS">
+                <header class="fs-2 mb-4 fw-bold text-blue">Elias Social</header>
+
+                <h3 class="sub-section"><i class="bx bx-collapse-alt"></i>How To Upload Posts?</h3>
+                <p class="paragraph-section">
+                    The complete way to upload a post on a social network called Elias Social is to log in to your user and go to the button in the feed called "upload photos" to upload a photo and if you also want a description click on upload and the post will be uploaded and anyone who remembers you will see it
+                </p>
+
+                <h3 class="sub-section"><i class="bx bx-collapse-alt"></i>How To find People?</h3>
+                <p class="paragraph-section">
+                    To search for people you need to use a social network first thing second thing you need to go to the page and go to the search bar on the left and look for the person you want to find, after you have searched it will show you all the people with the similar name or the person in question Do not search for a specific and direct name either Click on search and it will show all users of a social network
+                </p>
+
+                <h3 class="sub-section"><i class="bx bx-collapse-alt"></i>What is Remember and Unremember?</h3>
+                <p class="paragraph-section">
+                    In our social network, instead of saying follow or download a follower, they say remember and unremember. This is the way to follow people. You can see how it works if you go to the profile page of a certain person!
+                </p>
+
+              </section>
+            </div>
+          </main>
+          
+              <footer id="footer">
+                <div class="d-flex copyr">
+                 <!-- <p>&copy; Copyright 2022 - Ebayyou</p>
+                  <a href="" class="link-footer fs-6">About me</a>-->
+                </div>
+                <div>
+                  <a href="https://github.com/ebayyou" target="_blank" class="link-footer"><i class='bx bxl-github '></i></a>
+                  <a href="https://www.instagram.com/@byanggoro_" target="_blank" class="link-footer"><i class='bx bxl-instagram-alt'></i></a>
+                </div>
+              </footer>
+            </div>
+          </div>
+
+    <!-- out -->
+
+    <!-- Todo Option 1: Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+  </body>
+</html>
+
+<!-- Todo FreeCodeCamp : Responsive Web Design - Technical Documentation Page -->
+      <script id="rendered-js" >
+// !! IMPORTANT README:
+
+// You may add additional external JS and CSS as needed to complete the project, however the current external resource MUST remain in place for the tests to work. BABEL must also be left in place. 
+
+/***********
+INSTRUCTIONS:
+  - Select the project you would 
+    like to complete from the dropdown 
+    menu.
+  - Click the "RUN TESTS" button to
+    run the tests against the blank 
+    pen.
+  - Click the "TESTS" button to see 
+    the individual test cases. 
+    (should all be failing at first)
+  - Start coding! As you fulfill each
+    test case, you will see them go   
+    from red to green.
+  - As you start to build out your 
+    project, when tests are failing, 
+    you should get helpful errors 
+    along the way!
+    ************/
+
+// PLEASE NOTE: Adding global style rules using the * selector, or by adding rules to body {..} or html {..}, or to all elements within body or html, i.e. h1 {..}, has the potential to pollute the test suite's CSS. Try adding: * { color: red }, for a quick example!
+
+// Once you have read the above messages, you can delete all comments.
+//# sourceURL=pen.js
+    </script>
+
+  
+  <script src="https://cpwebassets.codepen.io/assets/editor/iframe/iframeRefreshCSS-44fe83e49b63affec96918c9af88c0d80b209a862cf87ac46bc933074b8c557d.js"></script>
+</body>
+
+</html>

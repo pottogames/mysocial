@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'icon.ico' %}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buy with PayPal</title>
+</head>
+<body>
+    <h1>Buy with PayPal</h1>
+    <form method="post" action="/buy_with_paypal/">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Buy Now</button>
+    </form>
+</body>
+</html>

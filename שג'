@@ -1,0 +1,66 @@
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const stories = document.querySelectorAll(".story");
+        const storiesContainer = document.querySelector(".stories");
+        const storiesFullView = document.querySelector(".stories-full-view");
+        const closeBtn = document.querySelector(".close-btn");
+        const previousBtn = document.querySelectorAll(".previous-btn");
+        const nextBtn = document.querySelector(".next-btn");
+        let currentStoryIndex = 0;
+    
+        // Event listener for clicking on a story
+        stories.forEach((story, index) => {
+            story.addEventListener("click", () => {
+                currentStoryIndex = index;
+                showFullView();
+            });
+        });
+    
+        // Event listener for clicking on the close button
+        closeBtn.addEventListener("click", () => {
+            storiesFullView.classList.remove("active");
+        });
+    
+        // Event listener for clicking on the previous button
+        previousBtn.forEach(btn => {
+            btn.addEventListener("click", () => {
+                if (currentStoryIndex > 0) {
+                    currentStoryIndex--;
+                    showFullView();
+                }
+            });
+        });
+    
+        // Event listener for clicking on the next button
+        nextBtn.addEventListener("click", () => {
+            if (currentStoryIndex < stories.length - 1) {
+                currentStoryIndex++;
+                showFullView();
+            }
+        });
+    
+        // Function to display the full view of a story
+        function showFullView() {
+            const fullViewStory = stories[currentStoryIndex];
+            const fullViewImg = fullViewStory.querySelector("img");
+            const fullViewAuthor = fullViewStory.querySelector(".author");
+    
+            storiesFullView.querySelector(".story img").src = fullViewImg.src;
+            storiesFullView.querySelector(".author").innerText = fullViewAuthor.innerText;
+    
+            storiesFullView.classList.add("active");
+    
+            // Update the state of the navigation buttons
+            updateButtons();
+        }
+    
+        // Function to update the state of the navigation buttons
+        function updateButtons() {
+            previousBtn.forEach(btn => {
+                btn.classList.toggle("active", currentStoryIndex > 0);
+            });
+            nextBtn.classList.toggle("active", currentStoryIndex < stories.length - 1);
+        }
+    });
+      </script>
+    

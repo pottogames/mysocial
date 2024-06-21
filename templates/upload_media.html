@@ -1,0 +1,90 @@
+{% load static %}
+<link rel="shortcut icon" type="image/x-icon" href="{% static 'icon.ico' %}">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Story</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .container {
+            max-width: 500px;
+            margin: 50px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 32px 20px 82px 1px rgba(0,0,0,0.75);
+-webkit-box-shadow: 32px 20px 82px 1px rgba(0,0,0,0.75);
+-moz-box-shadow: 32px 20px 82px 1px rgba(0,0,0,0.75);
+        }
+
+        label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        input[type="text"],
+        input[type="file"],
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 10px top 50%;
+            background-size: 15px;
+        }
+
+        button[type="submit"] {
+            background-color: #ff3300;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #ff3300;  
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <label for="author">Title:</label>
+            <input type="text" id="author" name="author" required><br><br>
+            
+            <label for="media_file">Story File:</label>
+            <input type="file" id="media_file" name="media_file" accept="image/*,video/*" required><br><br>
+
+            <label for="media_type">Story Type:</label>
+            <select id="media_type" name="media_type" required>
+                <option value="image">Image</option>
+                <option value="video">Video</option>
+            </select><br><br>
+
+            <button type="submit">Upload</button>
+        </form>
+    </div>
+</body>
+</html>

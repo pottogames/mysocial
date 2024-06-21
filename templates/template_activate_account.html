@@ -1,0 +1,9 @@
+{% load static %}
+<link rel="shortcut icon" type="image/x-icon" href="{% static 'icon.ico' %}">
+{% autoescape off %}
+Hi {{ user.username }},
+
+Please click on the link below to confirm your registration:
+
+{{ protocol }}://{{ domain }}{% url 'activate' uidb64=uid token=token %}
+{% endautoescape %}

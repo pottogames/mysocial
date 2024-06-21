@@ -1,0 +1,843 @@
+
+
+
+
+{% load static %}
+<link rel="shortcut icon" type="image/x-icon" href="{% static 'icon.ico' %}">
+<style>* {
+  margin: 0;
+  box-sizing: border-box;
+}
+
+video::-webkit-media-controls-panel {
+    display: none !important;
+    opacity: 1 !important;}
+
+html {
+  scroll-snap-type: y mandatory;
+}
+
+body {
+  color: white;
+  background-color: white;
+  height: 100vh;
+  display: grid;
+  place-items: center;
+}
+
+.app__videos {
+  position: relative;
+  height: 750px;
+  background-color: white;
+  overflow: scroll;
+  width: 100%;
+  max-width: 400px;
+  scroll-snap-type: y mandatory;
+  border-radius: 20px;
+}
+
+.app__videos::-webkit-scrollbar {
+  display: none;
+}
+
+.app__videos {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.video {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  background-color: white;
+  scroll-snap-align: start;
+}
+
+.video__player {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+.videoSidebar {
+  position: absolute;
+  top: 48%;
+  right: 10px;
+}
+
+.videoSidebar .material-icons {
+  font-size: 28px;
+  color: #fff;
+  cursor: pointer;
+}
+
+.videoSidebar__button {
+  padding: 20px;
+  color: #fff;
+  text-align: center;
+  text-decoration: none;
+
+}
+
+.videoFooter {
+  
+  position: relative;
+  bottom: 150px;
+  margin-left: 20px;
+  color: white;
+  display: flex;
+}
+
+@keyframes spinTheRecord {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.videoFooter__record {
+  animation: spinTheRecord infinite 5s linear;
+  height: 50px;
+  max-height: 50px;
+  width: 50px;
+  max-width: 50px;
+  filter: invert(1);
+  border-radius:93px;
+  position: absolute;
+  bottom: 0;
+  right: 20px;
+}
+
+.videoFooter__text {
+  flex: 1;
+}
+
+.videoFooter__text h3 {
+  padding-bottom: 20px;
+}
+
+.videoFooter__icon {
+  position: absolute;
+}
+
+.videoFooter__ticker {
+  width: 400px;
+  display: flex;
+  align-items: center;
+}
+
+.videoFooter__ticker marquee {
+  height: fit-content;
+  margin-left: 30px;
+  width: 60%;
+}
+
+.videoFooter__description {
+  padding-bottom: 20px;
+}
+
+@media (max-width: 425px) {
+  .app__videos {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    border-radius: 0;
+  }
+}
+body{
+    overflow-x: hidden;
+    overflow-y: hidden;
+  }
+/* Extra Small Devices (Phones): Up to 599px */
+@media screen and (max-width: 599px) { 
+  body{
+    overflow-x: hidden;
+    overflow-y: hidden;
+  }
+  .videoSidebar{
+    right: 4px;
+  }
+
+  .video{ 
+	object-fit: cover;
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+
+.app__videos{
+  overflow-x: hidden;
+}
+
+}
+
+
+/* Small Devices (Tablets): 600px to 899px */
+
+@media screen and (min-width: 600px) and (max-width: 899px) { 
+  body{
+    overflow-x: hidden;
+    overflow-y: hidden;
+  }
+  .video__player{
+    padding: -23px -520px;
+  }
+
+  .app__videos{
+    height: 1013px;
+    border-radius: none;
+
+    max-width: 1390px;
+  }
+  .mavea{
+    position: relative;
+    top: -283px;
+  }
+
+  .videoFooter__record{
+    position: relative;
+    right: -423px;
+    top: -53px;
+  }
+  .videoSidebar{
+    font-size: 23px;
+  }
+  
+}
+
+
+/* Medium Devices (Laptops, Desktops): 900px to 1199px */
+
+@media screen and (min-width: 900px) and (max-width: 1199px) { 
+  .app__videos{
+    max-height: 1310px;
+  }
+}
+
+
+
+/* Large Devices (Desktops, Large Laptops): 1200px to 1599px */
+
+@media screen and (min-width: 1200px) and (max-width: 1599px) { 
+  .app__videos{
+    max-height: 850px;
+    height: 850px;
+  }
+  .mavea{
+    position: relative;
+    top: -123px;
+  }
+  .mavea{
+    display: block;
+    position: relative;
+    right: -23px;
+    
+  }
+  #select1{
+    margin-top: -5px;
+  }
+
+  .cate{
+    position: relative;
+    margin-top: 230px ;
+  }
+
+}
+/* Extra Large Devices (Large Desktops, TVs): 1600px and above */
+
+@media screen and (min-width: 1600px) { 
+  .video{
+
+
+  }
+}
+
+.app__videos{
+  border-radius: 0%;
+  box-shadow: -3px 9px 153px 15px rgba(0,0,0,1);
+-webkit-box-shadow: -3px 9px 153px 15px rgba(0,0,0,1);
+-moz-box-shadow: -3px 9px 153px 15px rgba(0,0,0,1);
+
+
+}
+</style>
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presentation Videos</title>
+    <!-- Include your CSS stylesheets and other meta tags here -->
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+ <style>
+  .pottobutton{
+    background-color: black;
+    color: white;
+    height: 33px;
+    margin: 0 auto;
+    position: absolute;
+    top: 380px;
+    right: 160px;
+    background: none;
+    border: solid 1px black;
+    color: black;
+    border-radius: 3px;
+    box-shadow: 0px 0px 0px 1px black ;
+    
+  }
+ </style>
+  <div class="app__videos">
+    <a href="/create_video/"><button class="pottobutton">Upload Video</button></a>
+
+      <!-- Your videos loop starts here -->
+      {% for video in videos %}
+      <div class="video">
+        
+          <div class="video-player">
+              {% if video.video %}
+                  <video class="video__player" controls autoplay loop playsinline webkit-playsinline>
+                      <source src="{{ video.video.url}}" type="video/mp4">
+                      Your browser does not support the video tag.
+                  </video>
+                  <div class="play-button"></div>
+                  <div class="pause-button"></div> <!-- Pause button -->
+                  <a href="/create_video/"><button class="upload_video">Upload Video</button></a>
+                  <button class="profile">{{ video.user.username }}</button>
+              {% else %}
+                  <p>No video available</p>
+              {% endif %}
+
+          </div>
+
+          <style>
+      
+      .ata{
+        color: #fff;
+        text-decoration: none;
+      }
+
+      .upload_video{
+        background-color: black;
+        color: #fff;
+        border-radius: 12px;
+        border:none;
+        height:26px;
+        position: relative;
+        top: -31px;
+        right: -23px;
+      }
+      
+      .upload_video:hover{
+        background-color: #fff;
+        color: black;
+      }
+
+      .profile{
+        position: relative;
+        top: -32px;
+        height: 26px;
+        right: -23px;
+        background-color: black;
+        color: #fff;
+        border-radius: 12px;
+        border: none;
+      
+      }
+
+      @media (max-width: 425px) {
+
+        .profile{
+          position: relative;
+          top: -32px;
+        }
+        .upload_video{
+
+          position: relative;
+          top: -32px;        }
+      }
+
+      .videoFooter__ticker{
+              position: relative;
+              top: 18px;
+              right: 15px;
+            }
+
+
+@media (max-width: 425px) {
+  .videoFooter__ticker{
+              position: relative;
+              top: 18px;
+              right: 35px;
+            }
+}
+
+          </style>
+   
+        <!-- Footer -->
+        <div class="videoFooter">
+            <div class="videoFooter__text">
+                <h3>{{ video.title }}</h3>
+                <p class="videoFooter__bio"> {{ video.title }}</p>
+                <p class="videoFooter__description">{{ video.description }}</p>
+             
+
+                <div class="videoFooter__ticker">
+                    <!-- Replace 'user_profile.profileimg.url' with appropriate variable or remove it if not needed -->
+                    <marquee></marquee>
+                    {% if video.image %}
+                    <div class="videoFooter__record" style="background-image: url('{{ video.image.url }}');"></div>
+                {% else %}
+                    <div class="videoFooter__record" style="background-color: #ccc;"></div>
+                {% endif %}
+
+                </div>
+
+            </div>
+
+            <!-- Replace 'video.user.profile_picture.url' with appropriate variable -->
+        </div>
+      <!-- sidebar -->
+      <div class="videoSidebar">
+        <div class="videoSidebar__button" data-video-id="{{ video.id }}">
+          <span class="material-icons">star</span>
+          <p class="like_count">{{ video.likes_count }}</p>
+        </div>
+      
+
+  <a class="ata" href="{% url 'video_messages' video_id=video.id %}">
+    <div class="videoSidebar__button">
+        <span class="material-icons"> message </span>
+        <p>{{ video.messages_count }}</p>
+      </div></a>
+
+
+<div id="download">
+  <div class="videoSidebar__button">
+    {% if video.video %}
+      <span data-video-url="{{ video.video.url }}" class="material-icons download-button"> download </span>
+    {% else %}
+      <span class="material-icons disabled"> download_disabled </span> <!-- Placeholder for disabled download button -->
+    {% endif %}
+    <p>{{ video.download_count }}</p>
+  </div>
+</div>
+
+<a style="text-decoration: none;" href="{% url 'viral'  %}"><div id="download">
+  <div class="videoSidebar__button">
+      <span class="material-icons download-button"> search</span>
+  </div>
+
+</div></a>
+
+
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const downloadButtons = document.querySelectorAll('.download-button');
+    downloadButtons.forEach(function(button) {
+      button.addEventListener('click', function() {
+        const videoUrl = button.getAttribute('data-video-url');
+        if (videoUrl) {
+          const link = document.createElement('a');
+          link.href = videoUrl;
+          link.setAttribute('download', 'video.mp4');
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        } else {
+          console.error('Video URL not found');
+        }
+      });
+    });
+  });
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const likeButtons = document.querySelectorAll(".videoSidebar__button");
+
+    likeButtons.forEach(function(likeButton) {
+        const likeIcon = likeButton.querySelector(".material-icons");
+        const likeCount = likeButton.querySelector(".like_count");
+
+        likeButton.addEventListener("click", function() {
+            const videoId = likeButton.getAttribute("data-video-id");
+
+            fetch(`/like_video/${videoId}/`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.liked) {
+                        likeIcon.innerHTML = "star";
+                    } else {
+                        likeIcon.innerHTML = "star_border";
+                    }
+                    likeCount.innerHTML = data.likes_count;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        });
+    });
+});
+</script>
+<style>
+  .videoSidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .videoSidebar p{
+    margin-top: 59px;
+    margin-right: -23px;
+    position: relative;
+    text-align: center;
+    right: 22px;
+    
+  }
+
+  .videoSidebar__button {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    position: relative;
+    top: -213px;
+    cursor: pointer;
+  }
+
+  @media (max-width: 425px) {
+    .videoSidebar__button {
+      position: relative;
+      top: -213px; /* This seems unnecessary for small screens */
+    }
+  }
+</style>
+
+<style>
+
+
+#select1{
+  background-color: rgb(255, 81, 0); /* Change background color on hover */
+  color: rgb(0, 0, 0); /* Change text color on hover */
+}
+
+</style>
+      <body>
+        <form class="mavea" action="{% url 'presentation_videos' %}" method="post">
+          {% csrf_token %}
+      <select  id="select1" id="selected_categories" name="selected_category" >
+  
+        {% for category in categories %}
+                  <option id="cate" value="{{ category.id }}">{{ category.name }}</option>
+              
+                  {% endfor %}
+            </i> </select><br><br>
+          <i  class="fa fa-pencil-square-o" aria-hidden="true">
+            <button  id="Moved_button" class="Moved_button1" type="submit"></i></button>
+      </form>
+  </div>
+  {% endfor %}
+    </div>
+    <!-- Your videos loop ends here -->
+</div>
+<style>
+  #cate{
+    overflow-y: auto; /* Add scrollbar for overflow */
+
+  }
+#select1 {
+  margin-right: -7px; 
+  width: 26px;
+  top: -820px; 
+  right: 7px; 
+  margin-bottom: 13px; 
+  position: relative;
+  background: none;
+  border-color: rgb(255, 255, 255);
+  overflow-y: auto;
+}
+
+@media (max-width: 425px) {
+  #select1 {
+    position: absolute;
+    top: 6px;
+    width: 26px;
+    left: 9px;
+    border-radius: 5px;
+  }
+}
+
+
+@media (max-width: 425px) {
+  #select1{
+  position:absolute;
+  top: 6px; 
+  width: 26px;
+  left: 9px;
+  border-radius: 5px;
+
+  
+}
+
+
+#Moved_button{
+  position:absolute;
+  top: 4px;
+  background: none;
+  border-color:rgb(255, 255, 255);
+  left: 52px;
+  border-radius: 5px;
+  height: 24px;
+}
+}
+
+
+
+
+.Moved_button1{
+  margin-right: -12px; 
+  width: 30px;
+  top: -871px; 
+  right: -31px; 
+  margin-bottom: 13px; 
+  position: relative;
+  background: none;
+  border-color:rgb(255, 255, 255);
+
+
+
+}
+
+.Moved_button2{
+  margin-right: -7px; 
+  width: 30px;
+  height: 17px;
+  margin-left: -22px;
+  top: -817px;
+   
+  right: -112px; 
+  margin-bottom: 13px; 
+  position: relative;
+  background: none;
+  border-color:rgb(255, 255, 255);
+}
+
+.video-container {
+position: relative;
+width: 100%;
+}
+
+.video {
+width: 100%;
+display: block;
+}
+
+.play-button {
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+width: 60px;
+height: 60px;
+background-color: rgba(255, 0, 0, 0.5);
+border-radius: 50%;
+cursor: pointer;
+z-index: 999;
+}
+
+
+.pause-button {
+display: none;
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+width: 60px;
+height: 60px;
+background-color:rgba(0, 0, 0, 0.423); /* Red color for pause button */
+border-radius: 50%;
+cursor: pointer;
+z-index: 999;
+}
+
+.pause-button::after {
+content: '';
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-30%, -50%);
+width: 0;
+height: 0;
+border-left: 20px solid #fff; /* Pause symbol */
+border-top: 20px solid transparent;
+border-bottom: 20px solid transparent;
+}
+.play-button::after {
+content: '';
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-30%, -50%);
+width: 0;
+height: 0;
+border-top: 15px solid transparent;
+border-bottom: 15px solid transparent;
+border-left: 30px solid #fff;
+}
+
+.play-button:hover {
+background-color: rgba(0, 0, 0, 0.7);
+}
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var videos = document.querySelectorAll('.video__player');
+    var playButtons = document.querySelectorAll('.play-button');
+    var pauseButtons = document.querySelectorAll('.pause-button');
+
+    playButtons.forEach(function(playButton, index) {
+        var video = videos[index];
+        var pauseButton = pauseButtons[index];
+
+        playButton.addEventListener('click', function() {
+            if (video.paused) {
+                video.play();
+                playButton.style.display = 'none';
+                pauseButton.style.display = 'block';
+            }
+        });
+
+        pauseButton.addEventListener('click', function() {
+            if (!video.paused) {
+                video.pause();
+                pauseButton.style.display = 'none';
+                playButton.style.display = 'block';
+            }
+        });
+
+        window.addEventListener('scroll', function() {
+            var videoTop = video.getBoundingClientRect().top;
+            var videoBottom = video.getBoundingClientRect().bottom;
+            var windowHeight = window.innerHeight;
+
+            if (videoTop < windowHeight && videoBottom > 0) {
+                video.play();
+                playButton.style.display = 'none';
+                pauseButton.style.display = 'block';
+            } else {
+                video.pause();
+                pauseButton.style.display = 'none';
+                playButton.style.display = 'block';
+            }
+        });
+    });
+});
+</script>
+
+<script>
+  // Function to check if an element is in the viewport
+  function isElementInViewport(el) {
+      var rect = el.getBoundingClientRect();
+      return (
+          rect.top >= 0 &&
+          rect.left >= 0 &&
+          rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+          rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+      );
+  }
+
+  // Function to handle video play/pause based on visibility
+  function handleVideoVisibility() {
+      var videos = document.querySelectorAll('.video__player');
+      videos.forEach(function(video) {
+          if (isElementInViewport(video) && !video.paused && video.currentTime > 0) {
+              // Video is in viewport and has been started
+              // Check if it's already playing
+              if (video.paused) {
+                  video.play();
+              }
+          } else {
+              // Video is out of viewport or not started
+              // Pause the video
+              video.pause();
+          }
+      });
+  }
+
+  // Listen for scroll events and check video visibility
+  window.addEventListener('scroll', function() {
+      handleVideoVisibility();
+  });
+
+  // Listen for other events that might trigger video visibility changes
+  window.addEventListener('resize', function() {
+      handleVideoVisibility();
+  });
+
+  // Initial check for video visibility
+  handleVideoVisibility();
+</script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Handle category button clicks
+        $('.category-button').click(function() {
+            var categoryId = $(this).data('category-id');
+
+            // Send AJAX request to change category
+            $.ajax({
+                type: 'POST',
+                url: '{% url "change_category" %}',
+                data: {
+                    'selected_category': categoryId,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    // Update videos container with new videos
+                    $('#videos-container').html(response.html);
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        });
+    });
+</script>
+
+<script>
+    const videos = document.querySelectorAll('.video__player');
+
+    for (const video of videos) {
+        video.addEventListener('click', function () {
+            console.log('clicked');
+            if (video.paused) {
+                video.play();
+            } else {
+                video.pause();
+            }
+        });
+    }
+</script>
+
+<style>
+  /* Add your custom styles here */
+  .video {
+      position: relative;
+      display: inline-block;
+  }
+</style>
+
+
+

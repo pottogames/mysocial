@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% load static %}
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'icon.ico' %}">
+    <title>Create Post</title>
+</head>
+<body>
+    <h1>Create Post</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <!-- Drawing canvas or input field for drawing data -->
+        <canvas id="drawingCanvas" width="400" height="400"></canvas>
+        <input type="hidden" name="drawing_data" id="drawingDataInput">
+        <br>
+        <button type="submit">Create Post</button>
+    </form>
+
+    <script>
+        // JavaScript code for handling drawing and updating the hidden input field
+        const canvas = document.getElementById('drawingCanvas');
+        const context = canvas.getContext('2d');
+
+        // Add event listeners for drawing
+        let isDrawing = false;
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+
+        function startDrawing(event) {
+            isDrawing = true;
+            draw(event);
+        }
+
+        function draw(event) {
+            if (!isDrawing) return;
+
+            const x = event.offsetX;
+            const y = event.offsetY;
+
+            context.lineWidth = 2;
+            context.lineCap = 'round';
+            context.strokeStyle = '#000';
+
+            context.beginPath();
+            context.moveTo(x, y);
+            context.lineTo(x, y);
+            context.stroke();
+
+            updateDrawingData();
+        }
+
+        function stopDrawing() {
+            isDrawing = false;
+        }
+
+        function updateDrawingData() {
+            const drawingData = canvas.toDataURL('image/png');
+            document.getElementById('drawingDataInput').value = drawingData;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+    {% load static %}
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'icon.ico' %}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>about us</title>
+    <style>
+        body {
+            background-color: #31394D;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .card {
+            border-radius: 6px;
+            width: 300px; /* Adjust as needed for responsiveness */
+            height: auto;
+            height: 500px;
+            background-color: #31394D;
+            color: #ffffff;
+            box-shadow: 0 12px 13px rgba(0, 0, 0, 0.16), 0 12px 13px rgba(0, 0, 0, 0.16);
+            transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .profile {
+            border-radius: 50%;
+            width: 132px;
+            height: 128px;
+            margin: 20px auto;
+            display: block;
+        }
+
+        .title {
+            font-family: roboto;
+            font-weight: 300;
+            margin: 0;
+            text-align: center;
+        }
+
+        .job-title {
+            color: #7C8097;
+            font-size: 12px;
+            font-weight: 100;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .desc {
+            font-size: 12px;
+            color: #B7B8C0;
+            
+            text-align: center;
+            padding: 0 20px;
+            margin-bottom: 50px;
+        }
+
+        .btn {
+            border: none;
+            height: 40px;
+            color: #ffffff;
+            width: 80%;
+            margin-top: 93px;
+            margin-left: 33px;
+            font-size: 16px;
+            border-radius: 30px;
+            background: linear-gradient(to top right, #8162CE, #F54BA5);
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: #ffffff;
+            color: #DA59B1;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- Card 1 -->
+        <div class="card">
+            <img src="/static/images/mybrother.png" alt="profile-pic" class="profile">
+            <h1 class="title">Elia Eliasi</h1>
+            <p class="job-title">Web Designer</p>
+            <div class="desc">
+                <p>I am ready to create for you the best social network that has existed until today with the most
+                    valuable things</p>
+            </div>
+            <a href="http://127.0.0.1:8000/profile/Elia%20Eliasi"><button class="btn">My Profile</button></a>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="card">
+            <img src="/static/images/me.png" alt="profile-pic" class="profile">
+            <h1 class="title">Reuven Eliasi</h1>
+            <p class="job-title">Software Developer</p>
+            <div class="desc">
+                <p>I am ready to create for you the best social network that has existed until today with the most
+                    valuable things</p>
+            </div>
+            <a href="http://127.0.0.1:8000/profile/ReuvenEliasi"><button class="btn">My Profile</button></a>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="card">
+            <img src="/static/images/mydad.png" alt="profile-pic" class="profile">
+            <h1 class="title">Eliran Eliasi</h1>
+            <p class="job-title">Money Manager</p>
+            <div class="desc">
+                <p>I am ready to invest a lot in the app and website so that the user experience is the best</p>
+            </div>
+            <a href="http://127.0.0.1:8000/profile/EliranEliasi"><button class="btn">My Profile</button></a>
+        </div>
+    </div>
+
+</body>
+
+</html>

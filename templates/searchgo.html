@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search for users in Social!</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f8f9fa;
+        }
+        .search-container {
+            width: 100%;
+            max-width: 1200px; /* Maximum width of the container */
+            padding: 20px;
+            text-align: center;
+        }
+        .search-box {
+            display: flex;
+
+            align-items: center;
+            border: 1px solid #dfe1e5;
+            box-shadow: none;
+            border-radius: 24px;
+            padding: 5px 10px;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .search-box input {
+            flex: 1;
+            box-shadow: 0px 0px 0px 1px black;
+            border-radius: 23px;
+            border: none;
+            outline: none;
+            padding: 10px;
+            font-size: 16px;
+        }
+        .search-box button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            outline: none;
+            color: #5f6368;
+        }
+        .search-box button:hover {
+            color: #000;
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        @media (min-width: 576px) {
+            h1 {
+                font-size: 28px;
+            }
+        }
+        @media (min-width: 768px) {
+            .search-container {
+                padding: 20px 40px;
+            }
+        }
+        @media (min-width: 992px) {
+            .search-container {
+                padding: 20px 60px;
+            }
+        }
+        @media (min-width: 1200px) {
+            .search-container {
+                max-width: 1200px; /* Ensure max-width of 1200px on larger screens */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="search-container">
+        <form action="/search" method="POST">
+            {% csrf_token %}
+            <h1>Search for username:</h1>
+            <div class="search-box bg-white">
+                <input id="search" type="text" name="username" placeholder="Search for username..">
+                <button type="submit"><i id="icon_search" class="fa fa-search fa-lg"></i></button>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

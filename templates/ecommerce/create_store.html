@@ -1,0 +1,71 @@
+{% load static %}
+<link rel="shortcut icon" type="image/x-icon" href="{% static 'icon.ico' %}">
+<style>
+    /* Define CSS styles for form elements */
+    .form-container {
+        max-width: 400px;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #d3d5d8;
+        border-radius: 5px;
+        background-color: #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-container label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 900;
+    }
+
+    .form-container input[type="text"],
+    .form-container textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #d3d5d8;
+        border-radius: 5px;
+    }
+
+    .form-container button {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 5px;
+        background-color: #fa8b2b;
+        color: #fff;
+        margin-top: 23px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .form-container button:hover {
+        background-color: #fb6023f2;
+    }
+</style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Store</title>
+</head>
+<body>
+    <!-- Form container with defined CSS styles -->
+    <div class="form-container">
+        <h1>Create Store</h1>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <label for="name">Store Name:</label><br>
+            <input class="mb-2 shadow-none dark:bg-gray-800" type="text" id="name" name="name" required><br>
+            <label class="bg-gray-200 mb-2 shadow-none dark:bg-gray-800" for="description" >Description:</label><br>
+            <textarea id="description" name="description" required></textarea><br>
+            <label for="photo">Store Photo:</label><br>
+            <input type="file" id="photo" name="photo" accept="image/*" required><br>
+            <button class="bg-gradient-to-br from-pink-500 py-3 rounded-md text-white text-xl to-red-400 w-full" type="submit">Create Store</button>
+        </form>
+    </div>
+</body>
+</html>

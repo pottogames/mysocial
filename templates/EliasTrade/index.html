@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Viewer</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: rgb(49, 49, 49);
+            display: flex;
+            height: 100vh;
+            margin: 0;
+        }
+        #canvas1 {
+            background-color: rgb(49, 49, 49);
+            width: 30%;
+            color: white;
+            padding: 20px;
+            overflow-y: scroll;
+        }
+        #canvas2 {
+            background-color: rgb(49, 49, 49);
+            width: 70%;
+            color: white;
+            padding: 20px;
+        }
+        .stock-item {
+            cursor: pointer;
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+        .stock-item:hover {
+            background-color: #272727;
+            color:green;
+        }
+             /* Positioning for buttons */
+             .button-container {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        /* Button styles */
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            color: #fff;
+        }
+        /* Button colors */
+        .btn-outline-success {
+            background-color: #28a745;
+        }
+        .btn-outline-danger {
+            background-color: #dc3545;
+        }
+    </style>
+</head>            
+<body>
+    <div id="canvas1" class="border-right">
+        <h4>Stock Symbols</h4>
+        <form id="search-form" class="mb-3">
+            <div class="input-group">
+                <input type="text" id="symbol-input" class="form-control" placeholder="Enter Stock Symbol...">
+                <input type="text" id="function-input" class="form-control" placeholder="Enter Function...">
+                <input type="text" id="interval-input" class="form-control" placeholder="Enter Interval...">
+                <div class="input-group-append">
+                    <button style="background-color: orangered; margin-left: 5px;" type="submit" class="btn btn-primary">Search</button>
+                </div>
+            </div>
+        </form>
+        <div id="stock-list"></div>
+    </div>
+    <div id="canvas2">
+           <!-- Button container for positioning -->
+           <div class="button-container">
+            <button id="save-btn" class="btn btn-outline-success">Save</button>
+            <button id="delete-btn" class="btn btn-outline-danger">Delete</button>
+        </div>
+        
+        <h1 id="no-chart" style="display: none;">No chart found</h1>
+        <div id="chart-container" style="display: none; margin-top: 39px;">
+            <canvas id="stock-chart"></canvas>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // JavaScript code goes here
+    </script>
+</body>
+</html>
+
+<script>
+    $(document).ready(function() {
+        // Function to fetch and display stock symbols initially
+        fetchStockSymbols();
+    
+        // Handle search form submit
+        $('#search-form').on('submit', function(event) {
+            event.preventDefault();
+            const symbol = $('#symbol-input').val().toUpperCase();
+            const func = $('#function-input').val(); // This line seems unnecessary for Alpha Vantage
+            const interval = $('#interval-input').val();
+            fetchAlphaVantageChart(symbol, func, interval);
+        });
+    
+        // Handle search bar input
+        $('#search-bar').on('input', function() {
+            const query = $(this).val().toUpperCase();
+            filterStockList(query);
+        });
+    });
+    
+    function fetchStockSymbols() {
+        const apiEndpoint = 'https://financialmodelingprep.com/api/v3/stock/list?apikey=UNHLWllUMuSDPrGQtDAXErJ7z8xfFsfo';
+    
+        $.getJSON(apiEndpoint, function(data) {
+            const stockList = $('#stock-list');
+            stockList.empty();
+            data.forEach(stock => {
+                stockList.append(`<div class="stock-item" data-symbol="${stock.symbol}">${stock.symbol} - ${stock.price}</div>`);
+            });
+        });
+    }
+    
+    function fetchAlphaVantageChart(symbol, func, interval) {
+    const apiUrl = `https://financialmodelingprep.com/api/v3/historical-chart/5min/${symbol}?apikey=UNHLWllUMuSDPrGQtDAXErJ7z8xfFsfo`;
+    console.log("Fetching data for symbol:", symbol);
+
+    $.getJSON(apiUrl, function(data) {  
+        console.log("API Response:", data);
+
+        // Check if data is empty or contains a note (indicating API limit reached or invalid response)
+        if (!data || data.Note) {
+            console.error("API limit reached or invalid response.");
+            $('#no-chart').show();
+            $('#chart-container').hide();
+            return;
+        }
+
+        // Check if the required data structure is present
+        if (!data || !data.length) {
+            console.error("Invalid data format or missing data.");
+            $('#no-chart').show();
+            $('#chart-container').hide();
+            return;
+        }
+
+        // Assuming data is an array of objects with 'close' property
+        const prices = data.map(item => parseFloat(item.close));
+        const dates = data.map(item => item.date);
+
+        if (dates.length === 0 || prices.length === 0) {
+            console.error("Invalid data format or missing data.");
+            $('#no-chart').show();
+            $('#chart-container').hide();
+            return;
+        }
+
+        $('#no-chart').hide();
+        $('#chart-container').show();
+
+        renderChart(dates, prices);
+    }).fail(function(error) {
+        console.error("Error fetching chart data:", error);
+        $('#no-chart').show();
+        $('#chart-container').hide();
+    });
+}
+    
+    function renderChart(dates, prices) {
+        const ctx = document.getElementById('stock-chart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: dates,
+                datasets: [{
+                    label: 'Stock Price',
+                    data: prices,
+                    borderColor: 'rgba(237, 128, 2, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    xAxes: [{
+                        type: 'time',
+                        time: {
+                            unit: 'minute'
+                        }
+                    }],
+                    yAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Price'
+                        }
+                    }]
+                }
+            }
+        });
+    }
+    
+    function filterStockList(query) {
+        $('.stock-item').each(function() {
+            const symbol = $(this).data('symbol').toUpperCase();
+            $(this).toggle(symbol.includes(query));
+        });
+    }
+    </script>

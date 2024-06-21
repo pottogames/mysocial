@@ -1,0 +1,18 @@
+dependencies:
+  flutter:
+    sdk: flutter
+  url_launcher: ^6.0.0
+
+
+
+
+
+
+
+
+
+
+
+
+  assets:
+    - assets/images/logo-transparent.png

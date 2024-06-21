@@ -1,0 +1,301 @@
+
+<!DOCTYPE html>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+    integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+<!-- Required meta tags -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<html>
+
+<head>
+
+</head>
+
+<body class="bg-transparent">
+
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <script>
+            alert("{{message}}")
+        </script>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-primary">
+        <a class="navbar-brand text-light">Demo Trading</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+            <form method="POST" class="form-inline my-2 my-lg-0" action="/search/">
+                {% csrf_token %}
+                <input class="form-control mr-sm-2" type="search" placeholder="Search Ticker" aria-label="Search Ticker"
+                    name="ticker">
+                <input type="hidden" name="graphTime" value=0>
+                <button class="btn btn-outline-light my-2 my-sm-0" type="submit">Search</button>
+            </form>
+
+            <ul class="navbar-nav ml-auto">
+
+                <li class="nav-item active">
+                    <a class="nav-link text-light" href="/leaderboard/trade/">Leaderboard <span
+                            class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link text-light" href="/accounts/portfolio/">Portfolio <span
+                            class="sr-only">(current)</span></a>
+                </li>
+
+                <li class="nav-item active">
+                    <a class="nav-link text-light" href="{% url 'settings' %}">Settings <span
+                            class="sr-only">(current)</span></a>
+                </li>
+
+                <li class="nav-item active">
+                    <a class="nav-link text-light" href="{% url  'logout' %}">Logout <span
+                            class="sr-only">(current)</span></a>
+                </li>
+            </ul>
+
+        </div>
+    </nav>
+    <!--
+        <div style="width: 100%; overflow: hidden;">
+            <div style="width: 10%; float: left;">
+                <a href="/home/">Home</a>
+            </div>
+            <div style="width: 25%; float: left;">
+                <form method="POST" action="/search/">
+                    {% csrf_token %}
+                    <input name="ticker" onfocus="if (this.value=='Search for ticker') this.value = ''" type="text" value="Search for ticker">
+                    <button type="submit">Search</button>
+                </form>
+            </div>
+            <div style="width: 10%; float: left;">
+                <a href = "/leaderboard/">Leaderboard</a>
+            </div>
+            <div style="width: 10%; float: left;">
+                <a href="/accounts/portfolio/">Portfolio</a>
+            </div>
+            <div style="width: 10%; float: left;">
+                <a href="/accounts/account_settings/">Settings</a>
+            </div>
+            <div style="width: 35%; float: left; margin: auto;">
+                <p style="float: left; margin:auto;">{{user.username}}</p>
+                <a href="/accounts/logout/" style="margin-left:5%;">Logout</a>
+            </div>
+            
+            <div style="margin-left: 15%;"> 
+                
+            </div>
+            
+        </div>
+    -->
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+
+    {% block content %}{% endblock content %}
+</body>
+
+</html>
+
+
+<title>Demo Trading | {{TickerName}}</title>
+
+<body>
+
+    <div class="container">
+        <div class="row pt-5">
+            <div class="col mr-auto">
+                <h1 class="display-4 px-4 pt-3 text-primary">{{Summary.shortName}} ({{TickerName}})</h1>
+                <h1 class="display-4 px-4 text-primary">${{Price}}</h1>
+            </div>
+
+            <div class="col-5 ml-auto pt-4">
+                <form class="form-inline" method="POST" action="/accounts/buy/">
+                    {% csrf_token %}
+                    <input type="number" class="form-control" name="ShareCount" value=1>
+                    <input type="hidden" name="TickerName" value={{TickerName}} />
+                    <button type="submit" class="btn btn-outline-primary my-2 my-sm-0 text-center">Buy Shares</button>
+                </form>
+            </div>
+
+
+        </div>
+
+        <div class="row pt-md-3">
+
+            <div class="col-10 mr-auto pl-1">
+                {{StockPlot|safe }}
+            </div>
+
+        </div>
+
+        <div class="row pt-md-3" id="GraphTimeBar">
+            <div class="col-10 mr-auto pl-1">
+                <nav class="navbar navbar-expand-lg navbar-light bg-transparent">
+                    <button id="testButton" class="navbar-toggler" type="button" data-toggle="collapse"
+                        data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+                        <form method="POST" class="form-inline my-2 my-lg-0 pl-md-2 pr-md-1" action="/search/">
+                            {% csrf_token %}
+                            <input class="form-control mr-sm-2" type="hidden" placeholder="Search Ticker"
+                                aria-label="Search Ticker" name="ticker" value="{{TickerName}}">
+                            <input type="hidden" name="graphTime" value=0>
+                            <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">1D</button>
+                        </form>
+
+                        <form method="POST" class="form-inline my-2 my-lg-0 px-md-1" action="/search/">
+                            {% csrf_token %}
+                            <input class="form-control mr-sm-2" type="hidden" placeholder="Search Ticker"
+                                aria-label="Search Ticker" name="ticker" value="{{TickerName}}">
+                            <input type="hidden" name="graphTime" value=1>
+
+                            <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">5D</button>
+                        </form>
+
+                        <form method="POST" class="form-inline my-2 my-lg-0 px-md-1" action="/search/">
+                            {% csrf_token %}
+                            <input class="form-control mr-sm-2" type="hidden" placeholder="Search Ticker"
+                                aria-label="Search Ticker" name="ticker" value="{{TickerName}}">
+                            <input type="hidden" name="graphTime" value=2>
+                            <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">1MO</button>
+                        </form>
+
+                        <form method="POST" class="form-inline my-2 my-lg-0 px-md-1" action="/search/">
+                            {% csrf_token %}
+                            <input type="hidden" name="graphTime" value=3>
+                            <input class="form-control mr-sm-2" type="hidden" placeholder="Search Ticker"
+                                aria-label="Search Ticker" name="ticker" value="{{TickerName}}">
+                            <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">3MO</button>
+                        </form>
+
+                        <form method="POST" class="form-inline my-2 my-lg-0 px-md-1" action="/search/">
+                            {% csrf_token %}
+                            <input type="hidden" name="graphTime" value=4>
+                            <input class="form-control mr-sm-2" type="hidden" placeholder="Search Ticker"
+                                aria-label="Search Ticker" name="ticker" value="{{TickerName}}">
+                            <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">1Y</button>
+                        </form>
+
+                        <form method="POST" class="form-inline my-2 my-lg-0 px-md-1" action="/search/">
+                            {% csrf_token %}
+                            <input class="form-control mr-sm-2" type="hidden" placeholder="Search Ticker"
+                                aria-label="Search Ticker" name="ticker" value="{{TickerName}}">
+                            <input type="hidden" name="graphTime" value=5>
+                            <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">5Y</button>
+                        </form>
+
+                        <form method="POST" class="form-inline my-2 my-lg-0 px-md-1" action="/search/">
+                            {% csrf_token %}
+                            <input class="form-control mr-sm-2" type="hidden" placeholder="Search Ticker"
+                                aria-label="Search Ticker" name="ticker" value="{{TickerName}}">
+                            <input type="hidden" name="graphTime" value=6>
+                            <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">MAX</button>
+                        </form>
+
+
+
+                    </div>
+                </nav>
+                <hr>
+            </div>
+
+        </div>
+
+
+
+
+
+        <div class="row">
+            <div class="col-10 mr-auto pl-1">
+                <h1 class="display-4 px-0 pt-3 text-primary">Business Summary</h1>
+                <hr>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-10 mr-auto pl-1">
+                <p class="text-dark">{{Summary.longBusinessSummary}}</p>
+            </div>
+        </div>
+
+        <div class="col-10 mr-auto pl-1">
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td class="text-primary text-center font-weight-bold">Industry</td>
+                        <td class="text-primary text-center font-weight-bold">Exchange</td>
+                        <td class="text-primary text-center font-weight-bold">Location</td>
+                        <td class="text-primary text-center font-weight-bold">Founded</td>
+                    </tr>
+
+                    <tr>
+                        <td class="text-center">{{Summary.industry}}</td>
+                        <td class="text-center">{{Profile.exchange}}</td>
+                        <td class="text-center">{{Summary.city}}</td>
+                        <td class="text-center">{{Summary.currency}}</td>
+                    </tr>
+
+                    <tr>
+                        <td class="text-primary text-center font-weight-bold">Previous Close</td>
+                        <td class="text-primary text-center font-weight-bold">Market Open</td>
+                        <td class="text-primary text-center font-weight-bold">Market Cap</td>
+                        <td class="text-primary text-center font-weight-bold">Volume</td>
+                    </tr>
+
+                    <tr>
+                        <td class="text-center">${{Summary.previousClose}}</td>
+                        <td class="text-center">${{Summary.regularMarketOpen}}</td>
+                        <td class="text-center">${{Summary.marketCap}}</td>
+                        <td class="text-center">{{Summary.volume}}</td>
+                    </tr>
+
+                    <tr>
+                        <td class="text-primary text-center font-weight-bold">Trailing PE</td>
+                        <td class="text-primary text-center font-weight-bold">Forward PE</td>
+                        <td class="text-primary text-center font-weight-bold">Beta</td>
+                        <td class="text-primary text-center font-weight-bold">Short Ratio</td>
+                    </tr>
+
+                    <tr>
+                        <td class="text-center">{{Summary.trailingPE}}</td>
+                        <td class="text-center">{{Summary.forwardPE}}</td>
+                        <td class="text-center">{{Summary.beta}}</td>
+                        <td class="text-center">{{Summary.shortRatio}}</td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+
+
+
+
+
+
+
+
+
+</body>
+

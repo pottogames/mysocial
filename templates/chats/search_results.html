@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'icon.ico' %}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #eff;
+            padding:  20px;
+            height: auto;
+            box-shadow: 21px 18px 99px 1px rgba(0,0,0,0.75);
+-webkit-box-shadow: 21px 18px 99px 1px rgba(0,0,0,0.75);
+-moz-box-shadow: 21px 18px 99px 1px rgba(0,0,0,0.75);
+            border-radius: 5px;
+                }
+        h2 {
+            margin-top: 0;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        a {
+            color: #ff3300;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .no-results {
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <ul>
+            {% for user in search_results %}
+                <li>
+                    User Object: {{ user }}
+                    Username: {{ user.username }}
+                    - <a href="{% url 'send_private_message' recipient_id=user.id %}">Send Message</a>
+                </li>
+            {% endfor %}
+    </ul>
+    </div>
+    
+</body>
+</html>

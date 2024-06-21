@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'icon.ico' %}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Take a Photo/video and save it To Upload Video Presentation</title>
+    <style>
+        body {
+            overflow: hidden;
+            background-color: rgb(255, 255, 255);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        #container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 90vw;
+        }
+
+        #video-container {
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        #video {
+            border-radius: 12px;
+            width: 100%;
+            height: auto;
+        }
+
+        #controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .box {
+            padding: 10px 20px;
+            margin: 0 5px;
+            height: 44px;
+            width: 44px;
+            border-radius: 23px;
+            background-color: rgba(255, 255, 255, 0);
+            cursor: pointer;
+            box-shadow: 21px 16px 400px -14px rgba(0,0,0,1);
+            -webkit-box-shadow: 21px 16px 400px -14px rgba(0,0,0,1);
+            -moz-box-shadow: 21px 16px 400px -14px rgba(0,0,0,1);
+        }
+
+        i {
+            margin-left: 13px;
+            position: relative;
+            right: -23px;
+        }
+
+        @media screen and (max-width: 600px) {
+            #video-container video {
+                height: 50vh; /* Set the height of the video to 50% of the viewport height */
+                border-radius: 12px;
+            }
+
+            #controls {
+                margin-left: -43px;
+
+            }
+            
+        }
+        @media screen and (max-width: 599px){
+            #video{
+                border-radius: 12px;
+
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="video-container">
+            <video id="video" autoplay></video>
+        </div>
+        <div id="controls">
+            <div class="box" id="capture-button"><i class="fa fa-camera" aria-hidden="true"></i></div>
+            <div class="box" id="record-button"><i class="fa fa-video-camera" aria-hidden="true"></i></div>
+            <div class="box" id="stop-button"><i class="fa fa-stop" aria-hidden="true"></i></div>
+            <div class="box" id="toggle-camera-button"><i class="fa fa-exchange" aria-hidden="true"></i></div>
+        </div>
+    </div>
+</body>
+</html>
+    <script>
+        let videoElement;
+        let currentStream;
+        let isFrontCamera = false;
+
+        // Getting access to user's camera
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function(stream) {
+                currentStream = stream;
+                initializeVideo(stream);
+            })
+            .catch(function(error) {
+                console.error('Error accessing the camera:', error);
+            });
+
+        function initializeVideo(stream) {
+            videoElement = document.getElementById('video');
+            videoElement.srcObject = stream;
+            videoElement.style.display = 'block'; // Show the video element once permission is granted
+        }
+
+        var mediaRecorder;
+        var chunks = [];
+
+        document.getElementById('capture-button').addEventListener('click', function() {
+            var videoElement = document.getElementById('video');
+            var canvas = document.createElement('canvas');
+            canvas.width = videoElement.videoWidth;
+            canvas.height = videoElement.videoHeight;
+            var context = canvas.getContext('2d');
+            context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+            var imgData = canvas.toDataURL('image/png');
+            // Create a hidden download link for capturing the image
+            downloadMedia(imgData, 'YourImage.png');
+        });
+
+        document.getElementById('record-button').addEventListener('click', function() {
+            var videoElement = document.getElementById('video');
+            mediaRecorder = new MediaRecorder(videoElement.srcObject);
+            mediaRecorder.ondataavailable = function(event) {
+                chunks.push(event.data);
+            };
+            mediaRecorder.start();
+        });
+
+        document.getElementById('stop-button').addEventListener('click', function() {
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+                mediaRecorder.onstop = function() {
+                    var blob = new Blob(chunks, { type: 'video/mp4' });
+                    // Create a hidden download link for the recorded video
+                    var videoUrl = URL.createObjectURL(blob);
+                    downloadMedia(videoUrl, 'YourVideo.mp4');
+                    chunks = [];
+                };
+            }
+        });
+
+        document.getElementById('toggle-camera-button').addEventListener('click', function() {
+            toggleCamera();
+        });
+
+        function toggleCamera() {
+            if (currentStream) {
+                currentStream.getTracks().forEach(track => {
+                    track.stop();
+                });
+            }
+            isFrontCamera = !isFrontCamera;
+            const constraints = {
+                video: { facingMode: isFrontCamera ? "user" : "environment" }
+            };
+            navigator.mediaDevices.getUserMedia(constraints)
+                .then(function(stream) {
+                    currentStream = stream;
+                    initializeVideo(stream);
+                })
+                .catch(function(error) {
+                    console.error('Error accessing the camera:', error);
+                });
+        }
+
+        function downloadMedia(mediaUrl, fileName) {
+            var downloadLink = document.createElement('a');
+            downloadLink.href = mediaUrl;
+            downloadLink.download = fileName;
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        }
+    </script>
+</body>
+</html>

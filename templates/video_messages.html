@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Messages</title>
+</head>
+<style>
+    .dav {
+        background-color: rgb(255, 255, 255);
+        height: 640px;
+        width: 410px;
+        position: absolute;
+        top: 78px;
+        text-decoration: none;
+    }
+
+    .chat_container {
+        margin-top: 10px;
+        height: 60px;
+    }
+
+    .container {
+        height: 29px;
+        width: 275px;
+        position: relative;
+        top: -137px;
+        resize: none;
+        margin-top: 10px; /* Adjust margin */
+    }
+
+    .submit-message {
+        height: 30px;
+        width: 100px; /* Adjust width */
+        margin-top: 10px;
+        position: relative;
+        top: -149px; /* Adjust margin */
+        right: -6px;
+    }
+
+    .texts {
+        text-align: center;
+        color: black;
+        font-size: 21px;
+        font-weight: 900;
+        margin-top: 10px; /* Adjust margin */
+    }
+
+    .texa {
+        color: black;
+    }
+
+ 
+
+    .pat {
+    margin-top: 10px;
+    overflow-y: auto; /* Change to auto to add scrollbar */
+    height: 63vh; /* Use viewport height */
+    width: auto;
+    max-height: 570px; /* Maximum height */
+    background-color: rgb(255, 255, 255);
+}
+
+.pottoa {
+    color: rgb(67, 67, 67);
+    list-style-type: none;
+    margin-bottom: 3px;
+    /* Add any additional styling for the chat messages */
+}
+
+    .form-container {
+        margin-top: 20px; /* Adjust margin */
+    }
+
+    @media (max-width: 425px) {
+
+        
+        body {
+            overflow-x: hidden;
+        }
+
+        .container {
+            margin-top: 0;
+        }
+
+        .submit-message {
+            margin-top: 0; /* Adjust margin */
+            position: relative;
+            top: -170px;
+            width: 100px;
+            right: -269px;
+        }
+
+        .texts {
+            margin-top: 0; /* Adjust margin */
+        }
+    }
+</style>
+
+<body>
+    <h1>{{ video.title }}</h1>
+    <div class="app__videos">
+            <!-- Your videos loop starts here -->
+            <div class="video">
+                <div class="video-player">
+                    <video class="video__player" controls autoplay loop playsinline webkit-playsinline>
+                        <source src="{{ video.video.url }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+                <div class="dav"> <!-- Start of dav container -->
+                    <div class="chat_container"> <!-- Move chat container inside dav -->
+                        <h2 class="texts">Messages</h2>
+                        <div class="pat"> <!-- Start of pat container -->
+                            <div class="pata"></div> <!-- Move pata content inside pat container -->
+                            <ul class="messages_list">
+                                {% for message in messages %}
+                                <li class="pottoa">
+                                    <strong class="texa">{{ message.user.username }}</strong>: {{ message.content }}
+                                    <form  action="{% url 'report_message' message.id %}" method="post" class="report-form">
+                                        {% csrf_token %}
+                                        <button type="submit">Report</button>
+                                    </form>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div> <!-- End of pat container -->
+                    </div> <!-- End of chat container -->
+                </div> <!-- End of dav container -->
+                    <div class="form-container"> <!-- New container for the form -->
+                        <form action="{% url 'video_messages' video.id %}" method="post">
+                            {% csrf_token %}
+                            <textarea class="container" name="message_content" style="width: 275px; height: 29px;  resize: none;"></textarea>
+                            <button class="submit-message" type="submit">Send</button>
+                        </form>
+                    </div>
+                </div> <!-- End of dav container -->
+            </div> <!-- End of video -->
+            <!-- End of video loop -->
+        </div> <!-- End of app__videos -->
+    </body>
+
+    <script>
+function reportMessage(messageId, reportReason) {
+    fetch(`/report_message/${messageId}/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+    })
+    .then(response => {
+        if (response.ok) {
+            alert('Message has been reported successfully.');
+        } else {
+            // Handle non-successful response
+            if (response.status === 404) {
+                alert('Message not found.');
+            } else if (response.status === 500) {
+                alert('Internal server error. Please try again later.');
+            } else {
+                alert('Failed to report message. Please try again later.');
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error reporting message:', error);
+        alert('Failed to report message. Please try again later.');
+    });
+}
+    </script>
+</body>
+</html>
+
+<script>
+ document.addEventListener("DOMContentLoaded", function() {
+    const form = document.querySelector('form');
+    const messageList = document.getElementById('messageList');
+
+    form.addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        const formData = new FormData(this);
+
+        sendMessage(formData, form, messageList); // Pass form and messageList
+        this.querySelector('button[type="submit"]').setAttribute('disabled', true); // Disable the submit button
+    });
+});
+
+function sendMessage(formData, form, messageList) { // Accept form and messageList as parameters
+    const videoId = document.getElementById('video').getAttribute('data-video-id'); // Get video ID
+
+    fetch(`/video_messages/${videoId}/`, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            form.reset();
+            messageList.innerHTML += `<li>${data.message_content}</li>`;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        // Handle error, e.g., display an error message to the user
+    })
+    .finally(() => {
+        form.querySelector('button[type="submit"]').removeAttribute('disabled'); // Re-enable the submit button
+    });
+}
+</script>
+
+<style>* {
+    margin: 0;
+    box-sizing: border-box;
+  }
+  
+  video::-webkit-media-controls-panel {
+      display: none !important;
+      opacity: 1 !important;}
+  
+  html {
+    scroll-snap-type: y mandatory;
+  }
+  
+  body {
+    color: white;
+    background-color: white;
+    height: 100vh;
+    display: grid;
+    place-items: center;
+  }
+  
+  .app__videos {
+    position: relative;
+    height: 750px;
+    background-color: white;
+    overflow: scroll;
+    width: 100%;
+    max-width: 400px;
+    scroll-snap-type: y mandatory;
+    border-radius: 20px;
+  }
+  
+  .app__videos::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .app__videos {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .video {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    background-color: white;
+    scroll-snap-align: start;
+  }
+  
+  .video__player {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .videoSidebar {
+    position: absolute;
+    top: 48%;
+    right: 10px;
+  }
+  
+  .videoSidebar .material-icons {
+    font-size: 28px;
+    cursor: pointer;
+  }
+  
+  .videoSidebar__button {
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .videoFooter {
+    position: relative;
+    bottom: 150px;
+    margin-left: 20px;
+    color: white;
+    display: flex;
+  }
+  
+  @keyframes spinTheRecord {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  .videoFooter__record {
+    animation: spinTheRecord infinite 5s linear;
+    height: 50px;
+    max-height: 50px;
+    width: 50px;
+    max-width: 50px;
+    filter: invert(1);
+    border-radius:93px;
+    position: absolute;
+    bottom: 0;
+    right: 20px;
+  }
+  
+  .videoFooter__text {
+    flex: 1;
+  }
+  
+  .videoFooter__text h3 {
+    padding-bottom: 20px;
+  }
+  
+  .videoFooter__icon {
+    position: absolute;
+  }
+  
+  .videoFooter__ticker {
+    width: 400px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .videoFooter__ticker marquee {
+    height: fit-content;
+    margin-left: 30px;
+    width: 60%;
+  }
+  
+  .videoFooter__description {
+    padding-bottom: 20px;
+  }
+  
+  @media (max-width: 425px) {
+    .app__videos {
+      width: 100%;
+      height: 100%;
+      max-width: 100%;
+      border-radius: 0;
+    }
+  }
+  
+  
+  
+  
+  </style>

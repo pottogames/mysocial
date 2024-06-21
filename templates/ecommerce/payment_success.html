@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'icon.ico' %}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful</title>
+    <style>
+        /* Container styles */
+        .container {
+            max-width: 600px;
+            box-shadow: 18px 15px 67px 6px rgba(0,0,0,0.75);
+-webkit-box-shadow: 18px 15px 67px 6px rgba(0,0,0,0.75);
+-moz-box-shadow: 18px 15px 67px 6px rgba(0,0,0,0.75);
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            top: 43px;
+            background-color: rgb(238, 141, 31); /* Orange background color */
+            border-radius: 10px;
+            text-align: center;
+            color: white; /* White text color */
+        }
+
+        /* Heading styles */
+        h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        /* Paragraph styles */
+        p {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        /* Amount Paid paragraph */
+        .amount-paid {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Thank You!</h1>
+        <p>Your payment has been processed successfully.</p>
+        <p class="amount-paid">Amount Paid: ${{ amount }}</p>
+        <p>Product Name: {{ product_name }}</p>
+        <!-- You can add more details here as needed -->
+    </div>
+</body>
+</html>

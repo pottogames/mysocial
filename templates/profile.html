@@ -1,0 +1,335 @@
+
+{% load static %}
+
+<title>Profile - {{user_profile.user.username}}</title>
+
+
+<link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.6.0/css/font-awesome.min.css'>
+<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.3/css/bootstrap.min.css'>
+<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.1.1/css/mdb.min.css'>
+
+<style>
+body {
+		background:#eee;
+	}
+
+	html,
+	body,
+	.view {
+		height:100%;
+	}
+
+	.navbar-brand {
+		color:#fff !important;
+	}
+
+	.profile-photo {
+		width:48px;
+		height:auto;
+		
+	}
+
+	.flex-menu {
+		display:flex;
+	}
+
+	.flex-menu li:not(:last-child) {
+		margin-right:40px;
+	}
+	.navbar{
+		background-color: #eff !important;
+	}
+</style>
+
+<script>
+window.console = window.console || function(t) {};
+</script>
+
+
+
+</head>
+
+	<!-- 
+<body translate="no">
+
+<nav class="navbar navbar-fixed navbar-dark info-color">
+
+	<button class="navbar-toggler hidden-sm-up" type="button" data-toggle="collapse" data-target="#collapseEx2">
+		<i class="fa fa-bars"></i>
+	</button>
+
+	<div class="container">
+
+		<div class="collapse navbar-toggleable-xs" id="collapseEx2">
+			<a class="navbar-brand">Navbar</a>
+			<ul class="nav navbar-nav">
+				<li class="nav-item active">
+					<a class="nav-link">Home <span class="sr-only">(current)</span></a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link">Messages</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link">Friends</a>
+				</li>
+				<li class="nav-item btn-group">
+					<a class="nav-link dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Account</a>
+					<div class="dropdown-menu" aria-labelledby="dropdownMenu1">
+						<a class="dropdown-item">Edit profile</a>
+						<a class="dropdown-item">Change password</a>
+						<a class="dropdown-item">Privacy settings</a>
+					</div>
+				</li>
+			</ul>
+			
+			<ul class="nav navbar-nav nav-flex-icons">
+				<li class="nav-item"><a href="#!" class="nav-link"><i class="fa fa-search" aria-hidden="true"></i></a></li>
+				<li class="nav-item"><a href="#!" class="nav-link"><i class="fa fa-ellipsis-v" aria-hidden="true"></i></a></li>
+			</ul>
+		</div> 
+
+	</div>
+
+</nav>-->
+<style>
+	.photo{
+		width: 150px;
+	height: 150px;
+	object-fit: cover;
+	border-radius: 50%;
+	margin-bottom: 10px;
+	}
+							
+							
+	@media screen and (max-width: 599px) { 
+		.photo{
+			position: relative;
+			right:13%;
+		}
+
+	}
+
+
+@media (min-width: 768px)
+{
+    .ing {
+    float: left;
+    margin-left: 3px;
+    width: 16.666667%;
+
+}
+.photo{
+    margin-left: -43px;
+}
+}
+.col-lg-1, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-md-1, .col-md-10, .col-md-11, .col-md-12, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-sm-1, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-xl-1, .col-xl-10, .col-xl-11, .col-xl-12, .col-xl-2, .col-xl-3, .col-xl-4, .col-xl-5, .col-xl-6, .col-xl-7, .col-xl-8, .col-xl-9, .col-xs-1, .col-xs-10, .col-xs-11, .col-xs-12, .col-xs-2, .col-xs-3, .col-xs-4, .col-xs-5, .col-xs-6, .col-xs-7, .col-xs-8, .col-xs-9 {
+    position: relative;
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
+
+	
+							
+</style>
+<main>
+	<div class="container">
+		<div class="row m-b-r m-t-3">
+			<div class="col-md-2 ing">
+				<img  class="photo" src="{{user_profile.profileimg.url}}" alt="" class="img-circle img-fluid">
+			</div>
+			<div class="col-md-9 p-t-2">
+                {% for user_profile2 in user_profiles2 %}
+                <div class="user-profile">
+                    {% if user.userprofile2.is_verified %}
+                        <img src="{% static 'images/orange_star.png' %}" alt="Verified Symbol">
+                    {% endif %}
+                </div>
+            {% endfor %}
+				<h2 class="h2-responsive"><strong>@{{user_profile.user.username}}</strong></h2>
+                <p>{{user_profile.location}}</p>
+				<p>{{user_profile.bio}}</p>
+
+				<ul style="margin-top: 23px;" class="flex-menu">
+					<li><strong>{{user_post_length}}</strong> posts</li>
+					<li><strong>{{user_followers}}</strong> Remembers</li>
+					<li><strong>{{user_following}}</strong> Remember</li>
+				</ul>
+		
+				
+
+				<ul class="flex-menu">
+					<form action="/follow" method="POST">
+						{% csrf_token %}
+						<div>
+				
+	
+	
+	
+						<input type="hidden" value="{{user.username}}" name="follower" />
+						<input type="hidden" value="{{user_object.username}}" name="user" />
+	
+						{% if user_object.username == user.username %}
+						<a style="border: solid 1px black;  padding: 7px; border-radius: 5px; position: relative; top: 23px; background: none; " class="btn1wd" href="/settings" data-ripple="">Account Settings</a>
+						{% else %}
+						<a data-ripple=""><button  style="background-color: orangered; box-shadow: 0px 0px 0px 1px; border-radius: 4px; margin-top: 23px; "  class="btn" type="submit">{{button_text}}</button></a>
+						{% endif %}
+	
+						</div>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+<style>
+	.btn1wd:hover{
+		transition: 1s;
+		color: orangered;
+		
+	}
+</style>
+<style>
+	.imagess{
+		width: 100%;
+		display: grid;
+		grid-template-columns: repeat(3,1fr);
+		aspect-ratio: 1/1;
+		object-fit: cover;
+		gap: 1rem;
+
+}
+.strp-container {
+    position: relative;
+	display: none;
+    right: -710px;
+}
+.strp-position{
+	display: none;
+}
+
+
+</style>
+
+<div class="row">
+    {% for post in user_posts %}
+    <div class="col-sm-12 col-md-6 col-lg-4 mb-4">
+        <div class="view overlay hm-black-light m-b-2">
+            {% if post.image %}
+            <img class="img1" src="{{ post.image.url }}" alt="Post Image" onclick="showImagePreview('{{ post.image.url }}')">
+            {% else %}
+            <!-- Handle case where image field is empty -->
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Image Preview Container -->
+<div class="image-preview">
+    <div class="preview-content">
+        <img id="preview-image" src="" alt="Image Preview">
+        <button class="close-btn" onclick="closePreview()">Close</button>
+    </div>
+</div>
+<style>
+    .image-preview {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    .preview-content {
+        position: relative;
+        max-width: 80%; /* Adjust as needed */
+        max-height: 80%; /* Adjust as needed */
+        text-align: center;
+    }
+
+    #preview-image {
+        max-width: 100%;
+        max-height: 100%;
+        border-radius: 8px;
+        object-fit: contain; /* Ensure the entire image fits within the container */
+    }
+ 
+    .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: rgba(255, 255, 255, 0.8);
+        color: #333;
+        border: none;
+        padding: 8px 16px;
+        cursor: pointer;
+        border-radius: 4px;
+    }
+
+    .img1 {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+</style>
+<script>
+    function showImagePreview(imageSrc) {
+        var previewImage = document.getElementById('preview-image');
+        previewImage.src = imageSrc;
+
+        var previewContainer = document.querySelector('.image-preview');
+        previewContainer.style.display = 'flex';
+    }
+
+    function closePreview() {
+        var previewContainer = document.querySelector('.image-preview');
+        previewContainer.style.display = 'none';
+    }
+</script>
+
+<style>
+    .img1 {
+        width: 100%; /* Make the image responsive */
+        max-width: 100%; /* Ensure image doesn't exceed its container */
+        height: auto; /* Maintain aspect ratio */
+        display: block; /* Ensure proper block display */
+        border-radius: 12px; /* Rounded corners, adjust as needed */
+
+        /* Optional: Add additional styles as per your design */
+        margin-bottom: 10px; /* Example margin */
+    }
+    
+    .col-lg-4 {
+        flex: 0 0 33.333333%;
+        max-width: 33.333333%;
+    }
+    
+    .view {
+        width: 250px;
+        height: 250px;
+    }
+
+    @media (min-width: 768px) {
+        .img1 {
+            /* Adjust grid or column layout for larger screens if needed */
+        }
+    }
+</style>
+
+
+
+
+
+
+
+
+
+
+

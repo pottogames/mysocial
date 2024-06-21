@@ -1,0 +1,443 @@
+  
+   {% load static %}
+   <link rel="shortcut icon" type="image/x-icon" href="{% static 'icon.ico' %}">
+  
+<style>
+  #cart {
+    max-width: 1440px;
+    padding-top: 60px;
+    margin: auto;
+  }
+  .form div {
+    margin-bottom: 0.4em;
+  }
+  .cartItem {
+    --bs-gutter-x: 1.5rem;
+  }
+  .cartItemQuantity,
+  .proceed {
+    background: #f4f4f4;
+  }
+  .items {
+    padding-right: 30px;
+  }
+  #btn-checkout {
+    min-width: 100%;
+  }
+  
+  /* stasysiia.com */
+  @import url("https://fonts.googleapis.com/css2?family=Exo&display=swap");
+  body {
+    background-color: #fff;
+    font-family: "Exo", sans-serif;
+    font-size: 22px;
+    margin: 0;
+    padding: 0;
+    color: #111111;
+    justify-content: center;
+    align-items: center;
+  }
+  a {
+    color: #0e1111;
+    text-decoration: none;
+  }
+  .btn-check:focus + .btn-primary,
+  .btn-primary:focus {
+    color: #fff;
+    background-color: #111;
+    border-color: transparent;
+    box-shadow: 0 0 0 0.25rem rgb(49 132 253 / 50%);
+  }
+  button:hover,
+  .btn:hover {
+    box-shadow: 5px 5px 7px #c8c8c8, -5px -5px 7px white;
+  }
+  button:active {
+    box-shadow: 2px 2px 2px #c8c8c8, -2px -2px 2px white;
+  }
+  
+  /*PREVENT BROWSER SELECTION*/
+  a:focus,
+  button:focus,
+  input:focus,
+  textarea:focus {
+    outline: none;
+  }
+  /*main*/
+  main:before {
+    content: "";
+    display: block;
+    height: 88px;
+  }
+  h1 {
+    font-size: 2.4em;
+    font-weight: 600;
+    letter-spacing: 0.15rem;
+    text-align: center;
+    margin: 30px 6px;
+  }
+  h2 {
+    color: rgb(37, 44, 54);
+    font-weight: 700;
+    font-size: 2.5em;
+  }
+  h3 {
+    border-bottom: solid 2px #000;
+  }
+  h5 {
+    padding: 0;
+    font-weight: bold;
+    color: #92afcc;
+  }
+  p {
+    color: #333;
+    font-family: "Roboto", sans-serif;
+    margin: 0.6em 0;
+  }
+  h1,
+  h2,
+  h4 {
+    text-align: center;
+    padding-top: 16px;
+  }
+  /* yukito bloody */
+  .back {
+    position: relative;
+    top: -30px;
+    font-size: 16px;
+    margin: 10px 10px 3px 15px;
+  }
+  .inline {
+    display: inline-block;
+  }
+  
+  .shopnow,
+  .contact {
+    background-color: #000;
+    padding: 10px 20px;
+    font-size: 30px;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.5s;
+    cursor: pointer;
+  }
+  .shopnow:hover {
+    text-decoration: none;
+    color: white;
+    background-color: #c41505;
+  }
+  /* for button animation*/
+  .shopnow span {
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+    transition: all 0.5s;
+  }
+  .shopnow span:after {
+    content: url("https://badux.co/smc/codepen/caticon.png");
+    position: absolute;
+    font-size: 30px;
+    opacity: 0;
+    top: 2px;
+    right: -6px;
+    transition: all 0.5s;
+  }
+  .shopnow:hover span {
+    padding-right: 25px;
+  }
+  .shopnow:hover span:after {
+    opacity: 1;
+    top: 2px;
+    right: -6px;
+  }
+  .ma {
+    margin: auto;
+  }
+  .price {
+    color: slategrey;
+    font-size: 2em;
+  }
+  #mycart {
+    min-width: 90px;
+  }
+  #cartItems {
+    font-size: 17px;
+  }
+  #product .container .row .pr4 {
+    padding-right: 15px;
+  }
+  #product .container .row .pl4 {
+    padding-left: 15px;
+  }
+  </style>
+  
+    <script>
+    window.console = window.console || function(t) {};
+  </script>
+  
+    
+    
+  </head>
+  
+  <body translate="no">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <main id="cart" style="max-width:960px">
+        <div class="back"><a href="{% url 'store_list' %}">&#11178; shop</a></div>
+        <h1>Your Cart</h1>
+        <div class="container-fluid">
+            <div class="row align-items-start">
+                <div class="col-12 col-sm-8 items">
+                    <!--1-->
+                    {% for item in cart_items %}
+
+                    <div class="cartItem row align-items-start">
+                        <div class="col-3 mb-2">
+                            <img class="w-100" src="{{ item.product.photo.url }}" alt="{{ item.product.name }}">
+                        </div>
+                        <div class="col-5 mb-2">
+                            <h6 class="">{{ item.product.name }}</h6>
+                            <p class="pl-1 mb-0">{{ item.quantity }}</p>
+                            <p class="pl-1 mb-0">Matte Print</p>
+                        </div>
+                        <div class="col-2">
+                            <p class="cartItemQuantity p-1 text-center">1</p>
+                        </div>
+                        <div class="col-2">
+                            <p id="cartItem1Price">${{ item.product.price }}</p>
+                            <button class="btn btn-danger btn-sm delete-btn" data-item-id="{{ item.id }}">Delete</button>
+                        </div>
+                    </div>
+                    <hr>
+                    {% endfor %}
+                    <div class="col-12 col-sm-4 p-3 proceed form">
+                        <div class="row m-0">
+                            <div class="col-sm-8 p-0">
+                                <h6>Subtotal</h6>
+                            </div>
+                            <div class="col-sm-4 p-0">
+                                <p id="subtotal"> {{ total_price }}</p>
+                            </div>
+                        </div>
+                        <div class="row m-0">
+                            <div class="col-sm-8 p-0 ">
+                                <h6>Tax</h6>
+                            </div>
+                            <div class="col-sm-4 p-0">
+                                <p id="tax">$6.40</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row mx-0 mb-2">
+                            <div class="col-sm-8 p-0 d-inline">
+                                <h5>Total</h5>
+                            </div>
+                            <div class="col-sm-4 p-0">
+                                <p id="total"> {{ total_price }}</p>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-4 p-3 proceed form">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </main>
+    <script>
+    // JavaScript to handle deletion of items
+    document.addEventListener("DOMContentLoaded", function() {
+        const deleteButtons = document.querySelectorAll('.delete-btn');
+        deleteButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const itemId = this.getAttribute('data-item-id');
+                // Here, you can implement the logic to delete the item using AJAX
+                if (confirm("Are you sure you want to delete this item?")) {
+                    // Proceed with deletion
+                    console.log("Item with ID", itemId, "will be deleted.");
+                    // Send an AJAX request to delete the item
+                    fetch(`/delete_item/${itemId}/`, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}' // Include CSRF token for security
+                        }
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            // Item deleted successfully, you can update the UI as needed
+                            console.log("Item deleted successfully.");
+                            // Reload the page or update the UI to reflect the deletion
+                            location.reload(); // Example: Reload the page
+                        } else {
+                            console.error("Failed to delete item:", response.statusText);
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error deleting item:", error);
+                    });
+                }
+            });
+        });
+    });
+</script>
+</script>
+  </script>
+</body>
+  <footer class="container">
+  </footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"></script>
+  <div class="container">
+  {% if cart_items %}
+  <div class="pay-con">
+  <div id="paypal-button-container">
+      <i class="paypal"></i> Pay with PayPal
+  </div>
+</div>
+  {% endif %}
+</div>
+</div>
+  </body>
+  
+  </html>
+
+  <style>  
+  
+  
+  .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Payment section styles */
+        .pay-con {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        #paypal-button-container {
+            display: inline-block;
+            cursor: pointer;
+            background-color: #ffffff;
+            color: #fff;
+            padding: -90px 20px;
+            position: relative;
+            top: -453px;
+            right: -411px;
+            border-radius: 5px;
+        }
+
+        #paypal-button-container i {
+            margin-right: 10px;
+        }
+
+     /* Media query for screens up to 768px */
+     @media (max-width: 768px) {
+    /* Reverting changes to the original design */
+    .pay-con {
+        margin-top: 0;
+        text-align: center;
+    }
+
+    #paypal-button-container {
+        display: inline-block;
+        cursor: pointer;
+        background-color: #ffffff;
+        color: #fff;
+        padding: -90px 20px;
+        position: relative;
+        top: -453px;
+        right: -411px;
+        border-radius: 5px;
+    }
+
+    #paypal-button-container i {
+        margin-right: 10px;
+    }
+
+    /* Additional adjustments for other elements if needed */
+    h1 {
+        font-size: 2em;
+    }
+
+    .cartItem {
+        flex-direction: row;
+        align-items: start;
+        text-align: left;
+    }
+
+    .cartItem img {
+        max-width: 100px;
+        height: auto;
+    }
+
+    .cartItem .col-3 {
+        flex: 0 0 auto;
+        max-width: none;
+    }
+
+    .cartItem .col-5 {
+        flex: 0 0 auto;
+        max-width: none;
+        margin-top: 0;
+    }
+
+    .col-12.col-sm-4.p-3.proceed.form {
+        margin-top: 0;
+    }
+}
+  
+        /* Media query for screens up to 768px */
+        @media (max-width: 768px) {
+        
+            img.image {
+                margin-right: 0;
+                margin-bottom: 10px;
+          
+            
+        }
+      }
+
+</style>
+
+<script src="https://www.paypal.com/sdk/js?client-id=AePbEb9nSsXZNvV_wxB0VKDzhDj3FwkcXHLmKTxRL_XOH5tPKnZCAErfeZho5xH60Z1aHKY0jy1FjOhh&currency=USD"></script>
+</head>
+<body>
+</head>
+<body>
+    <script>
+      // Render PayPal Smart Payment Button
+      paypal.Buttons({
+            createOrder: function(data, actions) {
+                // Fetch product details from the server
+                return fetch('/get_product_details/', {
+                    method: 'GET'
+                }).then(function(response) {
+                    return response.json();
+                }).then(function(data) {
+                    // Calculate amounts for user and your PayPal account
+                    var userAmount = data.amount * 0.97; // 97% for the user
+                    var paypalAmount = data.amount * 0.03; // 3% for your PayPal account
+
+                    // Return product details to create the order with adjusted amounts
+                    return actions.order.create({
+                        purchase_units: [{
+                            amount: {
+                                currency_code: 'USD',
+                                value: userAmount.toFixed(2) // Format to two decimal places
+                            },
+                            description: data.description // Product description
+                        }]
+                    });
+                });
+            },
+            onApprove: function(data, actions) {
+                // Capture the order when the payment is approved
+                return actions.order.capture().then(function(details) {
+                    // Redirect or show success message
+                    window.location.href = '/payment_successful/';
+                });
+            }
+        }).render('#paypal-button-container');
+    </script>
+
+<style>

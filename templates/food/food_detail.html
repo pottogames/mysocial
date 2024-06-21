@@ -1,0 +1,17 @@
+<!-- Bootstrap CSS -->
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+{% load static %}
+<link rel="shortcut icon" type="image/x-icon" href="{% static 'icon.ico' %}">
+<div class="container">
+  <h1>Food Details</h1>
+  {% load static %}
+  <link rel="shortcut icon" type="image/x-icon" href="{% static 'icon.ico' %}">
+  <div class="card mb-4 shadow-sm">
+    <img src="{{ food_item.image_url }}" class="card-img-top" alt="{{ food_item.name }}">
+    <div class="card-body">
+      <h5 class="card-title">{{ food_item.name }}</h5>
+      <p class="card-text">Calories: {{ food_item.calories }}</p>
+      <!-- Add more details about the food item here -->
+    </div>
+  </div>
+</div>

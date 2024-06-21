@@ -1,0 +1,617 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>{{ group.name }} Group Chat</title>
+
+    {% load static %}
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'icon.ico' %}">
+
+    <script src="https://cpwebassets.codepen.io/assets/common/stopExecutionOnTimeout-2c7831bb44f98c1391d6a4ffda0e1fd302503391ca806e7fcc7b9b87197aec26.js"></script>
+
+
+
+  
+  
+<style>
+  @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;800&family=Poppins:wght@300;400;500;600;700&display=swap");
+  
+  * {
+    font-family: "Poppins", "sans-sarif";
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  :root {
+    --body-color: #e4e9f7;
+    --sidebar-color: #fff;
+    --primary-color: #f4f2f2;
+    --primary-color-light: #f4f2f2;
+    --toggle-color: #ddd;
+    --text-color: #707070;
+    --dark-color: #000;
+  
+    --trans-02: all 0.2s ease;
+    --trans-03: all 0.3s ease;
+    --trans-04: all 0.4s ease;
+    --trans-04: all 0.5s ease;
+  }
+  
+  body {
+    height: 100vh;
+    background-color: var(--body-color);
+    transition: var(--trans-02);
+  }
+  
+  body.dark {
+    --body-color: #181914;
+    --sidebar-color: #242526;
+    --primary-color: #34383c;
+    --primary-color-light: #383a3c;
+    --toggle-color: #fff;
+    --text-color: #ccc;
+    --dark-color: #fff;
+  }
+  /* Reusable CSS */
+  .sidebar{
+    z-index: 2;
+
+  }
+  .sidebar .text {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-color);
+    /* transition: var(--trans-04); */
+    white-space: unset;
+    opacity: 1;
+  }
+  
+  .sidebar .image {
+    min-width: 60px;
+    display: flex;
+    align-items: center;
+  }
+  
+  /* Sidebar */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0px;
+    height: 100%;
+    width: 250px;
+    background-color: var(--sidebar-color);
+    padding: 10px 14px;
+    transition: var(--trans-02);
+  }
+  
+  .sidebar header {
+    position: relative;
+  }
+  .sidebar .image-text img {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+  }
+  
+  .sidebar header .image-text {
+    display: flex;
+    align-items: center;
+  }
+  
+  .header .image-text .header-text {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .header-text .main {
+    font-weight: 600;
+  }
+  
+  .header-text .sub {
+    margin-top: -2px;
+  }
+  
+  .sidebar header .toggle {
+    position: absolute;
+    top: 50%;
+    right: -25px;
+    transform: translateY(-50%) rotate(180deg);
+    height: 25px;
+    width: 25px;
+    background-color: var(--dark-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: var(--sidebar-color);
+    font-size: 22px;
+  }
+  
+  .sidebar li {
+    height: 50px;
+    /* background-color: red; */
+    margin-top: 10px;
+    list-style: none;
+    display: flex;
+    align-items: center;
+  }
+  
+  .sidebar li .icons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 60px;
+    font-size: 20px;
+  }
+  .sidebar li .icons,
+  .sidebar li .text {
+    color: var(--text-color);
+    transition: var(--trans-03);
+  }
+  
+  .sidebar .search-bar input {
+    width: 100%;
+    height: 100%;
+    outline: none;
+    border: none;
+    border-radius: 6px;
+    background-color: var(--primary-color-light);
+  }
+  .sidebar .search-bar {
+    background-color: var(--primary-color-light);
+  }
+  
+  .sidebar li a {
+    height: 100%;
+    width: 100%;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    padding-right: 50px;
+    border-radius: 6px;
+    transition: var(--trans-04);
+    text-align: left;
+  }
+  
+  .sidebar li a:hover {
+    background: var(--primary-color);
+  }
+  .sidebar li a:hover .icons,
+  .sidebar li a:hover .text {
+    color: var(--dark-color);
+  }
+  
+  .sidebar .menu-bar {
+    height: 100%;
+    height: calc(100% - 50px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .menu-bar .mode {
+    position: relative;
+    border-radius: 6px;
+    background: var(--primary-color-light);
+  }
+  
+  .menu-bar .mode .moon-sun {
+    height: 50px;
+    width: 60px;
+    display: flex;
+    align-items: center;
+  }
+  .menu-bar .mode i {
+    position: absolute;
+    transition: var(--trans-03);
+  }
+  
+  .menu-bar .mode i.sun {
+    opacity: 0;
+  }
+  body.dark .menu-bar .mode i.sun {
+    opacity: 1;
+  }
+  body.dark .menu-bar .mode i.moon {
+    opacity: 0;
+  }
+  .menu-bar .mode .toggle-switch {
+    position: absolute;
+    /* left: 0; */
+    right: -10px;
+    display: flex;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    min-width: 60px;
+    background: var(--primary-color-light);
+  
+    /* background: red; */
+    cursor: pointer;
+  }
+  
+  .toggle-switch .switch {
+    position: relative;
+    height: 22px;
+    width: 44px;
+    background-color: var(--toggle-color);
+    border-radius: 25px;
+  }
+  
+  .switch::before {
+    content: "";
+    position: absolute;
+    height: 15px;
+    width: 15px;
+    border-radius: 50%;
+    top: 50%;
+    left: 5px;
+    transform: translateY(-50%);
+    background-color: var(--sidebar-color);
+  }
+  
+  body.dark .switch::before {
+    left: 25px;
+  }
+  
+  body.dark .sidebar .image img {
+    background-color: #fff;
+    /* border-color: 2px solid #000; */
+  }
+  
+  .sidebar.close {
+    width: 78px;
+  }
+  
+  .sidebar.close .text {
+    opacity: 0;
+  }
+  
+  .sidebar.close .search-bar {
+    background-color: var(--sidebar-color);
+  }
+  
+  body.dark .search-bar input {
+    color: white;
+  }
+  
+  .sidebar.close .toggle {
+    transform: translateY(-50%);
+  }
+  </style>
+  
+    <script>
+    window.console = window.console || function(t) {};
+  </script>
+  
+    
+    
+  </head>
+  
+  <body translate="no">
+    <link
+        href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+        rel="stylesheet"
+      />  
+  <nav class="sidebar">
+        <header>
+          <div class="image-text">
+            <span class="image">
+              <img  src="/static/images/user-og.png"  alt=""/>
+
+            </span>
+            <div class="text header-text">
+              <span style="font-size: 9px;  overflow-x: auto;" class="main">{{user.username}}
+              </span>
+            </div>
+          </div>
+          <i class="bx bx-chevron-right toggle"></i>
+        </header>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    var searchInput = document.getElementById("search-input");
+    var searchForm = document.getElementById("search-form");
+    
+    searchInput.addEventListener("keypress", function(event) {
+        // Check if the Enter key was pressed (keyCode 13)
+        if (event.keyCode === 13) {
+            // Prevent the default form submission behavior
+            event.preventDefault();
+            
+            // Submit the form
+            searchForm.submit();
+        }
+    });
+});
+
+</script>
+        <div class="menu-bar">
+          <div class="menu">
+            <ul class="menu-links">
+              <li class="search-bar">
+              <i class="bx bx-search icons">   </i>
+                <form action="{% url 'search1' %}">
+                <input type="search" placeholder="Search..." />
+              </li>
+            </form>
+              <li class="nav-link">
+
+                <a href="{% url 'search1' %}">
+                  <i class="bx bx-home-alt icons"></i>
+                  <span class="text nav-text">Praivte Chats</span>
+                </a>
+              </li>
+              <li class="nav-link">
+                <a href="{% url 'group_list' %}">
+                  <i class="bx bx-bar-chart-alt-2 icons"></i>
+                  <span class="text nav-text">Change Group</span>
+                </a>
+              </li>
+              <li class="nav-link">
+                <a href="{% url 'all_messages' %}">
+                  <i class="bx bx-bell icons"></i>
+                  <span class="text nav-text">Notifications</span>
+                </a>
+              </li>
+              <li class="nav-link">
+                <a href="{% url 'settings' %}">
+                  <i class="bx bx-pie-chart-alt icons"></i>
+                  <span class="text nav-text">My Profile</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+  
+          <div class="bottom-content">
+            <li class="nav-link">
+              <a href="{% url 'logout' %}">
+                <i class="bx bx-log-out icons"></i>
+                <span class="text nav-text">Log Out</span>
+              </a>
+            </li>
+            <li class="mode">
+              <div class="moon-sun">
+                <i class="bx bx-moon icons moon"></i>
+                <i class="bx bx-sun icons sun"></i>
+              </div>
+              <span class="mode-text text">Dark Mode</span>
+              <div class="toggle-switch">
+                <span class="switch"></span>
+              </div>
+            </li>
+          </div>
+        </div>
+      </nav>
+    
+        <script id="rendered-js" >
+  const body = document.querySelector("body"),
+  sidebar = document.querySelector(".sidebar"),
+  toggle = document.querySelector(".toggle"),
+  modeSwitch = document.querySelector(".toggle-switch"),
+  modeText = document.querySelector(".mode-text"),
+  searchBtn = document.querySelector(".search-bar");
+  
+  modeSwitch.addEventListener("click", () => {
+    body.classList.toggle("dark");
+    //   document.querySelector(".mode-text").innertext=""
+  
+    if (body.classList.contains("dark")) {
+      modeText.innerText = " Light Mode ";
+    } else modeText.innerText = " Dark Mode ";
+  });
+  
+  toggle.addEventListener("click", () => {
+    sidebar.classList.toggle("close");
+  });
+  
+  searchBtn.addEventListener("click", () => {
+    sidebar.classList.remove("close");
+  });
+  //# sourceURL=pen.js
+      </script>
+  
+    
+  </body>
+  
+  </html>
+    
+      
+      
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .group-chat {
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .group-chat img {
+            width: 150px;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        }
+        .group-chat h1 {
+            margin: 0;
+            padding: 0;
+            font-size: 24px;
+        }
+        .group-chat #chat-messages {
+            margin-top: 20px;
+        }
+        .group-chat #message-form {
+            margin-top: 20px;
+        }
+        .group-chat #message-form input[type="text"] {
+            padding: 10px;
+            width: calc(100% - 80px);
+            border: 1px solid #ccc;
+            border-radius: 5px 0 0 5px;
+            outline: none;
+        }
+        #message-form button{
+            margin-top: 19px;
+        }
+        .group-chat #message-form button {
+            padding: 10px 20px;
+            background-color: #181914;
+            color: #fff;
+            border: none;
+            border-radius: 5px 5px 5px 5px;
+            cursor: pointer;
+        }
+        .group-chat #message-form button:hover {
+            background-color: #383a3c;
+        }
+        .group-chat p {
+          color: #383a3c;
+            margin: 10px 0;
+            direction: ltr;
+            padding: 0;
+        }
+        .bg{
+          overflow-y: auto;
+          background-color: whitesmoke;
+        }
+        .messages{
+            border-radius: 21px;
+            height: 33px;
+            position: relative;
+            top: 7px;
+            right: -23px;
+            font-weight: 100;
+            width:auto;
+            margin-left: -23px;
+
+        }
+        .chatcontainer {
+    max-height: 300px; /* Adjust the max height as needed */
+    overflow-y: auto; /* Enable vertical scrolling */
+}
+
+/* Additional styling for sender and messages */
+.sender {
+    font-weight: bold;
+    color: #000;
+    margin-right: 5px;
+}
+
+.messages {
+    margin: 5px 0;
+    position: relative;
+    right: -4px;
+    top: 3px;
+    margin-top: 63px;
+    background-color: #ffffff;
+    width: 40% auto;
+    border-radius: 3px;
+    
+}
+.messages p{
+  color: #000;
+}
+        .bg{
+            border-radius: 5px;
+            
+            margin-bottom: -12px;
+            margin-top: 23px;
+            
+        }
+       .sender{
+          font-weight: 900;
+        }
+        .chatcontainer {
+    position: relative;
+    z-index: 1;
+    max-height: 300px; /* Adjust the max height as needed */
+    overflow-y: auto; /* Enable vertical scrolling */
+    background-color: #ffffff; /* Set background color */
+    padding: 10px; /* Add padding */
+    margin: 20px; /* Add margin */
+    border-radius: 8px; /* Add border radius */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add box shadow */
+}
+
+/* Additional styling for sender and messages */
+.sender {
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+.messages {
+    margin: 5px 0;
+}
+.container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsive grid */
+    gap: 20px; /* Gap between columns */
+    
+}
+/* Media query for small screens */
+@media screen and (max-width: 768px) {
+    .container {
+      width: 95%;
+      margin-left: 42px;
+    }
+}
+
+/* Media query for extra small screens */
+@media screen and (max-width: 1024px) {
+    .container {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Adjust column width for tablets */
+        width: 95%;
+        margin-left: 73px;
+      }
+
+}
+    </style>
+</head>
+<body>
+  <div class="container">
+      <div class="group-chat">
+          <img src="{{ group.image.url }}" alt="Group Image">
+          <h1>{{ group.name }} Group Chat</h1>
+          <div id="chat-messages" class="chatcontainer">
+              <div class="bg">
+                {% for message in messages %}
+                <p class="messages"><span class="sender">{{ message.sender.username }}:</span> {{ message.content }}</p>
+            {% endfor %}
+              </div>
+          </div>
+          <form id="message-form" method="post" action="{% url 'send_group_message' group_id=group.id %}">
+              {% csrf_token %}
+              <input type="text" name="content" placeholder="Type your message...">
+              <button type="submit">Send</button>
+          </form>
+      </div>
+  </div>
+</body>
+</body>
+</html>

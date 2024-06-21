@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'icon.ico' %}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Song</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: rgb(255, 255, 255);
+            border-radius: 10px;
+            box-shadow: 15px 4px 75px 15px rgba(0,0,0,0.75);
+            -webkit-box-shadow: 15px 4px 75px 15px rgba(0,0,0,0.75);
+            -moz-box-shadow: 15px 4px 75px 15px rgba(0,0,0,0.75);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #FFA500;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            font-weight: bold;
+            color: #000;
+        }
+        input[type="text"],
+        select,
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #FFA500;
+            color: white;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #FF8C00;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Upload Song</h1>
+        <form method="post" action="{% url 'upload_song' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="album_id">Album:</label>
+                <select name="album_id" id="album_id">
+                    {% for album in albums %}
+                        {% if album.user == request.user %}
+                            <option value="{{ album.id }}">{{ album.albumName }}</option>
+                        {% endif %}
+                    {% endfor %}
+                    <option value="0">Create New Album</option> <!-- Display "Create New Album" option -->
+                </select>
+            </div>
+            <div class="form-group" id="new_album_fields" >
+                <label for="new_album_name">New Album Name:</label>
+                <input type="text" name="new_album_name" id="new_album_name" placeholder="New Album Name">
+            </div>
+            <div class="form-group">
+                <label for="song_name">Song Name:</label>
+                <input type="text" name="song_name" id="song_name" placeholder="Song Name">
+            </div>
+            <div class="form-group">
+                <label for="song_file">Song File:</label>
+                <input type="file" name="song_file" id="song_file" accept=".mp3">
+            </div>
+            <div class="form-group">
+                <label for="thumbnail">Thumbnail:</label>
+                <input type="file" name="thumbnail" id="thumbnail" accept="image/*">
+            </div>
+            <button type="submit">Upload Song</button>
+        </form>
+    </div>
+
+
+</body>
+</html>

@@ -1,0 +1,319 @@
+<!-- upload_products.html -->
+{% load static %}
+<link rel="shortcut icon" type="image/x-icon" href="{% static 'icon.ico' %}">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Products</title>
+</head>
+<style>
+          body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        /* Styling for the label */
+        .price-label {
+            font-style: italic;
+            color: red;
+            font-size: 12px;
+            margin-top: -10px; /* Adjust as needed */
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="file"],
+        textarea {
+            width: 80%;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        textarea {
+            height: 100px;
+        }
+
+        button[type="submit"] {
+            width: 50%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        /* Responsive design */
+        @media screen and (max-width: 768px) {
+            
+            .container {
+                max-width: 90%;
+                padding-top: 123px;
+            }
+            input[type="text"],
+            input[type="number"],
+            input[type="file"],
+            textarea {
+                width: 100%;
+            }
+            button[type="submit"] {
+                width: 100%;
+            }
+        }
+</style>
+<div class="container">
+    <h1>Upload Products</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <!-- Add form fields for product details -->
+        <input type="text" name="name" placeholder="Product Name" required><br>
+        <label class="price-label" for="price">Pls type only a nubmer!</label>
+        <input type="text" name="price" placeholder="Price" required><br> <!-- Change type to "text" -->
+        <!-- Removed the select field for category -->
+        <input type="file" name="photo" accept="image/*" required><br>
+        <textarea name="description" placeholder="Description" required></textarea><br>
+        <button type="submit">Upload</button>
+    </form>
+</div>
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+
+<link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css'>
+
+<style>
+/* Primary Styles */
+*, *::before, *::after {
+ box-sizing: border-box;
+}
+
+body {
+ font-family: sans-serif;
+ font-size: 1em;
+ color: #333;
+}
+
+h1 {
+font-size: 1.4em;
+}
+
+em {
+ font-style: normal;
+}
+
+a {
+ text-decoration: none;
+ color: inherit;
+} 
+
+/* Layout */
+.s-layout {
+ display: flex;
+ width: 100%;
+ min-height: 100vh;
+}
+
+.s-layout__content {
+ display: flex;
+ justify-content: center;
+ align-items: center;
+ flex: 1;
+}
+
+/* Sidebar */
+.s-sidebar__trigger {
+ z-index: 2;
+ position: fixed;
+ top: 0;
+ left: 0;
+ width: 100%;
+ height: 4em;
+ background: #192b3c;
+}
+
+.s-sidebar__trigger > i {
+ display: inline-block;
+ margin: 1.5em 0 0 1.5em;
+ color: #f07ab0;
+}
+
+.s-sidebar__nav {
+ position: fixed;
+ top: 0;
+ left: -15em;
+ overflow: hidden;
+ transition: all .3s ease-in;
+ width: 15em;
+ height: 100%;
+ background: #243e56;
+ color: rgba(255, 255, 255, 0.7);
+}
+
+.s-sidebar__nav:hover,
+.s-sidebar__nav:focus,
+.s-sidebar__trigger:focus + .s-sidebar__nav,
+.s-sidebar__trigger:hover + .s-sidebar__nav {
+ left: 0;
+}
+
+.s-sidebar__nav ul {
+ position: absolute;
+ top: 4em;
+ left: 0;
+ margin: 0;
+ padding: 0;
+ width: 15em;
+}
+
+.s-sidebar__nav ul li {
+ width: 100%;
+}
+
+.s-sidebar__nav-link {
+ position: relative;
+ display: inline-block;
+ width: 100%;
+ height: 4em;
+}
+
+.s-sidebar__nav-link em {
+ position: absolute;
+ top: 50%;
+ left: 4em;
+ transform: translateY(-50%);
+}
+
+.s-sidebar__nav-link:hover {
+ background: #4d6276;
+}
+
+.s-sidebar__nav-link > i {
+ position: absolute;
+ top: 0;
+ left: 0;
+ display: inline-block;
+ width: 4em;
+ height: 4em;
+}
+
+.s-sidebar__nav-link > i::before {
+ position: absolute;
+ top: 50%;
+ left: 50%;
+ transform: translate(-50%, -50%);
+}
+
+/* Mobile First */
+@media (min-width: 42em) {
+ .s-layout__content {
+    margin-left: 4em;
+ }
+ 
+ /* Sidebar */
+ .s-sidebar__trigger {
+    width: 4em;
+ }
+ 
+ .s-sidebar__nav {
+    width: 4em;
+    left: 0;
+ }
+ 
+ .s-sidebar__nav:hover,
+ .s-sidebar__nav:focus,
+ .s-sidebar__trigger:hover + .s-sidebar__nav,
+ .s-sidebar__trigger:focus + .s-sidebar__nav {
+    width: 15em;
+ }
+}
+
+
+@media (min-width: 68em) {
+ .s-layout__content {
+    margin-left: 15em;
+ }
+ 
+ /* Sidebar */
+ .s-sidebar__trigger {
+    display: none
+ }
+ 
+ .s-sidebar__nav {
+    width: 15em;
+ }
+ 
+ .s-sidebar__nav ul {
+    top: 1.3em;c
+ }
+}
+</style>
+
+<script>
+    window.console = window.console || function(t) {};
+  </script>
+  
+    
+    
+  </head>
+  
+  
+  </head>
+  <body translate="no">
+     <div class="s-layout">
+   <!-- Sidebar -->
+   <div class="s-layout__sidebar">
+     <a class="s-sidebar__trigger" href="#0">
+        <i class="fa fa-bars"></i>
+     </a>
+   
+     <nav class="s-sidebar__nav">
+       <ul>
+          
+          <li>
+              <a class="s-sidebar__nav-link" href="/dashboard_start/">
+                <i class="fa fa-tachometer"></i><em>Dashboard</em>
+              </a>
+           </li>
+          <li>
+            
+       </ul>
+       
+    </nav>
+   </div>
+   
+   
+   </div>
+     
+     
+     
+   </body>

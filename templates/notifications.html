@@ -1,0 +1,603 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'icon.ico' %}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - all in Social</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'assets/css/color.css' %}">  
+    <link rel="stylesheet" href="{% static 'assets/css/icons.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/uikit.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/tailwind.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+    <script>
+        // Function to navigate to the selected website
+        function goToWebsite(selectedWebsite) {
+            // Check if a website is selected
+            if (selectedWebsite) {
+                // Redirect to the selected website
+                window.location.href = selectedWebsite;
+            }
+        }
+    </script>
+        <style>
+
+  
+            /* Select element styles */
+            #websiteSelect {
+                width: 100%;
+                padding: 10px;
+                margin-bottom: 10px;
+                border-radius: 5px;
+                font-size: 16px;
+                border: 1px solid orange; /* Set border to orange color */
+            }
+    
+            /* Button styles */
+            #goButton {
+                width: 100%;
+                padding: 10px;
+                background-color: #007bff;
+                border: none;
+                color: #fff;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+    
+              /* Select element styles */
+    #websiteSelect {
+        width: 200px;
+        padding: 8px;
+        border-radius: 5px;
+      
+        font-size: 16px;
+    }
+
+    .header_inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 1200px; /* Adjust max-width as needed */
+        }
+
+        /* Logo styles */
+        #logo a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+      
+
+    
+     
+        .header{
+            background-color: white;
+        }
+
+        /* Select element styles */
+        #websiteSelect {
+            width: 200px;
+            padding: 8px;
+            margin-right: 23px;
+            position: relative;
+            right: -23px;
+            color: black;
+            top: 5px;
+            border-radius: 5px;
+            border: none;
+            font-size: 16px;
+        }
+   
+        .all{
+            background-color: white;
+        }
+
+        /* Button styles */
+        #goButton {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            border: none;
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Responsive styles */
+        @media only screen and (max-width: 768px) {
+            
+            #texts{
+                display: none;
+            }
+            
+           .container{
+            position: relative;
+            top: 63px;
+           }
+            #websiteSelect {
+
+                width: 150px;
+            }
+        }
+        
+        
+
+
+        @media only screen and (max-width: 480px) {
+            .search-form input[type="text"] {
+                width: 60%;
+                position: relative;
+                top: -43px;
+              
+            }
+
+       
+           .container{
+            position: relative;
+            top: 63px;
+           }
+
+           .header{
+            width: auto;
+            height: 133px;
+           }
+           #texts{
+            display: none;
+           }
+
+           #names{
+            position: relative;
+            right: 49px;
+           }
+
+         
+
+        }
+
+        </style>
+
+            <header class="header">
+                <div class="header_inner">
+                    <form action="/search" method="POST">
+                    {% csrf_token %}
+                    <div class="left-side">
+                        <!-- Logo -->
+                        <div id="logo" class=" uk-hidden@s">
+                            <a href="/">
+                                <b><h1 id="names" style="text-transform: uppercase;">Elias Social</h1></b>
+                            </a>
+                        </div>
+
+
+                  
+                        <!-- <div class="header_search"> -->
+                            <input id="search" type="text" name="username" placeholder="Search for username..">&nbsp; &nbsp;
+                            <button type="submit"><i id="icon_search" class="fa fa-search fa-1x"></i></button>
+                        <!-- </div> -->
+
+                   
+                    </div>
+                    <style>
+                        .bg-pink-500{
+                            background-color: #211d1c;
+                        }
+                        .bg-pink-500:hover{
+                            background-color: orangered;
+                        }
+                    </style>
+                    </form>
+                    <style>
+     
+                    </style>
+                    <div   class="right-side lg:pr-4">
+                        <!-- upload -->
+                                          
+                    <a href="#"
+                      id="upload2" style="background-color: #333131;"
+                           class=" flex font-bold hidden hover:bg-pink-600 hover:text-white inline-block items-center lg:block max-h-10 mr-4 px-4 py-2 rounded shado text-white">
+                           <ion-icon name="add-circle" class="-mb-1
+                            mr-1 opacity-90 text-xl uilus-circle"></ion-icon> Upload Pics
+                       </a>
+                 
+
+                        <!-- upload dropdown box -->
+                       <div uk-dropdown="pos: top-right;mode:click ; animation: uk-animation-slide-bottom-small" class="header_dropdown">
+   
+                           <!-- notivication header -->
+                           <div class="px-4 py-3 -mx-5 -mt-4 mb-5 border-b">
+                               <h4>Upload Pics</h4>
+                           </div>
+   
+                           <!-- notification contents -->
+                           <div class="flex justify-center flex-center text-center">
+   
+                               <div class="flex flex-col choose-upload text-center">
+                                  
+                                   <div class="bg-gray-100 border-2 border-dashed flex flex-col h-24 items-center justify-center relative w-full rounded-lg  ">
+                                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-12">
+                                           <path d="M5.5 13a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.977A4.5 4.5 0 1113.5 13H11V9.413l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13H5.5z" />
+                                           <path d="M9 13h2v5a1 1 0 11-2 0v-5z" />
+                                       </svg>
+                                   </div>
+
+                                   <form action="upload" method="POST" enctype="multipart/form-data" >
+                                   {% csrf_token %}
+                                   <p class="my-3 leading-6"> Upload pics
+                                   </p>
+                                   <div>
+                                       <input type="file" name="image_upload" required>
+                                       <!-- <a href="#" class="button soft-warning small"> Choose file</a> -->
+                                       <textarea class="button soft-warning small" name="caption" placeholder="caption..." required ></textarea>
+                                       <br>
+                                       <button class="button bg-blue-700" type="submit" >Upload</button>
+                                   </div>
+                                   </form>
+
+                                   <!-- <a href="#" class="uk-text-muted mt-3 uk-link"
+                                       uk-toggle="target: .choose-upload ;  animation: uk-animation-slide-right-small, uk-animation-slide-left-medium; queued: true">
+                                       Or Import Video </a> -->
+                               </div>
+   
+                               <!--<div class="uk-flex uk-flex-column choose-upload" hidden>
+                                   <div class="mx-auto flex flex-col h-24 items-center justify-center relative w-full rounded-lg">
+                                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-12">
+                                           <path fill-rule="evenodd" d="M2 9.5A3.5 3.5 0 005.5 13H9v2.586l-1.293-1.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 15.586V13h2.5a4.5 4.5 0 10-.616-8.958 4.002 4.002 0 10-7.753 1.977A3.5 3.5 0 002 9.5zm9 3.5H9V8a1 1 0 012 0v5z" clip-rule="evenodd" />
+                                       </svg>
+                                   </div>
+                                   <p class="my-3 leading-6"> Import videos from YouTube <br> Copy / Paste your video link here </p>
+                                   <form class="uk-grid-small" uk-grid>
+                                       <div class="uk-width-expand">
+                                           <input type="text" class="uk-input uk-form-small  bg-gray-200 " style="box-shadow:none" placeholder="Paste link" required>
+                                       </div>
+                                       <div class="uk-width-auto"> <button type="submit" class="button soft-warning -ml-2" aria-required="true">
+                                               Import </button> </div>
+                                   </form>
+                                   <a href="#" class="uk-text-muted mt-3 uk-link"
+                                       uk-toggle="target: .choose-upload ; animation: uk-animation-slide-left-small, uk-animation-slide-right-medium; queued: true">
+                                       Or Upload Video </a>
+                               </div>-->
+   
+                           </div>
+                           <div class="px-4 py-3 -mx-5 -mb-4 mt-5 border-t text-sm">
+                               Your Image size Must be Maxmium 999MB
+                           </div>
+                       </div>
+                        
+                        <script>
+                            function checkImageSize(input) {
+                                const file = input.files[0];
+                                if (file) {
+                                    const img = new Image();
+                                    img.onload = function () {
+                                        const width = this.width;
+                                        const height = this.height;
+                                        if (width !== 6651 || height !== 8192) {
+                                            alert('Please upload an image with dimensions 6,651x8,192 pixels.');
+                                            input.value = ''; // Clear the file input
+                                        }
+                                    };
+                                    img.src = URL.createObjectURL(file);
+                                }
+                            }
+                        </script>
+            
+
+                        <a href="#" class="header-links-item">
+                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
+                                <g fill="none">
+                                    <path d="M12 22a2.02 2.02 0 0 1-2.01-2h4a2.02 2.02 0 0 1-.15.78a2.042 2.042 0 0 1-1.44 1.18h-.047A1.922 1.922 0 0 1 12 22zm8-3H4v-2l2-1v-5.5a8.065 8.065 0 0 1 .924-4.06A4.654 4.654 0 0 1 10 4.18V2h4v2.18c2.579.614 4 2.858 4 6.32V16l2 1v2z" fill="currentColor"/>
+                                </g>
+                            </svg>
+                        </a>
+                        <span id="messages-count">{{ notifications.count }}</span>
+
+                        <div uk-drop="mode: click; offset: 4" class="header_dropdown">
+                            <h4 class="-mt-5 -mx-5 bg-gradient-to-t from-gray-100 to-gray-50 border-b font-bold px-6 py-3">
+                                Notifications
+                            </h4>
+                            <ul class="dropdown_scrollbar" data-simplebar>
+                                {% for notification in notifications %}
+                                <li>
+                                    <a href="#">
+                                        <div class="drop_avatar">
+                                            <img src="{% static 'assets/images/avatars/avatar-1.jpg' %}" alt="">
+                                        </div>
+                                        <div class="drop_content">
+                                            <p>
+                                                <strong class="text-link">{{ notification.from_user.username }}</strong>  
+                                                <span class="text-link">{{ notification.notification_type }}</span>
+                                            </p>
+                                            <span class="time-ago">{{ notification.timestamp }}</span>
+                                        </div>
+                                    </a>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            <a href="{% url 'view_notifications' %}" class="see-all">See all</a>
+                        </div>
+
+                     <style>
+                        .chat-messages{
+                            color: orangered;
+                            margin-left: 53px;
+                            font-weight: 900;
+                        }
+                     </style>   
+
+                        <a href="#" class="header-links-item" id="notification-trigger">
+                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" width="0.5em" height="0.5em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 16 16">
+                                <g fill="currentColor">
+                                    <path d="M2 0a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2.5a1 1 0 0 1 .8.4l1.9 2.533a1 1 0 0 0 1.6 0l1.9-2.533a1 1 0 0 1 .8-.4H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
+                                </g>
+                            </svg>
+                        </a>
+                            <span id="notification-count">{{ all_messages|length }}</span>
+
+                        <div uk-drop="mode: click; offset: 4" class="header_dropdown" id="notification-dropdown">
+                            <h4 class="-mt-5 -mx-5 bg-gradient-to-t from-gray-100 to-gray-50 border-b font-bold px-6 py-3">
+                                Messages
+                            </h4>
+                            <ul class="dropdown_scrollbar" data-simplebar>
+                                {% for message in all_messages %}
+                                <li>
+                                    <div class="chat-messages" id="chat-messages">
+                                        <div class="message-container">
+                                            {% if message.content %}
+                                                <p>{{ message.content }}</p>
+                                            {% elif message.video %}
+                                                <video width="320" height="240" controls>
+                                                    <source src="{{ message.video.url }}" type="video/mp4">
+                                                    Your browser does not support the video tag.
+                                                </video>
+                                            {% elif message.image %}
+                                                <img src="{{ message.image.url }}" alt="Image">
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                         
+                            <a href="{% url 'all_messages' %}" class="see-all">See all</a>
+                        </div>
+                        <a href="#">
+        
+                            <img src="{{user_profile.profileimg.url}}" class="header-avatar" alt="">
+                        </a>
+                        <div uk-drop="mode: click;offset:9" class="header_dropdown profile_dropdown border-t">
+                            <ul>
+                                <li>       <!-- Select element with options -->
+                                    <select id="websiteSelect" onchange="goToWebsite(this.value)">
+                                      <option value="" disabled selected>Select a Elias Port</option>
+                                      <option value="products/store_list/">Elias Store</option>
+                                      <option value="{% url 'presentation_videos' %}">Elias Presentation</option>
+                                      <option value="{% url 'group_list' %}">Elias Grup and Praivte Chat</option>
+                                      <option value="food/home/">Elias Food</option>
+                                      <option value="{% url 'home_ai' %}">Elias AI</option>
+                                      <option value="music/index/">Elias Music</option>                                      
+                                    </select></li>
+                                <li><a href="/upload/mobile/">Upload Post</a></li>
+                                <li><a href="/settings"> Account setting </a> </li>
+                                <li><a href="/logout"> Log Out</a></li>
+                                <br><br>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+            </header>
+  
+
+
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Notifications</title>
+</head>
+
+
+
+
+<link rel="canonical" href="https://codepen.io/herbertfj/pen/gOvXzG">
+
+
+
+
+<style>
+body {
+font-family: 'Arial';
+font-size: 12px;
+color: #606060;
+}
+* {
+box-sizing: border-box;
+}
+.overall {
+width: 100%;
+height: 100%;
+margin: 20px;
+}
+.chatcontainer {
+display: flex;
+height: 80px;
+width: 100%;
+position: relative;
+border-radius: 2px;
+padding: 10px;
+margin: 15px 0;
+background-color: #f0f0f0;
+box-shadow: 0 1px 3px 0 #707070, 0 1px 1px 0 #adadad;
+transition: box-shadow 0.15s ease-in-out;
+}
+.chatcontainer:hover {
+box-shadow: 0 5px 10px 0 #757575, 0 4px 5px 0 #a8a8a8;
+}
+.chatcontainer:active {
+background-color: #e0e0e0;
+}
+.chatcontainer .photo {
+display: block;
+background-repeat: no-repeat;
+width: 60px;
+height: 60px;
+background-size: cover;
+border-radius: 30px;
+border: 1px solid #eaeaea;
+top: 10px;
+left: 10px;
+cursor: pointer;
+}
+.chatcontainer .chattext {
+flex: 1;
+height: 60px;
+overflow: hidden;
+position: relative;
+margin: 0 5px;
+cursor: pointer;
+}
+.chatcontainer .chattext .status {
+position: absolute;
+top: 10px;
+left: 3px;
+width: 10px;
+height: 10px;
+border-radius: 5px;
+}
+.chatcontainer .chattext .status.-online {
+background-color: #37d316;
+}
+.chatcontainer .chattext .status.-offline {
+border: 1px solid #adadad;
+}
+.chatcontainer .chattext .chatname {
+position: absolute;
+top: 5px;
+left: 17px;
+color: #000;
+font-size: 1.5em;
+}
+.chatcontainer .chattext .chatmessage {
+top: 35px;
+position: absolute;
+width: 100%;
+height: 15px;
+line-height: 15px;
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+}
+.chatcontainer .chattext .chatmessage.-unread {
+font-weight: bold;
+}
+.chatcontainer .connection {
+height: 60px;
+width: 60px;
+text-align: center;
+position: relative;
+}
+.chatcontainer .connection .time {
+position: absolute;
+top: 35px;
+}
+</style>
+
+<script>
+window.console = window.console || function(t) {};
+</script>
+
+<body>
+    {% if notifications %}
+        <div class="notifications">
+            {% for notification in notifications %}
+                <div class="notification">
+                    <div class="notification-header">
+                        <div class="notification-avatar">
+                            <img src="{{ notification.from_user.profile.avatar.url }}" alt="User Avatar">
+                        </div>
+                        <div class="notification-info">
+                            <p class="notification-sender">{{ notification.from_user.username }}</p>
+                            <p class="notification-type">{{ notification.notification_type }}</p>
+                        </div>
+                    </div>
+                    <div class="notification-body">
+                        <p class="notification-timestamp">{{ notification.timestamp }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+    <div class="center-container">
+        <p class="text">No notifications to display.</p>
+        <a style="color: rgb(25, 38, 219);" href="/" class="see-all">Back to Home</a>
+    </div>
+    {% endif %}
+</body>
+
+</body>
+</html>
+<style>
+
+    .center-container {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: rgba(230, 118, 28, 0.8); /* semi-transparent white background */
+        backdrop-filter: blur(8px); /* blur effect */
+        border-radius: 12px; /* border radius */
+        padding: 20px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2); /* shadow effect */
+    }
+    .text {
+        margin: 0;
+        font-size: 18px;
+        color: #333;
+    }
+</style>
+
+</body>
+</html>
+
+<style> body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f0f0f0;
+}
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+li {
+    background-color: #fff;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+video, img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: auto;
+}</style>

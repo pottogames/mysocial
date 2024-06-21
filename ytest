@@ -1,0 +1,159 @@
+<!-- create_video.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Video</title>
+</head>
+<body>
+    <h1>Create Video</h1>
+    <body>
+        <div class="container">
+            <h1>Create Video</h1>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="element_name">Description:</label><br>
+                    <input type="text" id="element_name" name="element_name">
+                </div>
+                <div class="form-group">
+                    <label for="title">Title:</label><br>
+                    <input type="text" id="title" name="title">
+                </div>
+                <div class="form-group">
+                    <label for="category">Category:</label><br>
+                    <select id="category" name="category">
+                        <option value="">Select existing category</option>
+                        {% for category in categories %}
+                        <option value="{{ category.id }}">{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="new_category">or create new category:</label><br>
+                    <input type="text" id="new_category" name="new_category">
+                </div>
+                <div class="form-group">
+                    <label for="image">Image:</label><br>
+                    <input type="file" id="image" name="image">
+                </div>
+                <div class="form-group">
+                    <label for="video">Video:</label><br>
+                    <input type="file" id="video" name="video">
+                </div>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+</body>
+</html>
+
+<style>
+    
+   
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+    }
+    .container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: rgb(255, 255, 255);
+        border-radius: 10px;
+        box-shadow: 15px 4px 75px 15px rgba(0,0,0,0.75);
+-webkit-box-shadow: 15px 4px 75px 15px rgba(0,0,0,0.75);
+-moz-box-shadow: 15px 4px 75px 15px rgba(0,0,0,0.75);    }
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: white;
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    label {
+        font-weight: bold;
+        color: rgb(0, 0, 0);
+    }
+    input[type="text"],
+    select,
+    input[type="file"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+    }
+    button {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        background-color: #FFA500;
+        color: white;
+        transition: background-color 0.3s ease;
+    }
+    button:hover {
+        background-color: #FF8C00;
+    }</style>
+
+
+
+
+
+<script>
+    document.getElementById('createForm').addEventListener('submit', function(event) {
+        const imageInput = document.getElementById('image');
+        const videoInput = document.getElementById('video');
+        const imageFile = imageInput.files[0];
+        const videoFile = videoInput.files[0];
+
+        if (imageFile) {
+            checkMinimumDimensions(imageFile, 300, 300, event);
+        }
+
+        if (videoFile) {
+            const video = document.createElement('video');
+            const url = URL.createObjectURL(videoFile);
+            video.onloadedmetadata = function() {
+                if (video.videoWidth < 300 || video.videoHeight < 300) {
+                    alert('Please upload a video with minimum dimensions of 300x300 pixels.');
+                    event.preventDefault();
+                }
+                URL.revokeObjectURL(url);
+            };
+            video.src = url;
+        }
+    });
+
+    function checkMinimumDimensions(file, minWidth, minHeight, event) {
+        const img = new Image();
+        const url = URL.createObjectURL(file);
+        img.onload = function() {
+            if (img.width < minWidth || img.height < minHeight) {
+                alert('Please upload an image with minimum dimensions of 300x300 pixels.');
+                event.preventDefault();
+            }
+            URL.revokeObjectURL(url);
+        };
+        img.src = url;
+    }
+</script>
+
+<script>
+    document.getElementById('new_category').addEventListener('input', function() {
+        var inputValue = this.value.trim();
+        var wordCount = inputValue.split(/\s+/).length; // Count words
+
+        // Check if word count exceeds 10
+        if (wordCount > 10) {
+            // Trim the input to 10 words
+            var words = inputValue.split(/\s+/).slice(0, 10);
+            this.value = words.join(' ');
+        }
+    });
+</script>

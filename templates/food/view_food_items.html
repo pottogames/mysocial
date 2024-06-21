@@ -1,0 +1,491 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'icon.ico' %}">
+    <script src="https://cpwebassets.codepen.io/assets/common/stopExecutionOnTimeout-2c7831bb44f98c1391d6a4ffda0e1fd302503391ca806e7fcc7b9b87197aec26.js"></script>  
+      <link rel="canonical" href="https://codepen.io/paulobrien/pen/VwvvpKb">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'>
+    
+</head>
+  </body>
+  </html>
+    <body translate="no">
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <meta http-equiv="X-UA-Compatible" content="ie=edge">
+            <title>Responsive Animated Navbar</title>
+        </head>
+        <script src="https://cpwebassets.codepen.io/assets/common/stopExecutionOnTimeout-2c7831bb44f98c1391d6a4ffda0e1fd302503391ca806e7fcc7b9b87197aec26.js"></script>
+
+
+        <title>CodePen - Responsive Navigation Bar with Flexbox</title>
+      
+          <link rel="canonical" href="https://codepen.io/tutsplus/pen/ZdRdZM">
+        
+        
+        <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css'>
+        
+      <style>
+      /* Basic styling */
+      * {
+        box-sizing: border-box;
+        padding: 0;
+        margin: 0;
+      }
+      body {
+        font-family: sans-serif;
+        background: #f1f1f1;
+      }
+      nav {
+        background: #222;
+        padding: 5px 20px;
+      }
+      ul {
+        list-style-type: none;
+      }
+      a {
+        color: white;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      .logo a:hover {
+        text-decoration: none;
+      }
+      .menu li {
+        font-size: 16px;
+        padding: 15px 5px;
+        white-space: nowrap;
+      }
+      .logo a,
+      .toggle a {
+        font-size: 20px;
+      }
+      .button.secondary {
+        border-bottom: 1px #444 solid;
+      }
+      /* Mobile menu */
+      .menu {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .toggle {
+        order: 1;
+      }
+      .item.button {
+        order: 2;
+      }
+      .item {
+        width: 100%;
+        text-align: center;
+        order: 3;
+        display: none;
+      }
+      .item.active {
+        display: block;
+      }
+      /* Tablet menu */
+      @media all and (min-width: 600px) {
+        .menu {
+          justify-content: center;
+        }
+        .logo {
+          flex: 1;
+        }
+        .toggle {
+          flex: 1;
+          text-align: right;
+        }
+        .item.button {
+          width: auto;
+          order: 1;
+          display: block;
+        }
+        .toggle {
+          order: 2;
+        }
+        .button.secondary {
+          border: 0;
+        }
+        .button a {
+          padding: 7.5px 15px;
+          background: teal;
+          border: 1px #006d6d solid;
+        }
+        .button.secondary a {
+          background: transparent;
+        }
+        .button a:hover {
+          text-decoration: none;
+        }
+        .button:not(.secondary) a:hover {
+          background: #006d6d;
+          border-color: #005959;
+        }
+        .button.secondary a:hover {
+          color: #ddd;
+        }
+      }
+      /* Desktop menu */
+      @media all and (min-width: 900px) {
+        .item {
+          display: block;
+          width: auto;
+        }
+        .toggle {
+          display: none;
+        }
+        .logo {
+          order: 0;
+        }
+        .item {
+          order: 1;
+        }
+        .button {
+          order: 2;
+        }
+        .menu li {
+          padding: 15px 10px;
+        }
+        .menu li.button {
+          padding-right: 0;
+        }
+      }
+      </style>
+      
+        <script>
+        window.console = window.console || function(t) {};
+      </script>
+      
+        
+        
+      </head>
+      
+      <body translate="no">
+        <nav>
+        <ul class="menu">
+          <li class="logo"><a href="#">All In Social</a></li>
+          <li class="item"><a href="#">Products</a></li>
+          <li class="item"><a href="#">Search</a></li>
+          <li class="item"><a href="#">OSP</a></li>
+          <li class="item"><a href="#">Elias Book</a></li>
+          <li class="item"><a href="#">Elias Store</a></li>
+          <li class="item"><a href="#">Elias AI</a>
+          <li class="item"><a href="#">Elias Food</a>
+          </li>
+          {% if user.is_authenticated %}
+          <!-- If user is logged in, show logout button -->
+          <li class="item button"><a href="/logout">Log Out</a></li>
+      {% else %}
+          <!-- If user is not logged in, show login and signup buttons -->
+          <li class="item button"><a href="/signin">Log In</a></li>
+          <li class="item button secondary"><a href="/signup">Sign Up</a></li>
+      {% endif %}
+          <li class="toggle"><a href="#"><i class="fas fa-bars"></i></a></li>
+        </ul>
+      </nav>
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js'></script>
+            <script id="rendered-js" >
+      $(function () {
+        $(".toggle").on("click", function () {
+          if ($(".item").hasClass("active")) {
+            $(".item").removeClass("active");
+            $(this).find("a").html("<i class='fas fa-bars'></i>");
+          } else {
+            $(".item").addClass("active");
+            $(this).find("a").html("<i class='fas fa-times'></i>");
+          }
+        });
+      });
+      //# sourceURL=pen.js
+          </script>
+      
+        
+      </body>
+      
+
+
+    <style>
+        .selected-food-list {
+            list-style: none;
+            padding: 0;
+        }
+        .selected-food-list-item {
+            margin-bottom: 5px;
+        }
+
+
+           /* Style for the welcome title */
+           .welcome {
+            font-size: 24px;
+            margin-top: 51px;
+            margin-left: 31px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        /* Style for the selected food products title */
+        .select1 {
+            margin-left: 34px;
+            font-size: 18px;
+            color: #0066cc;
+            margin-bottom: 10px;
+        }
+    </style>
+
+    <h1 class="welcome">Welcome, {{ request.user.username }}</h1>
+
+    <ul>
+        {% for item in food_items %}
+                <!-- List of selected food items -->
+                <h2 class="select1">Selected Food Products</h2>
+                <br>
+                <ul id="selected-food-list" class="selected-food-list"></ul>
+                <span id="total-calories"></span>
+            </div>
+        {% endfor %}
+    </ul>
+    <br>
+    <br>
+    <br>    
+    <!-- Bootstrap CSS -->
+</head>
+<body>
+    <div class="container">
+        <!-- List of existing food items -->
+        <div class="row">
+            {% for food_item in food_items %}
+            <div class="col-md-4">
+                <div class="card mb-4 shadow-sm">
+                    <img src="{{ food_item.image.url }}" class="card-img-top" alt="{{ food_item.name }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ food_item.name }}</h5>
+                        <p class="card-text">Calories: {{ food_item.calories }}</p>
+                        <button class="btn btn-primary add-to-list" data-name="{{ food_item.name }}" data-calories="{{ food_item.calories }}">Add to List</button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        // Initialize selected food list and total calories
+        var selectedFoodList = [];
+        var totalCalories = 0;
+
+        // Function to update total calories
+        function updateTotalCalories() {
+            var totalCaloriesElement = document.getElementById('total-calories');
+            totalCaloriesElement.innerText = 'Total Calories: ' + totalCalories;
+        }
+
+        // Event listener for add to list buttons
+        var addToListButtons = document.querySelectorAll('.add-to-list');
+        addToListButtons.forEach(function(button) {
+            button.addEventListener('click', function() {
+                var name = this.getAttribute('data-name');
+                var calories = parseInt(this.getAttribute('data-calories'));
+                selectedFoodList.push({ name: name, calories: calories });
+                totalCalories += calories;
+                updateSelectedFoodList();
+                updateTotalCalories();
+            });
+        });
+
+        // Function to update selected food list
+        function updateSelectedFoodList() {
+            var selectedFoodListElement = document.getElementById('selected-food-list');
+            selectedFoodListElement.innerHTML = '';
+            selectedFoodList.forEach(function(item) {
+                var listItem = document.createElement('li');
+                listItem.classList.add('selected-food-list-item');
+                listItem.innerText = item.name + ' - Calories: ' + item.calories;
+                selectedFoodListElement.appendChild(listItem);
+            });
+        }
+    </script>
+<script>
+    // Initialize selected food list and total calories
+    var selectedFoodList = [];
+    var totalCalories = 0;
+
+    // Function to update total calories
+    function updateTotalCalories() {
+        var totalCaloriesElement = document.getElementById('total-calories');
+        totalCaloriesElement.innerText = 'Total Calories: ' + totalCalories;
+    }
+
+    // Function to calculate total calories
+    function calculateTotalCalories() {
+        totalCalories = 0;
+        selectedFoodList.forEach(function(item) {
+            totalCalories += item.calories;
+        });
+        updateTotalCalories();
+    }
+
+    // Event listener for add to list buttons
+    var addToListButtons = document.querySelectorAll('.add-to-list');
+    addToListButtons.forEach(function(button) {
+        button.addEventListener('click', function() {
+            var name = this.getAttribute('data-name');
+            var calories = parseInt(this.getAttribute('data-calories'));
+            selectedFoodList.push({ name: name, calories: calories });
+            updateSelectedFoodList();
+            calculateTotalCalories(); // Update total calories
+        });
+    });
+
+    // Function to update selected food list
+    function updateSelectedFoodList() {
+        var selectedFoodListElement = document.getElementById('selected-food-list');
+        selectedFoodListElement.innerHTML = '';
+        selectedFoodList.forEach(function(item) {
+            var listItem = document.createElement('li');
+            listItem.classList.add('selected-food-list-item');
+            listItem.innerText = item.name + ' - Calories: ' + item.calories;
+            selectedFoodListElement.appendChild(listItem);
+        });
+    }
+
+    // Function to handle removing all food items
+    function removeAllFoodItems() {
+        selectedFoodList = []; // Clear the selected food list
+        updateSelectedFoodList(); // Update the displayed list
+        calculateTotalCalories(); // Update total calories (will be 0)
+    }
+</script>
+
+<style>
+    .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Style for the remove button */
+.remove-from-list {
+    padding: 5px 10px;
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.remove-from-list:hover {
+    background-color: #c82333;
+}
+
+.food-items {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.food-item {
+    width: calc(33.33% - 20px);
+    margin-bottom: 20px;
+}
+
+.food-image {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+
+.food-details {
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+}
+
+.food-name {
+    margin: 0;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.food-calories {
+    margin: 5px 0;
+}
+
+.add-to-list {
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.add-to-list:hover {
+    background-color: #0056b3;
+}
+</style>
+
+    <!-- jQuery -->
+   
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Initialize empty array to store selected food items
+            var selectedFoodItems = [];
+
+            // Handle click event for the "Add to List" button
+            $('.add-to-list').click(function() {
+                // Get the name and calories of the selected food item
+                var name = $(this).data('name');
+                var calories = $(this).data('calories');
+
+                // Add the selected food item to the selectedFoodItems array
+                selectedFoodItems.push({ name: name, calories: calories });
+
+                // Render the selected food items list
+                renderSelectedFoodList();
+            });
+
+            // Function to render the selected food items list
+            function renderSelectedFoodList() {
+                // Clear the existing list
+                $('#selected-food-list').empty();
+
+                // Render each selected food item as a list item
+                selectedFoodItems.forEach(function(item, index) {
+                    $('#selected-food-list').append('<li>' + item.name + ' - ' + item.calories + ' calories <button class="btn btn-danger remove-from-list" data-index="' + index + '">Remove</button></li>');
+                });
+            }
+
+            // Handle click event for the "Remove" button
+            $(document).on('click', '.remove-from-list', function() {
+                // Get the index of the selected food item to be removed
+                var index = $(this).data('index');
+
+                // Remove the selected food item from the selectedFoodItems array
+                selectedFoodItems.splice(index, 1);
+
+                // Render the updated selected food items list
+                renderSelectedFoodList();
+            });
+        });
+    </script>

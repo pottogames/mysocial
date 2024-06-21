@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'icon.ico' %}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campaign Detail</title>
+</head>
+<body>
+    <h1>Campaign Detail</h1>
+    <p>Product Link: {{ campaign.product_link }}</p>
+    <p>Product Name: {{ campaign.product_name }}</p>
+    <p>Purchase Times: {{ campaign.purchase_times }}</p>
+</body>
+</html>

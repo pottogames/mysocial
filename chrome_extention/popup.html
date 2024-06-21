@@ -1,0 +1,88 @@
+
+    <style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #eef;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+.logo-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.logo-container img {
+    max-width: 100%;
+    height: auto;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+button {
+    background-color: #e65022;
+    color: #ffffff;
+    font-size: 16px;
+    padding: 10px 20px;
+    margin: 10px;
+    border: none;
+    width: 80%;
+    border-radius: 23px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    background-color: #96420a;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+button:focus {
+    outline: none;
+}
+
+@media (max-width: 600px) {
+    button {
+        width: 80%;
+    }
+}
+    </style>
+</head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All In Social Extension</title>
+</head>
+<body>
+    <h1>All In Social Extension</h1>
+    <div class="logo-container">
+        <img src="/static/images/logo-transparent.png" alt="">
+    </div>
+    <form>
+        <button type="button" onclick="openTab('http://127.0.0.1:8000/')">Elias Social</button>
+        <button type="button" onclick="openTab('http://127.0.0.1:8000/products/store_list/')">Elias Store</button>
+        <button type="button" onclick="openTab('http://127.0.0.1:8000/presentation/')">Elias Video Presentation</button>
+        <button type="button" onclick="openTab('http://127.0.0.1:8000/group-list/')">Elias Group and Praivte Channel</button>
+        <button type="button" onclick="openTab('http://127.0.0.1:8000/food/home/')">Elias Food</button>
+        <button type="button" onclick="openTab('http://127.0.0.1:8000/home_ai/')">Elias AI</button>
+        <button type="button" onclick="openTab('http://127.0.0.1:8000/music/index/')">Elias Music</button>
+    </form>
+    
+    <script>
+function openTab(url) {
+    window.open(url, '_blank');
+}
+    </script>
+</body>
+</html>

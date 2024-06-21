@@ -1,0 +1,339 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+  
+    {% load static %}
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'icon.ico' %}">
+  
+<style>
+    body {
+      margin: 0;
+      font-family: "Open Sans", Helvetica Neue, Helvetica, Arial, sans-serif;
+      color: #fff;
+      padding-left: 240px;
+    }
+    main {
+      position: relative;
+      height: 100vh;
+    }
+    main .helper {
+      background: rgba(0, 0, 0, 0.2);
+      color: #ffea92;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate3d(-50%, -50%, 0);
+      padding: 1.2em 2em;
+      text-align: center;
+      border-radius: 20px;
+      font-size: 2em;
+      font-weight: bold;
+    }
+    main .helper span {
+      color: rgba(0, 0, 0, 0.2);
+      font-size: 0.4em;
+      display: block;
+    }
+    .menu {
+      background: #f1a605;
+      height: 100vh;
+      width: 240px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 5;
+      outline: none;
+    }
+    .menu .avatar {
+      background: rgba(0, 0, 0, 0.1);
+      padding: 2em 0.5em;
+      text-align: center;
+    }
+    .menu .avatar img {
+      width: 100px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 4px solid #ffea92;
+      box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.2);
+    }
+    .menu .avatar h2 {
+      font-weight: normal;
+      margin-bottom: 0;
+    }
+    .menu ul {
+      list-style: none;
+      padding: 0.5em 0;
+      margin: 0;
+    }
+    .menu ul li {
+      padding: 0.5em 1em 0.5em 3em;
+      font-size: 0.95em;
+      font-weight: regular;
+      background-repeat: no-repeat;
+      background-position: left 15px center;
+      background-size: auto 20px;
+      transition: all 0.15s linear;
+      cursor: pointer;
+    }
+    .menu ul li.icon-dashboard {
+      background-image: url("http://www.entypo.com/images//gauge.svg");
+    }
+    .menu ul li.icon-customers {
+      background-image: url("http://www.entypo.com/images//briefcase.svg");
+    }
+    .menu ul li.icon-users {
+      background-image: url("http://www.entypo.com/images//users.svg");
+    }
+    .menu ul li.icon-settings {
+      background-image: url("http://www.entypo.com/images//tools.svg");
+    }
+    .menu ul li:hover {
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+    .menu ul li:focus {
+      outline: none;
+    }
+    @media screen and (max-width: 900px) and (min-width: 400px) {
+      body {
+        padding-left: 90px;
+      }
+      .menu {
+        width: 90px;
+      }
+      .menu .avatar {
+        padding: 0.5em;
+        position: relative;
+      }
+      .menu .avatar img {
+        width: 60px;
+      }
+      .menu .avatar h2 {
+        opacity: 0;
+        position: absolute;
+        top: 50%;
+        left: 100px;
+        margin: 0;
+        min-width: 200px;
+        border-radius: 4px;
+        background: rgba(0, 0, 0, 0.4);
+        transform: translate3d(-20px, -50%, 0);
+        transition: all 0.15s ease-in-out;
+      }
+      .menu .avatar:hover h2 {
+        opacity: 1;
+        transform: translate3d(0px, -50%, 0);
+      }
+      .menu ul li {
+        height: 60px;
+        background-position: center center;
+        background-size: 30px auto;
+        position: relative;
+      }
+      .menu ul li span {
+        opacity: 0;
+        position: absolute;
+        background: rgba(0, 0, 0, 0.5);
+        padding: 0.2em 0.5em;
+        border-radius: 4px;
+        top: 50%;
+        left: 80px;
+        transform: translate3d(-15px, -50%, 0);
+        transition: all 0.15s ease-in-out;
+      }
+      .menu ul li span:before {
+        content: '';
+        width: 0;
+        height: 0;
+        position: absolute;
+        top: 50%;
+        left: -5px;
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        border-right: 5px solid rgba(0, 0, 0, 0.5);
+        transform: translateY(-50%);
+      }
+      .menu ul li:hover span {
+        opacity: 1;
+        transform: translate3d(0px, -50%, 0);
+      }
+    }
+    @media screen and (max-width: 400px) {
+      body {
+        padding-left: 0;
+      }
+      .menu {
+        width: 230px;
+        box-shadow: 0 0 0 100em rgba(0, 0, 0, 0);
+        transform: translate3d(-230px, 0, 0);
+        transition: all 0.3s ease-in-out;
+      }
+      .menu .smartphone-menu-trigger {
+        width: 40px;
+        height: 40px;
+        position: absolute;
+        left: 100%;
+        background: #f88e04;
+      }
+      .menu .smartphone-menu-trigger:before,
+      .menu .smartphone-menu-trigger:after {
+        content: '';
+        width: 50%;
+        height: 2px;
+        background: #fff;
+        border-radius: 10px;
+        position: absolute;
+        top: 45%;
+        left: 50%;
+        transform: translate3d(-50%, -50%, 0);
+      }
+      .menu .smartphone-menu-trigger:after {
+        top: 55%;
+        transform: translate3d(-50%, -50%, 0);
+      }
+      .menu ul li {
+        padding: 1em 1em 1em 3em;
+        font-size: 1.2em;
+      }
+      .menu:focus {
+        transform: translate3d(0, 0, 0);
+        box-shadow: 0 0 0 100em rgba(0, 0, 0, 0.6);
+      }
+      .menu:focus .smartphone-menu-trigger {
+        pointer-events: none;
+      }
+    }
+    </style>
+    
+      <script>
+      window.console = window.console || function(t) {};
+    </script>
+    
+      
+      
+    </head>
+    
+    <body translate="no">
+      <nav class="menu" tabindex="0">
+        <div class="smartphone-menu-trigger"></div>
+      <header class="avatar">
+            <img  src="/static/images/user-og.png"  alt=""/>
+        <h2 style="font-size: 13px;">{{user.username}}</h2>
+      </header>
+        <ul>   
+        <a style="color: #fff; text-decoration: none;" href="{% url 'search1' %}"><li tabindex="0" class="icon-users"><span>Search People</span></li></a>
+        <a style="color: #fff; text-decoration: none;" href="{% url 'group_list' %}"><li tabindex="0" class="icon-settings"><span>Public Group</span></li></a>
+        <a style="color: #fff; text-decoration: none;" href="{% url 'settings' %}"><li tabindex="0" class="icon-settings"><span>My Profile</span></li></a>
+      </ul> 
+    </nav>
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Private Chat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .chat-messages {
+            border: 1px solid #ccc;
+            padding: 10px;
+            color: #000;
+            margin-bottom: 20px;
+            height: 300px;
+            overflow-y: auto;
+            background-color: #f9f9f9;
+        }
+        .message-container {
+            margin-bottom: 10px;
+        }
+        .text-message {
+            background-color: #f2f2f2;
+            color: #000;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        #private-chat-form {
+            display: flex;
+            align-items: center;
+        }
+        #private-recipient-id,
+        #private-message-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 10px;
+            font-size: 14px;
+        }
+        button[type="submit"] {
+            padding: 10px 20px;
+            background-color: #ff6600;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            font-size: 14px;
+        }
+        button[type="submit"]:hover {
+            background-color: #020202;
+            color: white;
+            border-color: #020202;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Private Chat with {{ recipient.username }}</h1>
+        <div class="chat-messages" id="chat-messages">
+            {% for message in private_messages %}
+                <div class="message-container">
+                    {% if message.content %}
+                        <div class="text-message">{{ message.content }}</div>
+                    {% elif message.video %}
+                        <video width="320" height="240" controls>
+                            <source src="{{ message.video.url }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    {% elif message.image %}
+                        <img src="{{ message.image.url }}" alt="Image">
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+        <!-- Form to send messages to a specific recipient -->
+        <form id="private-chat-form" method="post" action="{% url 'send_private_message' recipient_id=recipient.id %}">
+            {% csrf_token %}
+            <input type="text" id="private-recipient-id" name="recipient_id" value="{{ recipient.id }}" style="display: none;">
+            <input type="text" id="private-message-input" name="content" placeholder="Type your message...">
+            <button type="submit">Send</button>
+        </form>
+    </div>

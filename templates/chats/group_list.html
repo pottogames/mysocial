@@ -1,0 +1,334 @@
+<script>
+    // JavaScript to handle toggling chat button visibility
+    document.addEventListener("DOMContentLoaded", function() {
+        const joinButtons = document.querySelectorAll(".join-group");
+        joinButtons.forEach(button => {
+            button.addEventListener("click", function() {
+                const groupDiv = this.closest(".group");
+                const chatButton = groupDiv.querySelector(".chat-group");
+                if (chatButton) {
+                    chatButton.style.display = "inline-block";
+                }
+            });
+        });
+    });
+</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  
+{% load static %}
+<link rel="shortcut icon" type="image/x-icon" href="{% static 'icon.ico' %}">
+  
+<style>
+/* GOOGLE FONTS */
+@import url("https://fonts.googleapis.com/css?family=Montserrat:400,400i,700");
+
+/* CSS RESET */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body,
+html {
+  font-family: "Montserrat", serif;
+  margin: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin: 0;
+  padding: 0;
+}
+
+button,
+.btn {
+  font-family: inherit;
+}
+
+/* CSS RESET ENDS */
+
+/* NAVIGATION BAR */
+
+nav {
+margin-bottom: 63px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 20px;
+  padding: 0.75rem 5vw;
+  box-shadow: 0 0 30px lightgray;
+}
+
+nav span {
+  color: #4caf50;
+}
+
+nav p {
+  font-size: 25px;
+  font-weight: 600;
+  cursor: default;
+}
+
+nav li {
+  display: flex;
+  align-items: center;
+  list-style: none;
+}
+
+nav a {
+  text-decoration: none;
+  color: #676767;
+  padding: 0 1rem;
+  transition: 0.1s ease-in-out;
+  font-size: 20px;
+}
+nav a:hover {
+  color: #121212;
+}
+
+nav .btn {
+  padding: 0.5rem 1rem;
+  margin: 0 0 0 0.5rem;
+  border: 1px solid #fa7406;
+  border-radius: 5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+  font-size: 17px;
+}
+
+.register {
+  background-color: #fa7406;
+  color: white;
+  border: 1px solid #fa7406;
+  border-radius: 5px;
+}
+
+.register:hover {
+  background-color: #f37c1b;
+  color: #121212;
+}
+
+.login {
+  background-color: white;
+  color: #4caf50;
+}
+
+.login:hover {
+  background-color: #4caf50;
+  color: white;
+  border: 1px solid #4caf50;
+  border-radius: 5px;
+}
+
+/* NAVIGATION BAR ENDS */
+
+
+/* MEDIA QUERIES - RESPONSIVE LAYOUT */
+
+/* DESKTOP - LAPTOP - TABLET */
+@media screen and (min-width: 850px){
+  nav .small-screens {
+    display: none;
+  }
+}
+
+/* MOBILE */
+@media screen and (max-width: 850px){
+  nav{
+    padding: 1rem 5vw;
+  }
+  
+  nav .small-screens i{
+    font-size: 25px;
+    cursor: pointer;
+  }
+  
+  nav .big-screens {
+    display: none;
+  }
+}
+
+/* MEDIA QUERIES ENDS*/
+</style>
+
+  <script>
+  window.console = window.console || function(t) {};
+</script>
+
+  
+  
+</head>
+
+<body translate="no">
+  <nav class="flex align-center">
+<img style="height: 53px;" src="/static/images/logo-transparent.png" alt="">  
+<ul>
+    <li class="big-screens">
+      <a href="{% url 'index' %}">Elias Social</a>
+      <a href="{% url 'search1' %}">Search Username</a>
+      <a href="{% url 'create_group' %}"><button class="btn register">Create Group</button></a>
+    </li>
+    <li class="small-screens">
+      <i class="fa-solid fa-bars"></i>
+    </li>
+  </ul>
+</nav>
+  
+  
+  
+</body>
+
+</html>
+
+<!-- Display existing groups -->
+<div class="container">
+<div id="existing-groups">
+    {% for group in groups %}
+        <!-- Render existing groups here -->
+        <div class="group">
+            {% if group.image %}
+                <img src="{{ group.image.url }}" alt="Group Image">
+            {% else %}
+                <p>No image available</p>
+            {% endif %}
+            <h3>{{ group.title }}</h3>
+            <p>{{ group.description }}</p>
+            {% if user.is_authenticated %}
+                {% if user not in group.members.all %}
+                    <form method="post" action="{% url 'join_group' group_id=group.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="join-group">Join Group</button>
+                    </form>
+                    <!-- Chat button initially hidden -->
+                    <button type="button" class="chat-group" style="display: none;">Open Chat</button>
+                {% else %}
+                    <form method="post" action="{% url 'leave_group' group_id=group.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="leave-group">Leave Group</button>
+                    </form>
+                    <!-- Chat button visible if user is already in the group -->
+                    <a href="{% url 'group_chat' group_id=group.id %}" class="chat-group">Open Chat</a>
+                {% endif %}
+            {% endif %}
+        </div>
+    {% endfor %}
+</div>
+</div>
+
+
+</body>
+</html>
+
+<style>
+
+    .nav{
+        height: 64px;
+        width: 4100px;
+        margin-top: -10px;
+        margin-left: -190px ;
+        padding-top: 10px;
+        padding-left: -44px;
+        margin-bottom: 53px;
+        
+   }
+
+
+   .link{
+    position: relative;
+    right: -440px;
+    text-decoration: none;
+    color: rgb(255, 255, 255);
+    padding-left: 30px;
+    font-size:x-large;
+    font-weight: 800;
+   }
+
+   .link:hover{
+    text-decoration: underline;
+   }
+
+
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+
+    }
+
+    .group {
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 10px 5px 30px 0px rgba(0,0,0,0.75);
+-webkit-box-shadow: 10px 5px 30px 0px rgba(0,0,0,0.75);
+-moz-box-shadow: 10px 5px 30px 0px rgba(0,0,0,0.75);
+        margin-bottom: 20px;
+    }
+
+    .group img {
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-bottom: 10px;
+    }
+
+    .group p {
+        margin: 0 0 10px;
+    }
+
+    .group .buttons {
+        margin-top: 10px;
+    }
+
+    .group form {
+        display: inline-block;
+    }
+
+    .group form button {
+        padding: 5px 10px;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: opacity 0.3s;
+    }
+
+    .group form button.join-group {
+        background-color: #ff4800;
+    }
+
+    .group form button.leave-group {
+        background-color: #dc3545;
+    }
+
+    .group form button:hover {
+        opacity: 0.8;
+    }
+
+    .group .chat-container {
+        display: none;
+        margin-top: 10px;
+    }
+
+    .group .chat-group {
+        background-color: #ff4800;
+        color: #fff;
+        padding: 5px 10px;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+    }
+
+    .group .chat-group:hover {
+        background-color: #ff4800;
+    }
+
+</style>

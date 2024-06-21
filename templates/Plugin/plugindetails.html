@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ plugin.title }} Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            padding-top: 20px;
+        }
+        .plugin-details {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        .plugin-details img {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            margin-right: 20px;
+        }
+        .plugin-details p {
+            font-size: 1.2em;
+        }
+        .plugin-details a {
+            color: #333;
+            text-decoration: none;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="plugin-details">
+            <img src="{{ plugin.image.url }}" alt="{{ plugin.title }}">
+            <div>
+                <h1>{{ plugin.title }}</h1>
+                <p>{{ plugin.description }}</p>
+                <p><strong>Web Link:</strong> <a href="{{ plugin.web_link }}">{{ plugin.web_link }}</a></p>
+                <a class="pottoaa" style="box-shadow: #333 0px 0px 0px 1px ;border-radius: 3px;" href="{{ plugin.file.url }}" download>Download {{ plugin.title }}</a>
+            </div>
+        </div>
+    </div><style>
+        .pottoaa:hover{
+            background-color: #333;
+            color: white;
+            transition: 1s;
+            
+        }
+    </style>
+</body>
+</html>

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'icon.ico' %}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Container</title>
+    <!DOCTYPE html>
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css'>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Container</title>
+    <style>
+       body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .chat-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;   
+            box-shadow: 10px -8px 8px -3px rgba(0,0,0,0.73) inset;
+-webkit-box-shadow: 10px -8px 8px -3px rgba(0,0,0,0.73) inset;
+-moz-box-shadow: 10px -8px 8px -3px rgba(0,0,0,0.73) inset;
+
+
+
+
+        }
+
+        .chat-header {
+            background-color: #ff5e00;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            border-bottom: 2px solid #ff5e00;
+        }
+
+        .chat-form {
+
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        #user-photo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .username {
+            font-weight: bold;
+        }
+
+        textarea[name="message"] {
+            width: 100%;
+            min-height: 100px;
+            resize: none;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        input[type="file"] {
+            margin-bottom: 10px;
+        }
+
+        input[type="submit"] {
+            padding: 10px 20px;
+            background-color: #ff5e00;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #000000;
+            color: white;
+        }
+
+        .chat-messages {
+            overflow-y: auto;
+            height: auto;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 20px;
+            width: auto;
+        }
+
+        .chat-messages div {
+    margin-bottom: 10px;
+    padding: 5px;
+    height: auto;
+    width: auto;
+    box-shadow: 10px -2px 24px -3px rgba(0,0,0,0.73);
+-webkit-box-shadow: 10px -2px 24px -3px rgba(0,0,0,0.73);
+-moz-box-shadow: 10px -2px 24px -3px rgba(0,0,0,0.73);
+
+    border-radius: 5px;
+    background-color: #ffa845;
+
+
+            filter: blur(0px); /* Apply blur effect */
+    background-color: rgba(
+        /* Random values for red, yellow, orange, and purple */
+        /* Red */
+        ${(Math.random() < 0.5) ? Math.floor(Math.random() * 256) : 255},
+        ${(Math.random() < 0.5) ? Math.floor(Math.random() * 256) : 0},
+        ${(Math.random() < 0.5) ? Math.floor(Math.random() * 256) : 0},
+        /* Yellow */
+        ${(Math.random() < 0.5) ? Math.floor(Math.random() * 256) : 255},
+        ${(Math.random() < 0.5) ? Math.floor(Math.random() * 256) : 255},
+        0,
+        /* Orange */
+        ${(Math.random() < 0.5) ? Math.floor(Math.random() * 256) : 255},
+        ${(Math.random() < 0.5) ? Math.floor(Math.random() * 256) : 165},
+        0,
+        /* Purple */
+        ${(Math.random() < 0.5) ? Math.floor(Math.random() * 256) : 128},
+        0,
+        ${(Math.random() < 0.5) ? Math.floor(Math.random() * 256) : 128},
+        /* Opacity */
+        0.5 /* Adjust opacity as needed */
+    );
+}
+        .chat-messages img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+
+        .chat-messages video {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+
+        .chat-messages {
+        overflow-y: auto;
+        max-height: 300px; /* Adjust the maximum height as needed */
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 10px;
+        margin: 20px;
+    }
+
+    .message-container {
+        position: relative;
+        margin-bottom: 10px;
+        margin-bottom: 10px;
+    padding: 5px;
+    border-radius: 5px;
+    background-color: #ffa845;
+    display: inline-block; /* Allow container to expand based on content */
+    max-width: 80%; /* Limit the maximum width of the container */
+    word-wrap: break-word; /* Allow long words to break and wrap onto the next line */
+    overflow: auto; 
+    }
+
+    .text-message {
+        height: auto;
+        width: auto;
+        background-color: #7c7b78;
+        padding: 10px;
+        border-radius: 5px;
+        margin-right: 40px; /* Make space for the delete button */
+    }
+
+    video, img {
+        max-width: 100%;
+        border-radius: 5px;
+    }
+
+    .delete-button {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 5px;
+        border-radius: 50%;
+        transition: background-color 0.3s ease;
+    }
+
+
+    .delete-button:hover {
+        background-color: #ff6347; /* Change color on hover */
+    }
+    </style>
+
+<!-- JavaScript Function -->
+<!-- JavaScript Function -->
+<script>
+    window.onload = function() {
+        var messageContainers = document.querySelectorAll('.message-container');
+        messageContainers.forEach(function(container) {
+            container.style.backgroundColor = getRandomColor();
+        });
+    };
+
+    function getRandomColor() {
+        var letters = '0123456789ABCDEF';
+        var color = '#';
+        for (var i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+
+
+</script>
+</head>
+<body>
+
+    <div class="chat-container">
+        <div class="chat-header">
+            Chat
+        </div>
+    
+        <div class="chat-messages" id="chat-messages">
+            {% for message in chat_messages %}
+                <div class="message-container">
+                    {% if message.message %}
+                        <div class="text-message">{{ message.message }}</div>
+                    {% elif message.video %}
+                        <video width="320" height="240" controls>
+                            <source src="{{ message.video.url }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    {% elif message.image %}
+                        <img src="{{ message.image.url }}" alt="Image">
+                    {% endif %}
+            
+                </div>
+            {% endfor %}
+        </div>
+    
+        <form class="chat-form" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="user-info">
+                <img src="/media/blank-profile-picture.png" alt="User Photo" id="user-photo">
+                <span class="username">{{ request.user.username }}</span>
+            </div>
+            <textarea name="message" placeholder="Type your message..."></textarea>
+            <input type="submit" value="Send">
+        </form>
+    </div>
+    
+    </body>
+    </html>
