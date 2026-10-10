@@ -46,10 +46,16 @@ from paypalcheckoutsdk.orders import OrdersCreateRequest, OrdersCaptureRequest
 from django.shortcuts import render
 from django.http import JsonResponse
 from .models import Transaction
-import openai
+try:
+    import openai
+except ImportError:  # optional on slim deploys (Vercel)
+    openai = None
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
-import openai
+try:
+    import openai
+except ImportError:  # optional on slim deploys (Vercel)
+    openai = None
 # views.py
 from django.shortcuts import render
 from .models import Video
@@ -58,7 +64,10 @@ from .models import Button
 from .models import Category
 from .models import FoodItem, WeightTracker, Chat2
 from django.db import IntegrityError
-import openai
+try:
+    import openai
+except ImportError:  # optional on slim deploys (Vercel)
+    openai = None
 from .models import FoodItem
 from .models import ChatMessage  # Import the ChatMessage model
 from .models import Message, PrivateMessage
@@ -89,7 +98,10 @@ register = template.Library()
 
 from .models import Song, Album,Artist
 
-from web3 import Web3, HTTPProvider
+try:
+    from web3 import Web3, HTTPProvider
+except ImportError:  # optional on slim deploys (Vercel)
+    Web3 = HTTPProvider = None
 
 # trading_platform/views.py
 
@@ -97,7 +109,10 @@ import requests
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
-from web3 import Web3, HTTPProvider
+try:
+    from web3 import Web3, HTTPProvider
+except ImportError:  # optional on slim deploys (Vercel)
+    Web3 = HTTPProvider = None
 from .models import Wallet, ChartData
 
 # Replace 'YOUR_INFURA_PROJECT_ID' with your Infura project ID
@@ -105,7 +120,7 @@ INFURA_PROJECT_ID = '4dd1dceeb1a64690a71aeb37ffd56930'
 INFURA_URL = f'https://mainnet.infura.io/v3/{INFURA_PROJECT_ID}'
 
 # Initialize Web3 with Infura as the provider
-web3 = Web3(HTTPProvider(INFURA_URL))
+web3 = Web3(HTTPProvider(INFURA_URL)) if Web3 else None
 
 #Elias plugin
 from .models import Plugin
@@ -401,7 +416,10 @@ def explain(request):
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-import google.generativeai as genai
+try:
+    import google.generativeai as genai
+except ImportError:  # optional on slim deploys (Vercel)
+    genai = None
 import os
 import json
 from .models import AiChatMessage
@@ -454,7 +472,8 @@ def submit_form(request):
     return render(request, 'signup.html')
 
 
-genai.configure(api_key=os.environ.get("AIzaSyDu2jKK82ZAXY52X4jDoUb18ke5TWSAmME"))
+if genai:
+    genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
 
 generation_config = {
     "temperature": 1,
@@ -467,7 +486,7 @@ generation_config = {
 model = genai.GenerativeModel(
     model_name="gemini-1.5-flash",
     generation_config=generation_config,
-)
+) if genai else None
 
 @csrf_exempt
 def chat_view(request):
@@ -475,6 +494,8 @@ def chat_view(request):
         data = json.loads(request.body)
         user_message = data.get('message', '')
 
+        if model is None:
+            return JsonResponse({'error': 'AI chat is not available on this deployment'}, status=503)
         # Assuming `model` is defined globally or imported properly
         chat_session = model.start_chat(
             history=[]
@@ -1241,7 +1262,10 @@ def get_chat_messages():
     messages = ChatMessage.objects.all().order_by('-timestamp')[:10]  # Example: Retrieve the 10 most recent messages
     return messages
 
-from moviepy.editor import VideoFileClip
+try:
+    from moviepy.editor import VideoFileClip
+except ImportError:  # optional on slim deploys (Vercel)
+    VideoFileClip = None
 import os
 from pathlib import Path
 
@@ -1329,7 +1353,10 @@ def change_category(request, category_id=None):
     categories = Category.objects.all()
     buttons = Button.objects.all()
     return render(request, 'change_category.html', {'categories': categories, 'buttons': buttons})
-from moviepy.editor import VideoFileClip
+try:
+    from moviepy.editor import VideoFileClip
+except ImportError:  # optional on slim deploys (Vercel)
+    VideoFileClip = None
 import os
 from pathlib import Path
 

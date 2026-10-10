@@ -1,0 +1,14 @@
+# Slim dependencies for the Vercel deployment (social_book/wsgi.py).
+# Vercel's 250 MB function limit rules out the full root requirements.txt (torch, jupyter, ...).
+# Heavy optional features (Gemini AI chat, moviepy, OpenAI, web3 wallet balance) are left out and
+# degrade gracefully; install them where there is room (Render / Docker use the root requirements.txt).
+Django==5.0.6
+django-cors-headers==4.4.0
+requests==2.32.3
+six==1.16.0
+jsonfield==3.1.0
+django-background-tasks==1.2.8
+paypal-checkout-serversdk==1.0.3
+joblib==1.4.2
+dj-database-url==2.2.0
+psycopg[binary]==3.2.3
