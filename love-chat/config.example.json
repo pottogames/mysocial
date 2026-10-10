@@ -3,5 +3,6 @@
   "port": 3000,
   "giphyKey": "המפתח-שלך-מ-developers.giphy.com",
   "ownerName": "ראובן",
-  "retentionDays": 3
+  "retentionDays": 3,
+  "togetherSince": "2024-02-14"
 }

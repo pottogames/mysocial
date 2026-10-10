@@ -12,6 +12,8 @@ const PASSPHRASE = process.env.CHAT_PASSPHRASE || cfg.passphrase;
 const PORT = Number(process.env.PORT || cfg.port || 3000);
 const RETENTION_DAYS = Number(process.env.RETENTION_DAYS || cfg.retentionDays || 3);
 const MAX_MESSAGES = 1500;
+const MAX_CT = 1500000;              // הודעה בודדת (תמונה/הודעה קולית) - כ-1.1MB אחרי פענוח
+const MAX_TOTAL = 200 * 1024 * 1024;   // תקרה לכל ההיסטוריה בדיסק
 if (!PASSPHRASE) {
   console.error('חסרה סיסמה. צור config.json (ראה config.example.json)');
   process.exit(1);
@@ -66,14 +68,14 @@ app.get('/config.js', (req, res) => {
   res.type('application/javascript').setHeader('Cache-Control', 'no-store');
   res.send(`window.CHAT_CONFIG = ${JSON.stringify({
     SERVER_URL: '', SAME_ORIGIN: true, GIPHY_KEY: cfg.giphyKey || '', OWNER_NAME: cfg.ownerName || 'ראובן',
-    ICE_SERVERS: cfg.iceServers || undefined,
+    ICE_SERVERS: cfg.iceServers || undefined, TOGETHER_SINCE: process.env.TOGETHER_SINCE || cfg.togetherSince || undefined,
   })};\n`);
 });
 app.use(express.static(path.join(__dirname, 'docs'), { index: 'index.html' }));
 app.use((req, res) => res.status(404).end());
 
 const server = http.createServer(app);
-const wss = new WebSocketServer({ server, maxPayload: 256 * 1024 });
+const wss = new WebSocketServer({ server, maxPayload: 2 * 1024 * 1024 });
 
 // הגבלת ניסיונות כושלים לפי IP
 const fails = new Map();
@@ -153,10 +155,13 @@ wss.on('connection', (ws, req) => {
       if (now - ws.rate.start > RATE_WINDOW_MS) ws.rate = { start: now, n: 0 };
       if (++ws.rate.n > RATE_MAX) return;
       if (typeof m.iv !== 'string' || m.iv.length !== 16 || !B64.test(m.iv)) return;
-      if (typeof m.ct !== 'string' || !m.ct.length || m.ct.length >= 200000 || !B64.test(m.ct)) return;
+      if (typeof m.ct !== 'string' || !m.ct.length || m.ct.length >= MAX_CT || !B64.test(m.ct)) return;
       const msg = { id: crypto.randomUUID(), ts: now, iv: m.iv, ct: m.ct };
       messages.push(msg);
       if (messages.length > MAX_MESSAGES) messages = messages.slice(-MAX_MESSAGES);
+      let total = 0;
+      for (const x of messages) total += x.ct.length;
+      while (total > MAX_TOTAL && messages.length > 1) total -= messages.shift().ct.length;
       save();
       broadcast({ type: 'msg', msg });
     }

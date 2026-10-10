@@ -1,6 +1,6 @@
 {
   "name": "love-chat",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "private": true,
   "description": "צ'אט פרטי ומוצפן לשניים, עם שיחות וידאו וקול",
   "main": "run.js",
