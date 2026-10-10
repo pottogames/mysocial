@@ -1,7 +1,13 @@
 {
   "version": 2,
   "builds": [
-    { "src": "social_book/wsgi.py", "use": "@vercel/python", "config": { "maxLambdaSize": "50mb" } },
+    {
+      "src": "social_book/wsgi.py",
+      "use": "@vercel/python",
+      "config": {
+        "excludeFiles": "{media,static,staticfiles,love-chat,android_app,MOBILEAPP,DesktopApp,DesktopReallyapp,chrome_extention,Eliasmining,ytest,sql,nginx,hib,home,node_modules}/**"
+      }
+    },
     { "src": "staticfiles/**", "use": "@vercel/static" },
     { "src": "media/**", "use": "@vercel/static" }
   ],
