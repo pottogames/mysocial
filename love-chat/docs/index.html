@@ -6,6 +6,7 @@
 <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
 <meta name="googlebot" content="noindex, nofollow">
 <meta name="referrer" content="no-referrer">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💌</text></svg>">
 <title>💌 הצ'אט שלנו</title>
 <style>
   :root{
@@ -83,6 +84,22 @@
   .tlEmpty{text-align:center;color:var(--muted);padding:40px 0}
   .hrow .sp{flex:1}
   .hbtn{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.2);font-size:18px;display:grid;place-items:center}
+  /* שיחת וידאו/קול */
+  #call{position:fixed;inset:0;z-index:50;background:#120b16;color:#fff;display:flex;flex-direction:column}
+  #remoteV{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#120b16}
+  #localV{position:absolute;top:calc(70px + env(safe-area-inset-top));inset-inline-start:14px;width:min(30vw,150px);aspect-ratio:3/4;object-fit:cover;border-radius:16px;border:2px solid rgba(255,255,255,.5);transform:scaleX(-1);background:#2a1e30;z-index:2}
+  #localV.back{transform:none}
+  .callTop{position:relative;z-index:3;text-align:center;padding:calc(16px + env(safe-area-inset-top)) 16px 30px;background:linear-gradient(rgba(0,0,0,.55),transparent)}
+  .callName{font-size:22px;font-weight:800}
+  #callState{font-size:15px;opacity:.9;margin-top:4px}
+  .e2e{font-size:12px;opacity:.75;margin-top:4px}
+  #callAvatar{position:relative;z-index:1;margin:auto;width:130px;height:130px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--pink2));display:grid;place-items:center;font-size:64px;animation:pulse 1.6s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,92,138,.6)}100%{box-shadow:0 0 0 30px rgba(255,92,138,0)}}
+  .callBtns{position:relative;z-index:3;margin-top:auto;display:flex;justify-content:center;gap:18px;padding:30px 16px calc(26px + env(safe-area-inset-bottom));background:linear-gradient(transparent,rgba(0,0,0,.6))}
+  .cb{width:62px;height:62px;border-radius:50%;background:rgba(255,255,255,.18);font-size:26px;display:grid;place-items:center;backdrop-filter:blur(6px)}
+  .cb.off{background:#fff;color:#000}
+  .cb.red{background:#ef4444}
+  .cb.green{background:#22c55e}
   #conn{background:#fde68a;color:#78350f;text-align:center;font-size:13px;padding:6px}
   @media (prefers-color-scheme: dark){ #conn{background:#5b4510;color:#fde68a} }
 </style>
@@ -108,6 +125,8 @@
         <div id="statusLine"><span class="dot" id="dot"></span><span id="statusText">עוד לא עודכן סטטוס</span></div>
       </div>
       <div class="sp"></div>
+      <button class="hbtn" id="voiceBtn" aria-label="שיחה קולית" title="שיחה קולית">📞</button>
+      <button class="hbtn" id="videoBtn" aria-label="שיחת וידאו" title="שיחת וידאו">📹</button>
       <button class="hbtn" id="notifBtn" aria-label="התראות" title="התראות">🔔</button>
       <button class="hbtn" id="logoutBtn" aria-label="יציאה" title="יציאה">🚪</button>
     </div>
@@ -133,6 +152,27 @@
     <button class="ib" id="gifBtn" aria-label="גיף">🎞️</button>
     <textarea id="input" rows="1" placeholder="כתוב הודעה..."></textarea>
     <button class="ib" id="send" aria-label="שלח">➤</button>
+  </div>
+</div>
+
+<div id="call" class="hidden">
+  <video id="remoteV" autoplay playsinline></video>
+  <video id="localV" autoplay playsinline muted></video>
+  <div class="callTop">
+    <div class="callName" id="callName"></div>
+    <div id="callState"></div>
+    <div class="e2e">🔒 מוצפן מקצה לקצה</div>
+  </div>
+  <div id="callAvatar">💞</div>
+  <div class="callBtns" id="inBtns">
+    <button class="cb red" id="declineBtn" aria-label="דחה">✖️</button>
+    <button class="cb green" id="acceptBtn" aria-label="ענה">📞</button>
+  </div>
+  <div class="callBtns hidden" id="activeBtns">
+    <button class="cb" id="muteBtn" aria-label="השתק">🎤</button>
+    <button class="cb" id="camBtn" aria-label="מצלמה">📷</button>
+    <button class="cb" id="flipBtn" aria-label="החלף מצלמה">🔄</button>
+    <button class="cb red" id="hangBtn" aria-label="נתק">📕</button>
   </div>
 </div>
 
@@ -220,6 +260,7 @@
         renderStatus(); renderTimeline();
       }
       else if(m.type === 'online'){ updateDot(m.count); }
+      else if(m.type === 'sig'){ const p = await decrypt(m); if(p) onSignal(p); }
     };
     sock.onclose = () => {
       clearInterval(keepAlive);
@@ -250,7 +291,11 @@
     const p = await decrypt(raw); if(!p) return;
     const el = document.createElement('div');
     el.dataset.ts = raw.ts;
-    if(p.kind === 'status'){
+    if(p.kind === 'call'){
+      el.className = 'b status';
+      el.textContent = (p.video ? '📹 ' : '📞 ') + (p.missed ? 'שיחה שלא נענתה' : (p.video ? 'שיחת וידאו' : 'שיחה קולית') + ' · ' + dur(p.ms||0))
+        + ' · ' + fmtDay(raw.ts) + fmt(raw.ts);
+    } else if(p.kind === 'status'){
       el.className = 'b status';
       el.innerHTML = '';
       const s = document.createElement('span'); s.textContent = p.from + ' עדכן/ה: ';
@@ -390,6 +435,198 @@
       if(!r.data || !r.data.length){ msg.classList.remove('hidden'); msg.textContent='לא נמצא כלום 🤷'; }
     }catch(e){ msg.classList.remove('hidden'); msg.textContent='שגיאה בטעינת גיפים'; }
   }
+
+  // ===== שיחות וידאו/קול (WebRTC) =====
+  // המדיה עוברת ישירות בין המכשירים ומוצפנת ב-DTLS-SRTP. ההודעות שמקימות את השיחה (SDP/ICE, כולל
+  // טביעות האצבע של מפתחות ההצפנה) מוצפנות ב-AES-GCM עם מפתח הצ'אט - כך שהשרת לא יכול לקרוא אותן
+  // או להתחזות לצד השני (MITM).
+  const SID = hex(crypto.getRandomValues(new Uint8Array(8)));
+  const ICE = () => (cfg.ICE_SERVERS && cfg.ICE_SERVERS.length) ? cfg.ICE_SERVERS
+    : [{urls:'stun:stun.cloudflare.com:3478'},{urls:'stun:stun.l.google.com:19302'}];
+  let call = null;
+
+  async function sendSig(o){
+    if(!ws || ws.readyState !== 1) return;
+    const e = await encrypt(Object.assign({sid: SID, ts: Date.now()}, o));
+    ws.send(JSON.stringify({type:'sig', iv:e.iv, ct:e.ct}));
+  }
+  async function getMedia(video, facing){
+    return navigator.mediaDevices.getUserMedia({
+      audio: {echoCancellation:true, noiseSuppression:true},
+      video: video ? {facingMode: facing || 'user', width:{ideal:1280}, height:{ideal:720}} : false,
+    });
+  }
+  function callUI(state){
+    $('call').classList.remove('hidden');
+    $('callName').textContent = call.peerName || 'שיחה';
+    $('callState').textContent = state;
+    const incoming = call.state === 'ringing';
+    $('inBtns').classList.toggle('hidden', !incoming);
+    $('activeBtns').classList.toggle('hidden', incoming);
+    $('acceptBtn').textContent = call.video ? '📹' : '📞';
+    $('camBtn').classList.toggle('hidden', !call.video);
+    $('flipBtn').classList.toggle('hidden', !call.video);
+    $('localV').classList.toggle('hidden', !call.video || !call.local);
+    const live = call.state === 'active' && call.video;
+    $('callAvatar').classList.toggle('hidden', live);
+    $('remoteV').style.visibility = live ? 'visible' : 'hidden';
+  }
+  let ringCtx = null, ringTimer = null;
+  function ring(on){
+    clearInterval(ringTimer); ringTimer = null;
+    if(navigator.vibrate) navigator.vibrate(on ? [400,200,400] : 0);
+    if(!on) return;
+    const beep = () => {
+      try{
+        ringCtx = ringCtx || new (window.AudioContext || window.webkitAudioContext)();
+        const o = ringCtx.createOscillator(), g = ringCtx.createGain();
+        o.frequency.value = 660; g.gain.value = .08; o.connect(g); g.connect(ringCtx.destination);
+        o.start(); o.stop(ringCtx.currentTime + .35);
+      }catch(e){}
+      if(navigator.vibrate) navigator.vibrate([400,200,400]);
+    };
+    beep(); ringTimer = setInterval(beep, 1500);
+  }
+
+  async function startCall(video){
+    if(call) return;
+    if(!ws || ws.readyState !== 1){ alert('אין חיבור לשרת כרגע'); return; }
+    if(!window.RTCPeerConnection || !navigator.mediaDevices){ alert('הדפדפן לא תומך בשיחות'); return; }
+    let local;
+    try{ local = await getMedia(video); }catch(e){ alert('אין גישה למצלמה/מיקרופון. צריך לאשר בדפדפן 🙏'); return; }
+    call = {id: hex(crypto.getRandomValues(new Uint8Array(8))), state:'calling', video, local, mine:true,
+            facing:'user', ice:[], peerName: myName === OWNER ? '' : OWNER};
+    $('localV').srcObject = local;
+    callUI('מתקשר... 📳');
+    sendSig({t:'call', id: call.id, from: myName, video});
+    call.timeout = setTimeout(() => { if(call && call.state === 'calling') endCall(true, 'אין מענה', true); }, 45000);
+  }
+
+  async function acceptCall(){
+    if(!call || call.state !== 'ringing') return;
+    ring(false);
+    try{ call.local = await getMedia(call.video); }
+    catch(e){ alert('אין גישה למצלמה/מיקרופון. צריך לאשר בדפדפן 🙏'); endCall(true); return; }
+    $('localV').srcObject = call.local;
+    call.state = 'connecting'; callUI('מתחבר... 🔐');
+    makePC();
+    sendSig({t:'accept', id: call.id, to: call.peer, from: myName});
+  }
+
+  function makePC(){
+    const c = call;
+    const pc = c.pc = new RTCPeerConnection({iceServers: ICE()});
+    c.local.getTracks().forEach(t => pc.addTrack(t, c.local));
+    pc.ontrack = e => { $('remoteV').srcObject = e.streams[0]; $('remoteV').play().catch(()=>{}); };
+    pc.onicecandidate = e => { if(e.candidate && call === c) sendSig({t:'ice', id:c.id, to:c.peer, cand:e.candidate.toJSON()}); };
+    pc.onconnectionstatechange = () => {
+      if(call !== c) return;
+      const st = pc.connectionState;
+      if(st === 'connected'){
+        if(c.state !== 'active'){ c.state = 'active'; c.started = Date.now(); }
+        clearInterval(c.clock);
+        const tick = () => { if(call === c) $('callState').textContent = clock(Date.now() - c.started); };
+        callUI(''); tick(); c.clock = setInterval(tick, 1000);
+      } else if(st === 'disconnected'){ $('callState').textContent = 'החיבור חלש... 📶'; }
+      else if(st === 'failed'){ endCall(true, 'החיבור נכשל (רשת חסומה?)'); }
+    };
+    return pc;
+  }
+  const clock = ms => { const s = Math.floor(ms/1000); return Math.floor(s/60) + ':' + String(s%60).padStart(2,'0'); };
+  async function flushIce(){ const c = call; for(const x of c.ice.splice(0)) try{ await c.pc.addIceCandidate(x); }catch(e){} }
+
+  function endCall(notify, reason, missed){
+    const c = call; if(!c) return;
+    call = null;
+    ring(false);
+    if(notify) sendSig({t:'hangup', id:c.id, to:c.peer});
+    clearTimeout(c.timeout); clearInterval(c.clock);
+    if(c.local) c.local.getTracks().forEach(t => t.stop());
+    if(c.pc) try{ c.pc.close(); }catch(e){}
+    $('remoteV').srcObject = null; $('localV').srcObject = null;
+    // רישום השיחה בצ'אט (מוצפן כמו כל הודעה) - רק מי שהתקשר רושם, כדי שלא יהיה כפול
+    if(c.mine && (c.started || missed)) sendPayload({kind:'call', video:c.video, ms: c.started ? Date.now()-c.started : 0, missed: !c.started});
+    if(reason){ $('callState').textContent = reason; $('inBtns').classList.add('hidden'); $('activeBtns').classList.add('hidden'); setTimeout(()=>{ if(!call) $('call').classList.add('hidden'); }, 1800); }
+    else $('call').classList.add('hidden');
+  }
+
+  async function onSignal(p){
+    if(p.sid === SID || Math.abs(Date.now() - (p.ts||0)) > 120000) return; // מתעלם מהודעות ישנות (replay)
+    if(p.to && p.to !== SID && p.t !== 'accept') return;
+    const c = call;
+    switch(p.t){
+      case 'call':
+        if(p.from === myName) return; // טאב אחר שלי
+        if(c){ sendSig({t:'busy', id:p.id, to:p.sid}); return; }
+        call = {id:p.id, state:'ringing', video:!!p.video, peer:p.sid, peerName:p.from, ice:[], facing:'user'};
+        callUI(p.video ? 'שיחת וידאו נכנסת 📹' : 'שיחה נכנסת 📞');
+        ring(true);
+        if(document.hidden && window.Notification && Notification.permission === 'granted')
+          try{ new Notification('📞 ' + p.from + ' מתקשר/ת', {tag:'love-chat-call', requireInteraction:true}); }catch(e){}
+        call.timeout = setTimeout(() => { if(call && call.state === 'ringing') endCall(false); }, 45000);
+        return;
+      case 'accept':
+        if(!c || c.id !== p.id) return;
+        if(c.state === 'ringing'){ endCall(false, 'נענתה במכשיר אחר'); return; }
+        if(c.state !== 'calling' || p.to !== SID) return;
+        clearTimeout(c.timeout);
+        c.peer = p.sid; if(p.from) c.peerName = p.from; c.state = 'connecting'; callUI('מתחבר... 🔐');
+        { const pc = makePC(); const offer = await pc.createOffer(); await pc.setLocalDescription(offer);
+          sendSig({t:'offer', id:c.id, to:c.peer, sdp: pc.localDescription.toJSON()}); }
+        return;
+      case 'offer':
+        if(!c || c.id !== p.id || !c.pc) return;
+        await c.pc.setRemoteDescription(p.sdp); await flushIce();
+        { const ans = await c.pc.createAnswer(); await c.pc.setLocalDescription(ans);
+          sendSig({t:'answer', id:c.id, to:c.peer, sdp: c.pc.localDescription.toJSON()}); }
+        return;
+      case 'answer':
+        if(!c || c.id !== p.id || !c.pc) return;
+        await c.pc.setRemoteDescription(p.sdp); await flushIce();
+        return;
+      case 'ice':
+        if(!c || c.id !== p.id) return;
+        if(c.pc && c.pc.remoteDescription) try{ await c.pc.addIceCandidate(p.cand); }catch(e){}
+        else c.ice.push(p.cand);
+        return;
+      case 'busy': case 'decline':
+        if(c && c.id === p.id && c.state === 'calling') endCall(true, p.t === 'busy' ? 'בשיחה אחרת' : 'השיחה נדחתה', true);
+        return;
+      case 'hangup':
+        if(c && c.id === p.id) endCall(false, c.state === 'ringing' ? 'שיחה שלא נענתה' : 'השיחה הסתיימה');
+        return;
+    }
+  }
+
+  $('voiceBtn').onclick = () => startCall(false);
+  $('videoBtn').onclick = () => startCall(true);
+  $('acceptBtn').onclick = acceptCall;
+  $('declineBtn').onclick = () => { if(call){ sendSig({t:'decline', id:call.id, to:call.peer}); endCall(false); } };
+  $('hangBtn').onclick = () => endCall(true);
+  $('muteBtn').onclick = () => {
+    if(!call || !call.local) return;
+    const t = call.local.getAudioTracks()[0]; if(!t) return;
+    t.enabled = !t.enabled; $('muteBtn').classList.toggle('off', !t.enabled); $('muteBtn').textContent = t.enabled ? '🎤' : '🔇';
+  };
+  $('camBtn').onclick = () => {
+    if(!call || !call.local) return;
+    const t = call.local.getVideoTracks()[0]; if(!t) return;
+    t.enabled = !t.enabled; $('camBtn').classList.toggle('off', !t.enabled);
+  };
+  $('flipBtn').onclick = async () => {
+    if(!call || !call.local || !call.video) return;
+    const facing = call.facing === 'user' ? 'environment' : 'user';
+    try{
+      const s = await navigator.mediaDevices.getUserMedia({video:{facingMode: facing}});
+      const nt = s.getVideoTracks()[0], old = call.local.getVideoTracks()[0];
+      const sender = call.pc && call.pc.getSenders().find(x => x.track && x.track.kind === 'video');
+      if(sender) await sender.replaceTrack(nt);
+      if(old){ call.local.removeTrack(old); old.stop(); }
+      call.local.addTrack(nt); call.facing = facing;
+      $('localV').classList.toggle('back', facing !== 'user');
+    }catch(e){ alert('אין מצלמה נוספת'); }
+  };
+  window.addEventListener('pagehide', () => { if(call) endCall(true); });
 
   function showErr(t){ $('loginErr').textContent = t; }
   function showLogin(t){ $('app').classList.add('hidden'); $('login').classList.remove('hidden'); showErr(t||''); }

@@ -66,6 +66,7 @@ app.get('/config.js', (req, res) => {
   res.type('application/javascript').setHeader('Cache-Control', 'no-store');
   res.send(`window.CHAT_CONFIG = ${JSON.stringify({
     SERVER_URL: '', SAME_ORIGIN: true, GIPHY_KEY: cfg.giphyKey || '', OWNER_NAME: cfg.ownerName || 'ראובן',
+    ICE_SERVERS: cfg.iceServers || undefined,
   })};\n`);
 });
 app.use(express.static(path.join(__dirname, 'docs'), { index: 'index.html' }));
@@ -100,12 +101,14 @@ function broadcast(obj) {
 const B64 = /^[A-Za-z0-9+/]+={0,2}$/;
 const RATE_WINDOW_MS = 10 * 1000;
 const RATE_MAX = 40;
+const SIG_RATE_MAX = 300;
 
 wss.on('connection', (ws, req) => {
   const ip = req.headers['cf-connecting-ip'] || req.socket.remoteAddress;
   ws.authed = false;
   ws.alive = true;
   ws.rate = { start: Date.now(), n: 0 };
+  ws.sigRate = { start: Date.now(), n: 0 };
   ws.on('pong', () => { ws.alive = true; });
   const authTimeout = setTimeout(() => { if (!ws.authed) ws.close(); }, 10000);
 
@@ -132,6 +135,18 @@ wss.on('connection', (ws, req) => {
     }
 
     if (m.type === 'ping') { ws.send(JSON.stringify({ type: 'pong' })); return; }
+
+    // אותות לשיחת וידאו/קול (WebRTC). מוצפנים בדפדפן, לא נשמרים - רק מועברים לצד השני.
+    if (m.type === 'sig') {
+      const now = Date.now();
+      if (now - ws.sigRate.start > RATE_WINDOW_MS) ws.sigRate = { start: now, n: 0 };
+      if (++ws.sigRate.n > SIG_RATE_MAX) return;
+      if (typeof m.iv !== 'string' || m.iv.length !== 16 || !B64.test(m.iv)) return;
+      if (typeof m.ct !== 'string' || !m.ct.length || m.ct.length >= 100000 || !B64.test(m.ct)) return;
+      const s = JSON.stringify({ type: 'sig', iv: m.iv, ct: m.ct });
+      for (const c of wss.clients) if (c !== ws && c.authed && c.readyState === 1) c.send(s);
+      return;
+    }
 
     if (m.type === 'msg') {
       const now = Date.now();

@@ -69,3 +69,22 @@ test('auth, send, broadcast, persist', async () => {
   assert.strictEqual(saved[0].ct, ct);
   a.close(); b.close();
 });
+
+test('call signals are relayed to the other side only, not stored', async () => {
+  const a = await open(), b = await open();
+  a.send(JSON.stringify({ type: 'auth', token: TOKEN }));
+  b.send(JSON.stringify({ type: 'auth', token: TOKEN }));
+  await a.next('history'); await b.next('history');
+  const iv = crypto.randomBytes(12).toString('base64');
+  const ct = crypto.randomBytes(64).toString('base64');
+  a.send(JSON.stringify({ type: 'sig', iv, ct }));
+  const got = await b.next('sig');
+  assert.deepStrictEqual(got, { type: 'sig', iv, ct });
+  // השולח לא מקבל את האות של עצמו
+  a.send(JSON.stringify({ type: 'ping' }));
+  assert.strictEqual((await a.next('pong')).type, 'pong');
+  await new Promise((r) => setTimeout(r, 400));
+  const saved = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'messages.json'), 'utf8'));
+  assert.ok(!saved.some((m) => m.ct === ct));
+  a.close(); b.close();
+});

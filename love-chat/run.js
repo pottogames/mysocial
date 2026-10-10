@@ -24,6 +24,7 @@ function publish(url) {
     SERVER_URL: url,
     GIPHY_KEY: cfg.giphyKey || '',
     OWNER_NAME: cfg.ownerName || 'ראובן',
+    ICE_SERVERS: cfg.iceServers || undefined,
   })};\n`;
   fs.writeFileSync(CONFIG_JS, out);
   console.log('כתובת השרת:', url);
