@@ -1,0 +1,19 @@
+{
+  "name": "love-chat",
+  "version": "1.1.0",
+  "private": true,
+  "description": "צ'אט פרטי ומוצפן לשניים",
+  "main": "run.js",
+  "scripts": {
+    "start": "node run.js",
+    "server": "node server.js",
+    "test": "node --test test/*.test.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "ws": "^8.18.0"
+  }
+}
