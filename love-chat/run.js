@@ -11,6 +11,9 @@ try { cfg = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf
 const CONFIG_JS = path.join(__dirname, 'docs', 'config.js');
 const isWin = process.platform === 'win32';
 let lastUrl = '';
+// טונל קבוע של Cloudflare (כתובת שלא משתנה). ראה README > "כתובת קבועה".
+const TUNNEL_TOKEN = process.env.CF_TUNNEL_TOKEN || cfg.tunnelToken || '';
+const PUBLIC_URL = (process.env.PUBLIC_URL || cfg.publicUrl || '').replace(/\/$/, '');
 let backoff = 3000;
 
 function git(args) {
@@ -20,6 +23,7 @@ function git(args) {
 function publish(url) {
   if (url === lastUrl) return;
   lastUrl = url;
+  try { if (fs.readFileSync(CONFIG_JS, 'utf8').includes(JSON.stringify(url))) { console.log('כתובת השרת:', url); return; } } catch (e) {}
   const out = `window.CHAT_CONFIG = ${JSON.stringify({
     SERVER_URL: url,
     GIPHY_KEY: cfg.giphyKey || '',
@@ -48,8 +52,10 @@ function publish(url) {
 
 function startTunnel() {
   const started = Date.now();
-  const cf = spawn(isWin ? 'cloudflared.exe' : 'cloudflared',
-    ['tunnel', '--url', `http://localhost:${PORT}`, '--no-autoupdate'], { stdio: ['ignore', 'pipe', 'pipe'] });
+  const args = TUNNEL_TOKEN
+    ? ['tunnel', '--no-autoupdate', 'run', '--token', TUNNEL_TOKEN]
+    : ['tunnel', '--url', `http://localhost:${PORT}`, '--no-autoupdate'];
+  const cf = spawn(isWin ? 'cloudflared.exe' : 'cloudflared', args, { stdio: ['ignore', 'pipe', 'pipe'] });
   const onData = (d) => {
     const m = String(d).match(/https:\/\/[a-z0-9-]+\.trycloudflare\.com/);
     if (m) publish(m[0]);
@@ -65,5 +71,11 @@ function startTunnel() {
   });
 }
 
-startTunnel();
+if (PUBLIC_URL && !/^https:\/\//.test(PUBLIC_URL)) {
+  console.error('publicUrl צריך להתחיל ב-https://');
+  process.exit(1);
+}
+if (PUBLIC_URL) publish(PUBLIC_URL); // הכתובת קבועה - מעדכנים את האתר פעם אחת (ולא כלום אם לא השתנתה)
+if (TUNNEL_TOKEN || !PUBLIC_URL) startTunnel();
+else console.log('טונל קבוע רץ כשירות (cloudflared service) - לא מפעיל טונל מכאן');
 process.on('uncaughtException', (e) => console.error('שגיאה:', e.message));

@@ -47,6 +47,27 @@ copy config.example.json config.json
 - הסיסמה עצמה לא נשמרת בטלפון - רק המפתח הנגזר ממנה. כפתור 🚪 מוחק אותו מהמכשיר.
 - לשינוי סיסמה: עדכן `config.json` ואתחל. הודעות ישנות יהפכו לבלתי קריאות.
 
+## 🔒 כתובת קבועה עם Cloudflare Tunnel (מומלץ ל-24/7)
+
+בלי זה, הטונל החינמי (`trycloudflare.com`) מקבל כתובת חדשה בכל הפעלה, ויש דקה-שתיים בלי חיבור עד שהאתר מתעדכן.
+עם טונל קבוע הכתובת לא משתנה לעולם, ואין צורך ב-push בכל הפעלה. צריך דומיין שמנוהל ב-Cloudflare (אפשר לקנות שם בזול).
+
+1. Cloudflare Dashboard > **Zero Trust** > **Networks** > **Tunnels** > **Create a tunnel** > Cloudflared > שם: `love-chat`.
+2. העתק את ה-**token** (המחרוזת הארוכה אחרי `--token` בפקודת ההתקנה).
+3. **Public Hostname** > Add: Subdomain `chat`, Domain שלך, Service: `HTTP` > `localhost:3000`.
+4. ב-`config.json`:
+   ```json
+   "tunnelToken": "eyJh...",
+   "publicUrl": "https://chat.your-domain.com"
+   ```
+5. `start.bat` כרגיל. הכתובת `https://chat.your-domain.com` עובדת תמיד - ואפשר גם לתת אותה ישירות במקום GitHub Pages.
+
+**עוד יותר יציב (ב-Windows):** התקן את הטונל כשירות שעולה עם המחשב גם בלי node:
+`cloudflared service install <TOKEN>` - ואז ב-`config.json` שים רק `publicUrl` (בלי `tunnelToken`).
+
+**אותו טונל יכול להריץ גם את אתר ה-Django (mysocial) מהמחשב** - הוסף Public Hostname נוסף, למשל `social` > `HTTP` > `localhost:8000`,
+והרץ `python manage.py runserver 8000` (או gunicorn/waitress). הוסף את הדומיין ל-`ALLOWED_HOSTS` (משתנה סביבה `ALLOWED_HOSTS=social.your-domain.com`).
+
 ## 🏠 מצלמת בית - שידור חי 24/7
 
 כדי שתוכל/י לראות מה קורה בבית בלי לדאוג. מוצפן מקצה לקצה כמו השיחות.
