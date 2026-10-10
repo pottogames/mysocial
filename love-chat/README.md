@@ -47,6 +47,27 @@ copy config.example.json config.json
 - הסיסמה עצמה לא נשמרת בטלפון - רק המפתח הנגזר ממנה. כפתור 🚪 מוחק אותו מהמכשיר.
 - לשינוי סיסמה: עדכן `config.json` ואתחל. הודעות ישנות יהפכו לבלתי קריאות.
 
+## ☁️ הרצה על Cloudflare Workers - 24/7 בלי מחשב דולק (מומלץ)
+
+הצ'אט, השיחות, התמונות וההודעות הקוליות רצים בענן של Cloudflare (חינם בשימוש של זוג), עם כתובת קבועה
+`https://love-chat.<החשבון-שלך>.workers.dev`. אין צורך בשרת במחשב, בטונל או ב-GitHub Pages.
+גם כאן השרת שומר רק מידע מוצפן. **מצלמת הבית** עדיין צריכה מכשיר בבית (מחשב/טלפון ישן) שפותח את הכתובת עם `?cam=1`.
+
+**פריסה אוטומטית מ-GitHub (פעם אחת):**
+1. Cloudflare Dashboard > My Profile > **API Tokens** > Create Token > תבנית **Edit Cloudflare Workers**.
+2. במחשב: `npm run token -- "הסיסמה-המשותפת"` - מדפיס טוקן אימות (64 תווים). הסיסמה עצמה לא נשלחת לשום מקום.
+3. ב-GitHub: Settings > Secrets and variables > Actions > New repository secret:
+   - `CLOUDFLARE_API_TOKEN` - מסעיף 1
+   - `LOVE_CHAT_AUTH_TOKEN` - מסעיף 2
+   - (אם יש לך כמה חשבונות Cloudflare: גם `CLOUDFLARE_ACCOUNT_ID`)
+4. Actions > **Deploy love-chat to Cloudflare Workers** > Run workflow. מכאן כל push פורס לבד.
+
+**או ידנית מהמחשב:** `npm install`, `npx wrangler login`, `npx wrangler deploy`,
+ואז `npm run token -- "הסיסמה"` והדבק את התוצאה ב-`npx wrangler secret put AUTH_TOKEN`.
+
+הגדרות (שם, ימים ביחד, GIPHY, ימי שמירה) ב-`wrangler.jsonc` תחת `vars`. בדיקה מקומית: `npm run cf:dev`
+(עם קובץ `.dev.vars` שבו `AUTH_TOKEN=...`).
+
 ## 🔒 כתובת קבועה עם Cloudflare Tunnel (מומלץ ל-24/7)
 
 בלי זה, הטונל החינמי (`trycloudflare.com`) מקבל כתובת חדשה בכל הפעלה, ויש דקה-שתיים בלי חיבור עד שהאתר מתעדכן.
@@ -119,6 +140,12 @@ copy config.example.json config.json
 ]
 ```
 שים לב: פרטי ה-TURN נכנסים ל-`docs/config.js` שהוא ציבורי - השתמש בפרטים שמותר שיהיו גלויים או מוגבלים בזמן.
+
+## מה חדש בגרסה 2.1
+
+- ☁️ גרסת Cloudflare Workers (Durable Object + SQLite): רץ 24/7 בלי מחשב, עם פריסה אוטומטית מ-GitHub Actions.
+- 🔒 תמיכה ב-Cloudflare Tunnel קבוע למי שמריץ את השרת בבית.
+- היסטוריה נשלחת בחלקים, תמונות/הודעות קוליות מוגבלות לגודל שעובר ב-Cloudflare.
 
 ## מה חדש בגרסה 2.0
 

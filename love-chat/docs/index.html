@@ -296,7 +296,7 @@
   }
 
   function wsUrl(){
-    if(cfg.SAME_ORIGIN || !cfg.SERVER_URL) return location.origin.replace(/^http/, 'ws');
+    if(cfg.SAME_ORIGIN || !cfg.SERVER_URL) return location.origin.replace(/^http/, 'ws') + (cfg.WS_PATH || '');
     return cfg.SERVER_URL.replace(/\/$/,'').replace(/^http/, 'ws');
   }
   // כתובת הטונל משתנה בכל הפעלה של השרת - טוענים מחדש את config.js (בלי cache) לפני ניסיון חוזר
@@ -324,6 +324,7 @@
         if(m.reason === 'blocked'){ showLogin('יותר מדי ניסיונות. נסה שוב בעוד 10 דקות'); return; }
         store.del('lc_key'); showLogin('סיסמה שגויה'); return;
       }
+      if(m.type === 'hist'){ for(const x of m.msgs) await addMsg(x, true); if(!m.more) historyDone(); return; }
       if(m.type === 'history'){
         $('conn').classList.add('hidden');
         clearInterval(keepAlive);
@@ -331,10 +332,7 @@
         if(!authed){ authed = true; $('login').classList.add('hidden'); $('app').classList.remove('hidden'); setup(); }
         $('msgs').innerHTML=''; seen.clear(); statuses.length = 0; reacts.clear(); pendingReacts.clear();
         for(const x of m.msgs) await addMsg(x, true);
-        renderTimeline(); renderTogether();
-        scrollDown(true);
-        markSeen();
-        onCamReconnect();
+        if(!m.more) historyDone();
       } else if(m.type === 'msg'){ await addMsg(m.msg); }
       else if(m.type === 'prune'){
         document.querySelectorAll('#msgs .b').forEach(e => { if(Number(e.dataset.ts) < m.before) e.remove(); });
@@ -351,6 +349,13 @@
       updateDot(0);
       scheduleRetry();
     };
+  }
+  // ההיסטוריה יכולה להגיע בכמה חלקים (מגבלת גודל הודעה ב-Cloudflare)
+  function historyDone(){
+    renderTimeline(); renderTogether();
+    scrollDown(true);
+    markSeen();
+    onCamReconnect();
   }
   function scheduleRetry(){
     if(retryTimer || !token) return;
@@ -553,7 +558,7 @@
       const c = document.createElement('canvas'); c.width = Math.round(bmp.width*scale); c.height = Math.round(bmp.height*scale);
       c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
       let q = .8, data = c.toDataURL('image/jpeg', q);
-      while(data.length > 1000000 && q > .3){ q -= .15; data = c.toDataURL('image/jpeg', q); }
+      while(data.length > 600000 && q > .3){ q -= .15; data = c.toDataURL('image/jpeg', q); }
       sendPayload({kind:'img', data});
     }catch(e){ alert('לא הצלחתי לטעון את התמונה'); }
   }
@@ -578,12 +583,12 @@
       if(!r.send) return;
       const blob = new Blob(r.chunks, {type: mr.mimeType || 'audio/webm'});
       const fr = new FileReader();
-      fr.onload = () => { if(fr.result.length < 1100000) sendPayload({kind:'voice', data: fr.result, ms: Date.now() - r.start}); else alert('ההקלטה ארוכה מדי'); };
+      fr.onload = () => { if(fr.result.length < 640000) sendPayload({kind:'voice', data: fr.result, ms: Date.now() - r.start}); else alert('ההקלטה ארוכה מדי'); };
       fr.readAsDataURL(blob);
     };
     mr.start(1000);
     $('bar').classList.add('hidden'); $('recBar').classList.remove('hidden');
-    const tick = () => { const s = Math.floor((Date.now()-rec.start)/1000); $('recTime').textContent = Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); if(s >= 180) stopVoice(true); };
+    const tick = () => { const s = Math.floor((Date.now()-rec.start)/1000); $('recTime').textContent = Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); if(s >= 150) stopVoice(true); };
     tick(); rec.clock = setInterval(tick, 500);
   }
   function stopVoice(send){ if(rec && rec.mr.state !== 'inactive'){ rec.send = send; rec.mr.stop(); } }

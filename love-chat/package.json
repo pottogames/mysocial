@@ -1,13 +1,16 @@
 {
   "name": "love-chat",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "private": true,
   "description": "צ'אט פרטי ומוצפן לשניים, עם שיחות וידאו וקול",
   "main": "run.js",
   "scripts": {
     "start": "node run.js",
     "server": "node server.js",
-    "test": "node --test test/*.test.js"
+    "test": "node --test test/*.test.js",
+    "token": "node scripts/token.js",
+    "cf:dev": "wrangler dev",
+    "cf:deploy": "wrangler deploy"
   },
   "engines": {
     "node": ">=18"
@@ -15,5 +18,8 @@
   "dependencies": {
     "express": "^4.19.2",
     "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "wrangler": "4.139.0"
   }
 }

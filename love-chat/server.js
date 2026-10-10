@@ -12,7 +12,7 @@ const PASSPHRASE = process.env.CHAT_PASSPHRASE || cfg.passphrase;
 const PORT = Number(process.env.PORT || cfg.port || 3000);
 const RETENTION_DAYS = Number(process.env.RETENTION_DAYS || cfg.retentionDays || 3);
 const MAX_MESSAGES = 1500;
-const MAX_CT = 1500000;              // הודעה בודדת (תמונה/הודעה קולית) - כ-1.1MB אחרי פענוח
+const MAX_CT = 950000;               // הודעה בודדת (תמונה/הודעה קולית). אותה מגבלה כמו בגרסת Cloudflare
 const MAX_TOTAL = 200 * 1024 * 1024;   // תקרה לכל ההיסטוריה בדיסק
 if (!PASSPHRASE) {
   console.error('חסרה סיסמה. צור config.json (ראה config.example.json)');
@@ -90,6 +90,20 @@ function fail(ip) {
   fails.set(ip, f);
 }
 
+// ההיסטוריה נשלחת בחלקים של עד ~700KB (כמו בגרסת Cloudflare, שם יש מגבלה של 1MB להודעה)
+function sendHistory(ws) {
+  let batch = [], size = 0, first = true;
+  const flush = (more) => {
+    ws.send(JSON.stringify({ type: first ? 'history' : 'hist', msgs: batch, more }));
+    first = false; batch = []; size = 0;
+  };
+  for (const m of messages) {
+    if (batch.length && size + m.ct.length > 700000) flush(true);
+    batch.push(m); size += m.ct.length;
+  }
+  flush(false);
+}
+
 function onlineCount() {
   let n = 0;
   for (const c of wss.clients) if (c.authed) n++;
@@ -126,7 +140,7 @@ wss.on('connection', (ws, req) => {
         ws.authed = true;
         clearTimeout(authTimeout);
         fails.delete(ip);
-        ws.send(JSON.stringify({ type: 'history', msgs: messages }));
+        sendHistory(ws);
         broadcast({ type: 'online', count: onlineCount() });
       } else {
         fail(ip);
