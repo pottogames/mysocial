@@ -10,7 +10,8 @@
     "test": "node --test test/*.test.js",
     "token": "node scripts/token.js",
     "cf:dev": "wrangler dev",
-    "cf:deploy": "wrangler deploy"
+    "cf:deploy": "wrangler deploy",
+    "deploy": "wrangler deploy"
   },
   "engines": {
     "node": ">=18"

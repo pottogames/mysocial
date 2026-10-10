@@ -25,6 +25,7 @@ export default {
       try { ice = env.ICE_SERVERS ? JSON.parse(env.ICE_SERVERS) : undefined; } catch (e) {}
       const body = `window.CHAT_CONFIG = ${JSON.stringify({
         SERVER_URL: '', SAME_ORIGIN: true, WS_PATH: '/ws',
+        SETUP: !/^[0-9a-f]{64}$/.test(env.AUTH_TOKEN || '') || undefined, // עדיין לא הוגדר טוקן - מסך הגדרה ראשונית
         GIPHY_KEY: env.GIPHY_KEY || '', OWNER_NAME: env.OWNER_NAME || 'ראובן',
         ICE_SERVERS: ice, TOGETHER_SINCE: env.TOGETHER_SINCE || undefined,
       })};\n`;

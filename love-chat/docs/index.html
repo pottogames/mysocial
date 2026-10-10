@@ -158,6 +158,18 @@
   <input id="passIn" type="password" placeholder="סיסמה" autocomplete="current-password">
   <button class="go" id="goBtn">כניסה</button>
   <div id="loginErr"></div>
+  <div id="setup" class="hidden" style="text-align:start;margin-top:14px;font-size:14px;line-height:1.6">
+    <b>🛠️ הגדרה ראשונה</b><br>
+    הקוד הזה נגזר מהסיסמה כאן בדפדפן (הסיסמה עצמה לא נשלחת לשום מקום):
+    <input id="setupTok" readonly style="font-family:monospace;font-size:12px;direction:ltr;text-align:left">
+    <button class="go" id="setupCopy" style="font-size:15px;padding:10px">📋 העתק קוד</button>
+    <ol style="padding-inline-start:20px;margin:10px 0 0">
+      <li>Cloudflare Dashboard > Workers &amp; Pages > <b>love-chat</b></li>
+      <li>Settings > Variables and Secrets > <b>Add</b></li>
+      <li>Type: <b>Secret</b>, Name: <b>AUTH_TOKEN</b>, Value: הקוד > Deploy</li>
+      <li>רענן את הדף והיכנס עם אותה סיסמה 💞</li>
+    </ol>
+  </div>
 </div>
 
 <div id="app" class="hidden">
@@ -1060,6 +1072,10 @@
     showErr('מתחבר... 💞');
     myName = name;
     const bits = await derive(pass); await useBits(bits);
+    if(cfg.SETUP){ // השרת עוד לא מוגדר: מציגים את הקוד שצריך להדביק ב-Cloudflare
+      $('setupTok').value = token; $('setup').classList.remove('hidden'); showErr(''); token = ''; key = null;
+      return;
+    }
     $('passIn').value = '';
     store.set('lc_name', name); store.set('lc_key', hex(bits));
     retry = 0; connect();
@@ -1080,6 +1096,7 @@
   $('gifQ').addEventListener('input', e => { clearTimeout(gifTimer); gifTimer = setTimeout(()=>gifSearch(e.target.value.trim()), 400); });
 
   $('logoutBtn').onclick = logout;
+  $('setupCopy').onclick = async () => { const t = $('setupTok'); t.select(); try{ await navigator.clipboard.writeText(t.value); $('setupCopy').textContent = '✅ הועתק'; }catch(e){ document.execCommand('copy'); } };
   $('menuBtn').onclick = e => { e.stopPropagation(); $('menu').classList.toggle('hidden'); };
   document.addEventListener('click', e => { if(!$('menu').contains(e.target)) $('menu').classList.add('hidden'); });
   $('loveFab').onclick = () => { hearts(10); if(navigator.vibrate) navigator.vibrate(60); sendPayload({kind:'love'}); };
@@ -1105,7 +1122,8 @@
   const sn = store.get('lc_name'), sk = store.get('lc_key');
   store.del('lc_pass'); // גרסה ישנה שמרה את הסיסמה עצמה - מוחקים
   if(sn) $('nameIn').value = sn;
-  if(sn && sk && sk.length === 128){
+  if(cfg.SETUP) showErr('הגדרה ראשונה: הכנס שם וסיסמה משותפת 🛠️');
+  else if(sn && sk && sk.length === 128){
     myName = sn; showErr('מתחבר... 💞');
     useBits(unhex(sk)).then(connect);
   }
