@@ -22,15 +22,23 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-y6on4&^y1+^c$5_h4eh-i2fz-c6jmagos9$5b!o!%8=08s#!tm'
+# Running on Vercel (serverless): read-only filesystem except /tmp, production defaults.
+ON_VERCEL = bool(os.environ.get('VERCEL'))
+
+SECRET_KEY = os.environ.get('SECRET_KEY') or 'django-insecure-y6on4&^y1+^c$5_h4eh-i2fz-c6jmagos9$5b!o!%8=08s#!tm'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'False' if ON_VERCEL else 'True').lower() in ('1', 'true', 'yes')
 
-ALLOWED_HOSTS = [
-     "http://localhost:3000",  # Adjust with your React frontend URL
-    "http://127.0.0.1:3000",   # Example with localhost IP
+# Host names only (no scheme/port). Extra hosts, e.g. a custom domain: ALLOWED_HOSTS="example.com,www.example.com"
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.vercel.app'] + [
+    h.strip() for h in os.environ.get('ALLOWED_HOSTS', '').split(',') if h.strip()
 ]
+CSRF_TRUSTED_ORIGINS = ['https://*.vercel.app'] + [
+    'https://' + h.lstrip('.') for h in os.environ.get('ALLOWED_HOSTS', '').split(',') if h.strip()
+]
+if ON_VERCEL:
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 
 # Application definition
@@ -84,9 +92,14 @@ WSGI_APPLICATION = 'social_book.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        # On Vercel only /tmp is writable, so SQLite there is per-instance and temporary.
+        # Set DATABASE_URL (e.g. Neon / Vercel Postgres) for data that persists.
+        'NAME': '/tmp/db.sqlite3' if ON_VERCEL else BASE_DIR / 'db.sqlite3',
     }
 }
+if os.environ.get('DATABASE_URL'):
+    import dj_database_url
+    DATABASES['default'] = dj_database_url.parse(os.environ['DATABASE_URL'], conn_max_age=60)
 
 
 # Password validation

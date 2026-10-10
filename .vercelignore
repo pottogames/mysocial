@@ -1,0 +1,14 @@
+# Not needed by the Vercel deployment (Django app in social_book/ + core/)
+love-chat/
+*.zip
+android_app/
+MOBILEAPP/
+DesktopApp/
+DesktopReallyapp/
+chrome_extention/
+Eliasmining/
+photopea projects/
+ytest/
+# Never ship credentials
+*firebase-adminsdk*.json
+.env

@@ -1,0 +1,1137 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+<meta name="googlebot" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💌</text></svg>">
+<title>💌 הצ'אט שלנו</title>
+<style>
+  :root{
+    --bg:#fff5f8; --card:#ffffff; --pink:#ff5c8a; --pink2:#ff8fab; --ink:#2b2030; --muted:#8c7b92;
+    --me:#ffd6e3; --them:#ffffff; --line:#f3dfe6;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#1c1420; --card:#2a1e30; --ink:#f6eaf3; --muted:#a592ad; --me:#7a2a4a; --them:#3a2a42; --line:#3d2c46; }
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;margin:0}
+  body{background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;display:flex;flex-direction:column}
+  button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+  .hidden{display:none!important}
+
+  /* כניסה */
+  #login{margin:auto;width:min(92vw,380px);background:var(--card);border-radius:24px;padding:28px 22px;box-shadow:0 10px 40px rgba(255,92,138,.18);text-align:center}
+  #login h1{margin:0 0 6px;font-size:28px}
+  #login p{margin:0 0 18px;color:var(--muted)}
+  #login input{width:100%;padding:14px;border-radius:14px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font-size:16px;margin-bottom:10px;text-align:center}
+  #login .go{width:100%;padding:14px;border-radius:14px;background:linear-gradient(135deg,var(--pink),var(--pink2));color:#fff;font-weight:700;font-size:17px}
+  #loginErr{color:#e11d48;min-height:20px;margin-top:10px;font-size:14px}
+
+  /* אפליקציה */
+  #app{flex:1;display:flex;flex-direction:column;min-height:0}
+  header{background:linear-gradient(135deg,var(--pink),var(--pink2));color:#fff;padding:calc(10px + env(safe-area-inset-top)) 14px 10px}
+  .hrow{display:flex;align-items:center;gap:10px}
+  .avatar{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.25);display:grid;place-items:center;font-size:24px}
+  .hname{font-weight:800;font-size:17px}
+  #statusLine{font-size:14px;opacity:.95}
+  .dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#bbb;margin-inline-end:6px}
+  .dot.on{background:#4ade80;box-shadow:0 0 8px #4ade80}
+  #statusBar{display:flex;gap:8px;overflow-x:auto;padding:10px 12px;background:var(--card);border-bottom:1px solid var(--line);scrollbar-width:none}
+  #statusBar::-webkit-scrollbar{display:none}
+  .chip{white-space:nowrap;padding:8px 12px;border-radius:999px;background:var(--bg);border:1.5px solid var(--line);font-size:14px}
+  .chip:active{transform:scale(.96)}
+
+  #msgs{flex:1;overflow-y:auto;padding:14px 12px;display:flex;flex-direction:column;gap:6px;overscroll-behavior:contain}
+  .b{max-width:78%;padding:9px 12px;border-radius:18px;line-height:1.45;word-break:break-word;box-shadow:0 1px 2px rgba(0,0,0,.06);white-space:pre-wrap}
+  .b.me{align-self:flex-start;background:var(--me);border-bottom-right-radius:6px}
+  .b.them{align-self:flex-end;background:var(--them);border-bottom-left-radius:6px}
+  .b .t{display:block;font-size:11px;color:var(--muted);margin-top:3px}
+  .b img{display:block;max-width:100%;border-radius:12px;margin:2px 0}
+  .b.status{align-self:center;background:transparent;box-shadow:none;color:var(--muted);font-size:13px;text-align:center;max-width:92%}
+  .b.status strong{color:var(--pink)}
+  .big{font-size:38px;line-height:1.2}
+
+  #bar{display:flex;align-items:flex-end;gap:6px;padding:8px 8px calc(8px + env(safe-area-inset-bottom));background:var(--card);border-top:1px solid var(--line)}
+  #bar .ib{width:42px;height:42px;border-radius:50%;font-size:22px;display:grid;place-items:center;background:var(--bg)}
+  #input{flex:1;resize:none;max-height:120px;min-height:42px;padding:10px 14px;border-radius:22px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;font-size:16px}
+  #send{background:linear-gradient(135deg,var(--pink),var(--pink2))!important;color:#fff;font-size:20px}
+
+  #panel{background:var(--card);border-top:1px solid var(--line);height:260px;display:flex;flex-direction:column}
+  #emojis{flex:1;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(44px,1fr));padding:8px;gap:2px}
+  #emojis button{font-size:26px;padding:6px;border-radius:10px}
+  #emojis button:active{background:var(--bg)}
+  #gifs{flex:1;display:flex;flex-direction:column;min-height:0}
+  #gifQ{margin:8px;padding:10px 14px;border-radius:14px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font-size:16px}
+  #gifGrid{flex:1;overflow-y:auto;columns:3;column-gap:6px;padding:0 8px 8px}
+  #gifGrid img{width:100%;margin-bottom:6px;border-radius:10px;cursor:pointer;display:block}
+  #gifMsg{padding:20px;text-align:center;color:var(--muted)}
+
+  /* טאבים + ציר זמן */
+  #tabs{display:flex;background:var(--card);border-bottom:1px solid var(--line)}
+  #tabs button{flex:1;padding:11px;font-weight:700;color:var(--muted);border-bottom:3px solid transparent}
+  #tabs button.on{color:var(--pink);border-bottom-color:var(--pink)}
+  #timeline{flex:1;overflow-y:auto;padding:14px 16px 24px}
+  .tlDay{font-weight:800;color:var(--pink);margin:16px 0 8px;font-size:15px}
+  .tlDay:first-child{margin-top:0}
+  .tlRow{position:relative;padding:2px 22px 14px 0;margin-inline-end:6px;border-inline-end:2px solid var(--line)}
+  .tlRow::before{content:"";position:absolute;inset-inline-end:-7px;top:4px;width:12px;height:12px;border-radius:50%;background:var(--pink2);border:2px solid var(--bg)}
+  .tlRow.now::before{background:#4ade80;box-shadow:0 0 8px #4ade80}
+  .tlText{font-size:16px;font-weight:600}
+  .tlMeta{font-size:13px;color:var(--muted);margin-top:2px}
+  .tlEmpty{text-align:center;color:var(--muted);padding:40px 0}
+  .hrow .sp{flex:1}
+  .hbtn{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.2);font-size:18px;display:grid;place-items:center}
+  /* שיחת וידאו/קול */
+  #call{position:fixed;inset:0;z-index:50;background:#120b16;color:#fff;display:flex;flex-direction:column}
+  #remoteV{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#120b16}
+  #localV{position:absolute;top:calc(70px + env(safe-area-inset-top));inset-inline-start:14px;width:min(30vw,150px);aspect-ratio:3/4;object-fit:cover;border-radius:16px;border:2px solid rgba(255,255,255,.5);transform:scaleX(-1);background:#2a1e30;z-index:2}
+  #localV.back{transform:none}
+  .callTop{position:relative;z-index:3;text-align:center;padding:calc(16px + env(safe-area-inset-top)) 16px 30px;background:linear-gradient(rgba(0,0,0,.55),transparent)}
+  .callName{font-size:22px;font-weight:800}
+  #callState{font-size:15px;opacity:.9;margin-top:4px}
+  .e2e{font-size:12px;opacity:.75;margin-top:4px}
+  #callAvatar{position:relative;z-index:1;margin:auto;width:130px;height:130px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--pink2));display:grid;place-items:center;font-size:64px;animation:pulse 1.6s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,92,138,.6)}100%{box-shadow:0 0 0 30px rgba(255,92,138,0)}}
+  .callBtns{position:relative;z-index:3;margin-top:auto;display:flex;justify-content:center;gap:18px;padding:30px 16px calc(26px + env(safe-area-inset-bottom));background:linear-gradient(transparent,rgba(0,0,0,.6))}
+  .cb{width:62px;height:62px;border-radius:50%;background:rgba(255,255,255,.18);font-size:26px;display:grid;place-items:center;backdrop-filter:blur(6px)}
+  .cb.off{background:#fff;color:#000}
+  .cb.red{background:#ef4444}
+  .cb.green{background:#22c55e}
+  /* זוגיות */
+  #together{font-size:12px;opacity:.9;margin-top:1px}
+  .hinfo{min-width:0;flex:1}
+  .hinfo>div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .hrow .sp{display:none}
+  .hbtn{flex:none}
+  #camBadge{position:relative}
+  #camBadge.onair::after{content:"";position:absolute;top:2px;inset-inline-end:2px;width:10px;height:10px;border-radius:50%;background:#ef4444;box-shadow:0 0 0 2px #fff;animation:blink 1.2s infinite}
+  @keyframes blink{50%{opacity:.3}}
+  #menu{position:absolute;top:calc(58px + env(safe-area-inset-top));inset-inline-start:10px;z-index:20;background:var(--card);color:var(--ink);border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.2);overflow:hidden;min-width:190px}
+  #menu button{display:block;width:100%;text-align:start;padding:13px 16px;font-size:15px}
+  #menu button:active{background:var(--bg)}
+  #app{position:relative}
+  #loveFab{position:absolute;inset-inline-start:14px;bottom:calc(76px + env(safe-area-inset-bottom));z-index:5;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--pink2));color:#fff;font-size:24px;box-shadow:0 6px 18px rgba(255,92,138,.45);display:grid;place-items:center}
+  #loveFab:active{transform:scale(.9)}
+  .heart{position:fixed;bottom:-40px;z-index:60;pointer-events:none;font-size:30px;animation:floatUp 2.6s ease-in forwards}
+  @keyframes floatUp{to{transform:translateY(-110vh) rotate(25deg);opacity:0}}
+  #typing{font-size:13px;color:var(--muted);padding:0 16px 4px;min-height:0}
+  .b{position:relative}
+  .b .tick{margin-inline-start:4px}
+  .b .tick.seen{color:#3b82f6}
+  .react{position:absolute;bottom:-10px;inset-inline-end:8px;background:var(--card);border-radius:999px;padding:1px 6px;font-size:13px;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+  .b.hasReact{margin-bottom:10px}
+  .b.photo{padding:4px}
+  .b.photo img{max-height:320px;cursor:zoom-in}
+  .b audio{width:230px;max-width:100%;height:40px;display:block}
+  #recBar{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--card);border-top:1px solid var(--line)}
+  #recBar .recDot{width:12px;height:12px;border-radius:50%;background:#ef4444;animation:blink 1s infinite}
+  #recTime{flex:1;font-variant-numeric:tabular-nums}
+  #viewer{position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.92);display:grid;place-items:center}
+  #viewer img{max-width:100%;max-height:100%}
+
+  /* מצלמת בית */
+  #cam{position:fixed;inset:0;z-index:55;background:#0d0a10;color:#fff;display:flex;flex-direction:column}
+  #camV{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000}
+  #camV.self{transform:scaleX(-1)}
+  .camTop{position:relative;z-index:2;display:flex;align-items:center;gap:10px;padding:calc(12px + env(safe-area-inset-top)) 14px 24px;background:linear-gradient(rgba(0,0,0,.65),transparent)}
+  .live{background:#ef4444;color:#fff;font-weight:800;border-radius:8px;padding:4px 10px;font-size:14px;letter-spacing:.5px}
+  .live::before{content:"● ";animation:blink 1.2s infinite}
+  #camTitle{font-weight:700;font-size:16px}
+  #camInfo{font-size:13px;opacity:.85}
+  #camMsg{white-space:pre-line;position:relative;z-index:2;margin:auto;text-align:center;font-size:17px;padding:20px;opacity:.9}
+  #camBtns{position:relative;z-index:2;margin-top:auto;display:flex;justify-content:center;gap:16px;padding:24px 16px calc(22px + env(safe-area-inset-bottom));background:linear-gradient(transparent,rgba(0,0,0,.65))}
+  #camBtns .cb.rec{background:#ef4444;animation:blink 1.2s infinite}
+  #conn{background:#fde68a;color:#78350f;text-align:center;font-size:13px;padding:6px}
+  @media (prefers-color-scheme: dark){ #conn{background:#5b4510;color:#fde68a} }
+</style>
+</head>
+<body>
+
+<div id="login">
+  <h1>💌</h1>
+  <h1>הצ'אט שלנו</h1>
+  <p>רק לשנינו 🤍</p>
+  <input id="nameIn" placeholder="השם שלך" autocomplete="off">
+  <input id="passIn" type="password" placeholder="סיסמה" autocomplete="current-password">
+  <button class="go" id="goBtn">כניסה</button>
+  <div id="loginErr"></div>
+  <div id="setup" class="hidden" style="text-align:start;margin-top:14px;font-size:14px;line-height:1.6">
+    <b>🛠️ הגדרה ראשונה</b><br>
+    הקוד הזה נגזר מהסיסמה כאן בדפדפן (הסיסמה עצמה לא נשלחת לשום מקום):
+    <input id="setupTok" readonly style="font-family:monospace;font-size:12px;direction:ltr;text-align:left">
+    <button class="go" id="setupCopy" style="font-size:15px;padding:10px">📋 העתק קוד</button>
+    <ol style="padding-inline-start:20px;margin:10px 0 0">
+      <li>Cloudflare Dashboard > Workers &amp; Pages > <b>love-chat</b></li>
+      <li>Settings > Variables and Secrets > <b>Add</b></li>
+      <li>Type: <b>Secret</b>, Name: <b>AUTH_TOKEN</b>, Value: הקוד > Deploy</li>
+      <li>רענן את הדף והיכנס עם אותה סיסמה 💞</li>
+    </ol>
+  </div>
+</div>
+
+<div id="app" class="hidden">
+  <header>
+    <div class="hrow">
+      <div class="avatar">🏗️</div>
+      <div class="hinfo">
+        <div class="hname" id="ownerName">ראובן</div>
+        <div id="statusLine"><span class="dot" id="dot"></span><span id="statusText">עוד לא עודכן סטטוס</span></div>
+        <div id="together" class="hidden"></div>
+      </div>
+      <div class="sp"></div>
+      <button class="hbtn" id="voiceBtn" aria-label="שיחה קולית" title="שיחה קולית">📞</button>
+      <button class="hbtn" id="videoBtn" aria-label="שיחת וידאו" title="שיחת וידאו">📹</button>
+      <button class="hbtn" id="camBadge" aria-label="מצלמת הבית" title="מצלמת הבית">🏠</button>
+      <button class="hbtn" id="menuBtn" aria-label="תפריט" title="תפריט">⋯</button>
+    </div>
+  </header>
+  <div id="menu" class="hidden">
+    <button id="camStartBtn">🔴 שדר מהמכשיר הזה (מצלמת בית)</button>
+    <button id="notifBtn">🔔 הפעל התראות</button>
+    <button id="logoutBtn">🚪 יציאה</button>
+  </div>
+  <div id="conn" class="hidden">מתחבר מחדש... 🔄</div>
+  <div id="tabs">
+    <button id="tabChat" class="on">💬 צ'אט</button>
+    <button id="tabTl">🕒 ציר זמן</button>
+  </div>
+  <div id="statusBar" class="hidden"></div>
+  <div id="msgs"></div>
+  <div id="timeline" class="hidden"></div>
+  <div id="panel" class="hidden">
+    <div id="emojis"></div>
+    <div id="gifs" class="hidden">
+      <input id="gifQ" placeholder="חיפוש גיף... 🔍">
+      <div id="gifGrid"></div>
+      <div id="gifMsg" class="hidden"></div>
+    </div>
+  </div>
+  <button id="loveFab" aria-label="שלח אהבה" title="חושב/ת עליך 💗">💗</button>
+  <div id="typing"></div>
+  <div id="recBar" class="hidden">
+    <span class="recDot"></span><span id="recTime">0:00</span>
+    <button class="ib" id="recCancel" aria-label="בטל">🗑️</button>
+    <button class="ib" id="recSend" aria-label="שלח הקלטה" style="background:linear-gradient(135deg,var(--pink),var(--pink2));color:#fff">➤</button>
+  </div>
+  <div id="bar">
+    <button class="ib" id="emojiBtn" aria-label="אימוג'י">😊</button>
+    <button class="ib" id="gifBtn" aria-label="גיף">🎞️</button>
+    <button class="ib" id="photoBtn" aria-label="תמונה">📷</button>
+    <input type="file" id="photoIn" accept="image/*" class="hidden">
+    <textarea id="input" rows="1" placeholder="כתוב הודעה..."></textarea>
+    <button class="ib" id="send" aria-label="שלח">🎤</button>
+  </div>
+</div>
+
+<div id="viewer" class="hidden"><img id="viewerImg" alt=""></div>
+
+<div id="cam" class="hidden">
+  <video id="camV" autoplay playsinline muted></video>
+  <div class="camTop">
+    <span class="live">LIVE</span>
+    <div style="flex:1;min-width:0">
+      <div id="camTitle"></div>
+      <div id="camInfo"></div>
+    </div>
+  </div>
+  <div id="camMsg"></div>
+  <div id="camBtns">
+    <button class="cb" id="camMic" aria-label="מיקרופון">🔇</button>
+    <button class="cb" id="camSound" aria-label="קול">🔇</button>
+    <button class="cb" id="camRec" aria-label="הקלטה">⏺️</button>
+    <button class="cb" id="camShot" aria-label="צילום מסך">📸</button>
+    <button class="cb red" id="camClose" aria-label="סגור">✖️</button>
+  </div>
+</div>
+
+<div id="call" class="hidden">
+  <video id="remoteV" autoplay playsinline></video>
+  <video id="localV" autoplay playsinline muted></video>
+  <div class="callTop">
+    <div class="callName" id="callName"></div>
+    <div id="callState"></div>
+    <div class="e2e">🔒 מוצפן מקצה לקצה</div>
+  </div>
+  <div id="callAvatar">💞</div>
+  <div class="callBtns" id="inBtns">
+    <button class="cb red" id="declineBtn" aria-label="דחה">✖️</button>
+    <button class="cb green" id="acceptBtn" aria-label="ענה">📞</button>
+  </div>
+  <div class="callBtns hidden" id="activeBtns">
+    <button class="cb" id="muteBtn" aria-label="השתק">🎤</button>
+    <button class="cb" id="camBtn" aria-label="מצלמה">📷</button>
+    <button class="cb" id="flipBtn" aria-label="החלף מצלמה">🔄</button>
+    <button class="cb red" id="hangBtn" aria-label="נתק">📕</button>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script>
+(() => {
+  const OWNER = (window.CHAT_CONFIG || {}).OWNER_NAME || 'ראובן';
+  const enc = new TextEncoder(), dec = new TextDecoder();
+  const $ = id => document.getElementById(id);
+  const b64 = buf => { let s=''; const a=new Uint8Array(buf); for(let i=0;i<a.length;i++) s+=String.fromCharCode(a[i]); return btoa(s); };
+  const unb64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+  const hex = a => Array.from(a).map(x=>x.toString(16).padStart(2,'0')).join('');
+  const unhex = h => Uint8Array.from(h.match(/../g)||[], x => parseInt(x,16));
+  const store = { get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }, set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }, del(k){ try{ localStorage.removeItem(k); }catch(e){} } };
+
+  let cfg = window.CHAT_CONFIG || {};
+  let key = null, token = '', myName = '', ws = null, retry = 0, authed = false, retryTimer = null, keepAlive = null;
+  const seen = new Set();
+  const statuses = []; // רק של הבעלים
+
+  async function derive(pass){
+    const base = await crypto.subtle.importKey('raw', enc.encode(pass), 'PBKDF2', false, ['deriveBits']);
+    return new Uint8Array(await crypto.subtle.deriveBits(
+      {name:'PBKDF2', salt: enc.encode('love-chat-v1'), iterations:200000, hash:'SHA-256'}, base, 512));
+  }
+  // נשמר במכשיר רק המפתח הנגזר (לא הסיסמה עצמה)
+  async function useBits(bits){
+    key = await crypto.subtle.importKey('raw', bits.slice(0,32), 'AES-GCM', false, ['encrypt','decrypt']);
+    token = hex(bits.slice(32));
+  }
+  async function encrypt(obj){
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const ct = await crypto.subtle.encrypt({name:'AES-GCM', iv}, key, enc.encode(JSON.stringify(obj)));
+    return {iv: b64(iv), ct: b64(ct)};
+  }
+  async function decrypt(m){
+    try{
+      const pt = await crypto.subtle.decrypt({name:'AES-GCM', iv: unb64(m.iv)}, key, unb64(m.ct));
+      return JSON.parse(dec.decode(pt));
+    }catch(e){ return null; }
+  }
+
+  function wsUrl(){
+    if(cfg.SAME_ORIGIN || !cfg.SERVER_URL) return location.origin.replace(/^http/, 'ws') + (cfg.WS_PATH || '');
+    return cfg.SERVER_URL.replace(/\/$/,'').replace(/^http/, 'ws');
+  }
+  // כתובת הטונל משתנה בכל הפעלה של השרת - טוענים מחדש את config.js (בלי cache) לפני ניסיון חוזר
+  function reloadConfig(){
+    return new Promise(res => {
+      const s = document.createElement('script');
+      s.src = 'config.js?t=' + Date.now();
+      s.onload = s.onerror = () => { s.remove(); cfg = window.CHAT_CONFIG || cfg; res(); };
+      document.head.appendChild(s);
+    });
+  }
+  const isOpen = () => ws && (ws.readyState === 0 || ws.readyState === 1);
+
+  function connect(){
+    clearTimeout(retryTimer); retryTimer = null;
+    if(isOpen()) return;
+    if(!cfg.SERVER_URL && !cfg.SAME_ORIGIN){ showErr('השרת עדיין לא מוגדר (המחשב כבוי?)'); scheduleRetry(); return; }
+    try{ ws = new WebSocket(wsUrl()); }catch(e){ scheduleRetry(); return; }
+    const sock = ws;
+    sock.onopen = () => { retry = 0; sock.send(JSON.stringify({type:'auth', token})); };
+    sock.onmessage = async ev => {
+      let m; try{ m = JSON.parse(ev.data); }catch(e){ return; }
+      if(m.type === 'denied'){
+        authed=false; sock.onclose = null; sock.close();
+        if(m.reason === 'blocked'){ showLogin('יותר מדי ניסיונות. נסה שוב בעוד 10 דקות'); return; }
+        store.del('lc_key'); showLogin('סיסמה שגויה'); return;
+      }
+      if(m.type === 'hist'){ for(const x of m.msgs) await addMsg(x, true); if(!m.more) historyDone(); return; }
+      if(m.type === 'history'){
+        $('conn').classList.add('hidden');
+        clearInterval(keepAlive);
+        keepAlive = setInterval(() => { if(sock.readyState === 1) sock.send('{"type":"ping"}'); }, 25000);
+        if(!authed){ authed = true; $('login').classList.add('hidden'); $('app').classList.remove('hidden'); setup(); }
+        $('msgs').innerHTML=''; seen.clear(); statuses.length = 0; reacts.clear(); pendingReacts.clear();
+        for(const x of m.msgs) await addMsg(x, true);
+        if(!m.more) historyDone();
+      } else if(m.type === 'msg'){ await addMsg(m.msg); }
+      else if(m.type === 'prune'){
+        document.querySelectorAll('#msgs .b').forEach(e => { if(Number(e.dataset.ts) < m.before) e.remove(); });
+        while(statuses.length && statuses[0].ts < m.before) statuses.shift();
+        renderStatus(); renderTimeline();
+      }
+      else if(m.type === 'online'){ updateDot(m.count); }
+      else if(m.type === 'sig'){ const p = await decrypt(m); if(p) onSignal(p); }
+    };
+    sock.onclose = () => {
+      clearInterval(keepAlive);
+      if(authed) $('conn').classList.remove('hidden');
+      else showErr('לא מצליח להתחבר לשרת. מנסה שוב... 🙏');
+      updateDot(0);
+      scheduleRetry();
+    };
+  }
+  // ההיסטוריה יכולה להגיע בכמה חלקים (מגבלת גודל הודעה ב-Cloudflare)
+  function historyDone(){
+    renderTimeline(); renderTogether();
+    scrollDown(true);
+    markSeen();
+    onCamReconnect();
+  }
+  function scheduleRetry(){
+    if(retryTimer || !token) return;
+    retry++;
+    retryTimer = setTimeout(async () => { retryTimer = null; if(retry > 1) await reloadConfig(); connect(); }, Math.min(1000*retry, 10000));
+  }
+  // כשחוזרים לאפליקציה בטלפון - מתחברים מיד במקום לחכות
+  document.addEventListener('visibilitychange', () => { if(!document.hidden && token && !isOpen()){ retry = 0; connect(); } });
+  window.addEventListener('online', () => { if(token && !isOpen()){ retry = 0; connect(); } });
+
+  let ownerOnline = false;
+  function updateDot(count){ ownerOnline = count >= 2 || (myName === OWNER && count >= 1); $('dot').classList.toggle('on', count >= 2); }
+
+  const fmt = ts => new Date(ts).toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});
+  const fmtDay = ts => { const d=new Date(ts), n=new Date(); return d.toDateString()===n.toDateString()? '' : d.toLocaleDateString('he-IL',{day:'numeric',month:'numeric'})+' '; };
+  const onlyEmoji = t => /^(\p{Extended_Pictographic}|‍|️|\s){1,6}$/u.test(t);
+
+  async function addMsg(raw, quiet){
+    if(seen.has(raw.id)) return; seen.add(raw.id);
+    const p = await decrypt(raw); if(!p) return;
+    if(p.kind === 'react'){ addReaction(p.target, p.emoji, p.from); return; }
+    const el = document.createElement('div');
+    el.dataset.ts = raw.ts; el.dataset.id = raw.id;
+    if(p.kind === 'love'){
+      el.className = 'b status';
+      el.textContent = (p.from === myName ? 'שלחת אהבה 💗' : p.from + ' חושב/ת עליך 💗') + ' · ' + fmtDay(raw.ts) + fmt(raw.ts);
+      if(!quiet && p.from !== myName){ hearts(18); if(navigator.vibrate) navigator.vibrate([80,60,80,60,200]); }
+      if(!quiet && p.from !== myName) notify('💗 ' + p.from, 'חושב/ת עליך');
+    } else if(p.kind === 'call'){
+      el.className = 'b status';
+      el.textContent = (p.video ? '📹 ' : '📞 ') + (p.missed ? 'שיחה שלא נענתה' : (p.video ? 'שיחת וידאו' : 'שיחה קולית') + ' · ' + dur(p.ms||0))
+        + ' · ' + fmtDay(raw.ts) + fmt(raw.ts);
+    } else if(p.kind === 'status'){
+      el.className = 'b status';
+      el.innerHTML = '';
+      const s = document.createElement('span'); s.textContent = p.from + ' עדכן/ה: ';
+      const st = document.createElement('strong'); st.textContent = p.text;
+      const tm = document.createElement('span'); tm.textContent = ' · ' + fmtDay(raw.ts) + fmt(raw.ts);
+      el.append(s, st, tm);
+      if(p.from === OWNER){ statuses.push({text:p.text, ts:raw.ts}); renderStatus(); if(!quiet) renderTimeline(); }
+    } else {
+      const mine = p.from === myName;
+      el.className = 'b ' + (mine ? 'me' : 'them');
+      if(p.kind === 'gif' && /^https:\/\/[a-z0-9.-]*giphy\.com\//i.test(p.url||'')){
+        const img = document.createElement('img'); img.src = p.url; img.loading = 'lazy'; img.alt = 'GIF';
+        el.appendChild(img);
+      } else if(p.kind === 'img' && /^data:image\/(jpeg|png|webp);base64,/.test(p.data||'')){
+        el.classList.add('photo');
+        const img = document.createElement('img'); img.src = p.data; img.alt = 'תמונה';
+        img.onclick = () => { $('viewerImg').src = p.data; $('viewer').classList.remove('hidden'); };
+        el.appendChild(img);
+      } else if(p.kind === 'voice' && /^data:audio\/[a-z0-9.+-]+(;[a-z0-9=.+-]+)*;base64,/i.test(p.data||'')){
+        const a = document.createElement('audio'); a.controls = true; a.preload = 'metadata'; a.src = p.data;
+        el.appendChild(a);
+      } else {
+        const tx = document.createElement('span'); tx.textContent = p.text || '';
+        if(onlyEmoji(p.text||'')) tx.className = 'big';
+        el.appendChild(tx);
+      }
+      const t = document.createElement('span'); t.className='t';
+      t.textContent = (mine ? '' : p.from + ' · ') + fmtDay(raw.ts) + fmt(raw.ts);
+      if(mine){ const k = document.createElement('span'); k.className = 'tick' + (raw.ts <= seenUpTo ? ' seen' : ''); k.textContent = raw.ts <= seenUpTo ? '✓✓' : '✓'; t.appendChild(k); }
+      el.appendChild(t);
+      el.addEventListener('dblclick', () => sendPayload({kind:'react', target: raw.id, emoji:'❤️'}));
+      if(!mine) lastTheirTs = Math.max(lastTheirTs, raw.ts);
+      if(!quiet && !mine){
+        document.title = '💌 הודעה חדשה'; setTimeout(()=>document.title='💌 הצ\'אט שלנו', 4000);
+        notify('💌 ' + p.from, ({gif:'GIF 🎞️', img:'📷 תמונה', voice:'🎤 הודעה קולית'})[p.kind] || (p.text || ''));
+        showTyping(null);
+      }
+    }
+    const box = $('msgs');
+    const nearBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 140;
+    box.appendChild(el);
+    const pend = pendingReacts.get(raw.id); if(pend){ pendingReacts.delete(raw.id); pend.forEach(r => addReaction(raw.id, r.emoji, r.from)); }
+    if(!quiet && (nearBottom || p.from === myName)) scrollDown();
+    if(!quiet) markSeen();
+  }
+
+  // ===== זוגיות: תגובות, נקרא, מקליד/ה, לבבות, ימים ביחד =====
+  let seenUpTo = 0, lastTheirTs = 0, lastSeenSent = 0;
+  const reacts = new Map(), pendingReacts = new Map();
+  function addReaction(target, emoji, from){
+    if(typeof emoji !== 'string' || emoji.length > 8) return;
+    const el = document.querySelector('#msgs .b[data-id="' + CSS.escape(String(target)) + '"]');
+    if(!el){ const a = pendingReacts.get(target) || []; a.push({emoji, from}); pendingReacts.set(target, a); return; }
+    const m = reacts.get(target) || new Map(); m.set(from, emoji); reacts.set(target, m);
+    let b = el.querySelector('.react'); if(!b){ b = document.createElement('span'); b.className = 'react'; el.appendChild(b); }
+    b.textContent = [...m.values()].join('');
+    el.classList.add('hasReact');
+  }
+  function notify(title, body){
+    if(document.hidden && window.Notification && Notification.permission === 'granted')
+      try{ new Notification(title, { body, tag: 'love-chat' }); }catch(e){}
+  }
+  function hearts(n){
+    const set = ['💗','💖','💕','❤️','💞','🌸'];
+    for(let i = 0; i < n; i++){
+      const h = document.createElement('div'); h.className = 'heart';
+      h.textContent = set[i % set.length];
+      h.style.left = (Math.random()*90 + 5) + 'vw';
+      h.style.fontSize = (22 + Math.random()*26) + 'px';
+      h.style.animationDelay = (Math.random()*0.8) + 's';
+      document.body.appendChild(h); setTimeout(() => h.remove(), 3600);
+    }
+  }
+  // "נקרא": כשהצ'אט פתוח ומוצג - מודיעים לצד השני (מוצפן, לא נשמר בשרת)
+  function markSeen(){
+    if(document.hidden || $('msgs').classList.contains('hidden') || !lastTheirTs || lastTheirTs <= lastSeenSent) return;
+    lastSeenSent = lastTheirTs; sendSig({t:'seen', from: myName, upTo: lastTheirTs});
+  }
+  function applySeen(upTo){
+    if(upTo <= seenUpTo) return; seenUpTo = upTo;
+    document.querySelectorAll('#msgs .b.me').forEach(e => {
+      const k = e.querySelector('.tick'); if(k && Number(e.dataset.ts) <= upTo){ k.textContent = '✓✓'; k.classList.add('seen'); }
+    });
+  }
+  let typingTimer = null, lastTypingSent = 0;
+  function showTyping(name){
+    clearTimeout(typingTimer);
+    $('typing').textContent = name ? name + ' מקליד/ה... ✍️' : '';
+    if(name) typingTimer = setTimeout(() => showTyping(null), 4000);
+  }
+  function togetherText(){
+    const since = cfg.TOGETHER_SINCE && new Date(cfg.TOGETHER_SINCE + 'T00:00:00');
+    if(!since || isNaN(since)) return '';
+    const now = new Date(), days = Math.floor((now - since) / 86400000);
+    if(days < 0) return '';
+    const years = now.getFullYear() - since.getFullYear();
+    if(years > 0 && now.getMonth() === since.getMonth() && now.getDate() === since.getDate()) return '🎉 היום ' + years + ' שנים ביחד! 💍';
+    if(now.getDate() === since.getDate() && days > 27) return '🎂 עוד חודש ביחד! · ' + days.toLocaleString('he-IL') + ' ימים 💞';
+    return '💞 ' + days.toLocaleString('he-IL') + ' ימים ביחד';
+  }
+  function renderTogether(){ const t = togetherText(); $('together').textContent = t; $('together').classList.toggle('hidden', !t); }
+  function scrollDown(instant){ const b=$('msgs'); b.scrollTo({top:b.scrollHeight, behavior: instant?'auto':'smooth'}); }
+
+  function dur(ms){
+    const m = Math.round(ms/60000);
+    if(m < 1) return 'פחות מדקה';
+    if(m < 60) return m + " דק'";
+    const h = Math.floor(m/60), r = m % 60;
+    return h + " שע'" + (r ? ' ו-' + r + " דק'" : '');
+  }
+  function dayLabel(ts){
+    const d = new Date(ts), n = new Date(), y = new Date(); y.setDate(n.getDate()-1);
+    if(d.toDateString() === n.toDateString()) return 'היום';
+    if(d.toDateString() === y.toDateString()) return 'אתמול';
+    return d.toLocaleDateString('he-IL',{weekday:'long',day:'numeric',month:'numeric'});
+  }
+  function renderTimeline(){
+    const box = $('timeline'); box.innerHTML = '';
+    if(!statuses.length){ const e = document.createElement('div'); e.className='tlEmpty'; e.textContent = 'עוד אין עדכונים 🕊️'; box.appendChild(e); return; }
+    let lastDay = '';
+    for(let i = statuses.length-1; i >= 0; i--){
+      const s = statuses[i], day = dayLabel(s.ts), isNow = i === statuses.length-1;
+      if(day !== lastDay){ const h = document.createElement('div'); h.className='tlDay'; h.textContent = day; box.appendChild(h); lastDay = day; }
+      const row = document.createElement('div'); row.className = 'tlRow' + (isNow ? ' now' : '');
+      const tx = document.createElement('div'); tx.className='tlText'; tx.textContent = s.text;
+      const mt = document.createElement('div'); mt.className='tlMeta';
+      const end = isNow ? Date.now() : statuses[i+1].ts;
+      mt.textContent = fmt(s.ts) + ' · ' + (isNow ? 'עכשיו, כבר ' : '') + dur(end - s.ts);
+      row.append(tx, mt); box.appendChild(row);
+    }
+  }
+  function showTab(tl){
+    $('tabChat').classList.toggle('on', !tl); $('tabTl').classList.toggle('on', tl);
+    $('msgs').classList.toggle('hidden', tl); $('timeline').classList.toggle('hidden', !tl);
+    $('bar').classList.toggle('hidden', tl); $('loveFab').classList.toggle('hidden', tl); $('typing').classList.toggle('hidden', tl);
+    if(tl){ $('panel').classList.add('hidden'); renderTimeline(); } else scrollDown(true);
+  }
+  $('tabChat').onclick = () => { showTab(false); markSeen(); };
+  $('tabTl').onclick = () => showTab(true);
+  setInterval(() => { if(!$('timeline').classList.contains('hidden')) renderTimeline(); }, 30000);
+
+  function renderStatus(){
+    const last = statuses[statuses.length-1];
+    if(!last){ $('statusText').textContent = 'עוד לא עודכן סטטוס'; return; }
+    $('statusText').textContent = last.text + ' · ' + fmtDay(last.ts) + fmt(last.ts);
+  }
+
+  async function sendPayload(p){
+    if(!ws || ws.readyState !== 1) return;
+    const e = await encrypt(Object.assign({from: myName}, p));
+    ws.send(JSON.stringify({type:'msg', iv:e.iv, ct:e.ct}));
+  }
+  function sendText(fromKey){
+    const v = $('input').value.trim();
+    if(!v){ if(fromKey !== true) startVoice(); return; }
+    $('input').value=''; $('input').style.height='auto'; updateSendBtn();
+    sendPayload({kind:'text', text:v});
+  }
+  function updateSendBtn(){ $('send').textContent = $('input').value.trim() ? '➤' : '🎤'; }
+
+  // ===== תמונות: מוקטנות בדפדפן ומוצפנות לפני השליחה =====
+  async function sendPhoto(file){
+    if(!file || !/^image\//.test(file.type)) return;
+    try{
+      const bmp = await createImageBitmap(file);
+      const scale = Math.min(1, 1280 / Math.max(bmp.width, bmp.height));
+      const c = document.createElement('canvas'); c.width = Math.round(bmp.width*scale); c.height = Math.round(bmp.height*scale);
+      c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+      let q = .8, data = c.toDataURL('image/jpeg', q);
+      while(data.length > 600000 && q > .3){ q -= .15; data = c.toDataURL('image/jpeg', q); }
+      sendPayload({kind:'img', data});
+    }catch(e){ alert('לא הצלחתי לטעון את התמונה'); }
+  }
+
+  // ===== הודעות קוליות =====
+  let rec = null;
+  async function startVoice(){
+    if(rec) return;
+    if(!window.MediaRecorder){ alert('הדפדפן לא תומך בהקלטה'); return; }
+    let stream;
+    try{ stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true, noiseSuppression:true}}); }
+    catch(e){ alert('אין גישה למיקרופון'); return; }
+    const type = ['audio/webm;codecs=opus','audio/mp4','audio/webm'].find(t => MediaRecorder.isTypeSupported(t)) || '';
+    const mr = new MediaRecorder(stream, type ? {mimeType:type, audioBitsPerSecond:32000} : {audioBitsPerSecond:32000});
+    rec = {mr, stream, chunks:[], start: Date.now(), send:false};
+    mr.ondataavailable = e => { if(e.data.size) rec.chunks.push(e.data); };
+    mr.onstop = () => {
+      const r = rec; rec = null;
+      r.stream.getTracks().forEach(t => t.stop());
+      clearInterval(r.clock);
+      $('recBar').classList.add('hidden'); $('bar').classList.remove('hidden');
+      if(!r.send) return;
+      const blob = new Blob(r.chunks, {type: mr.mimeType || 'audio/webm'});
+      const fr = new FileReader();
+      fr.onload = () => { if(fr.result.length < 640000) sendPayload({kind:'voice', data: fr.result, ms: Date.now() - r.start}); else alert('ההקלטה ארוכה מדי'); };
+      fr.readAsDataURL(blob);
+    };
+    mr.start(1000);
+    $('bar').classList.add('hidden'); $('recBar').classList.remove('hidden');
+    const tick = () => { const s = Math.floor((Date.now()-rec.start)/1000); $('recTime').textContent = Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); if(s >= 150) stopVoice(true); };
+    tick(); rec.clock = setInterval(tick, 500);
+  }
+  function stopVoice(send){ if(rec && rec.mr.state !== 'inactive'){ rec.send = send; rec.mr.stop(); } }
+
+  const STATUSES = ['🏗️ באתר בניה','🚗 בנסיעה','👷 בפגישה עם לקוח','💻 עובד על פרויקט','🍽️ אוכל','🏠 בבית','😴 הולך לישון','📞 עסוק בשיחה'];
+  const EMOJIS = '😀 😃 😄 😁 😆 😅 😂 🤣 🥲 ☺️ 😊 😇 🙂 😉 😍 🥰 😘 😗 😙 😚 😋 😛 😜 🤪 🤗 🤭 🤔 🫠 😴 😌 😎 🤩 🥳 😏 😒 🙄 😔 😢 😭 😤 😡 🥺 😱 🤯 😳 🫶 ❤️ 🧡 💛 💚 💙 💜 🤍 💖 💗 💓 💞 💕 💘 💝 💋 🌹 🌸 🌻 🍀 ✨ ⭐ 🔥 🎉 🎁 🎂 🍕 🍔 🍟 ☕ 🍫 🍦 🥂 🍷 🐶 🐱 🦋 🌈 ☀️ 🌙 👍 👏 🙌 🙏 💪 🤝 👋 🫂 💃 🕺 🏠 🚗 ✈️ 🏖️ 💍 🏗️ 👷'.split(' ');
+
+  let didSetup = false;
+  function setup(){
+    if(didSetup) return; didSetup = true;
+    $('ownerName').textContent = OWNER;
+    if(myName === OWNER){
+      $('statusBar').classList.remove('hidden');
+      const bar = $('statusBar');
+      STATUSES.forEach(s => { const c=document.createElement('button'); c.className='chip'; c.textContent=s; c.onclick=()=>sendPayload({kind:'status', text:s}); bar.appendChild(c); });
+      const custom = document.createElement('button'); custom.className='chip'; custom.textContent='✏️ אחר...';
+      custom.onclick = () => { const v = prompt('מה אתה עושה עכשיו?'); if(v && v.trim()) sendPayload({kind:'status', text:v.trim()}); };
+      bar.appendChild(custom);
+    }
+    const g = $('emojis');
+    EMOJIS.forEach(e => { const b=document.createElement('button'); b.textContent=e; b.onclick=()=>{ const i=$('input'); i.value+=e; i.focus(); }; g.appendChild(b); });
+  }
+
+  // פאנל אימוג'י / גיפים
+  function togglePanel(which){
+    const panel = $('panel');
+    const showing = !panel.classList.contains('hidden');
+    const cur = $('gifs').classList.contains('hidden') ? 'emoji' : 'gif';
+    if(showing && cur === which){ panel.classList.add('hidden'); return; }
+    panel.classList.remove('hidden');
+    $('emojis').classList.toggle('hidden', which==='gif');
+    $('gifs').classList.toggle('hidden', which!=='gif');
+    if(which==='gif') gifSearch('');
+  }
+  let gifTimer;
+  async function gifSearch(q){
+    const msg = $('gifMsg'), grid = $('gifGrid');
+    if(!cfg.GIPHY_KEY){ grid.innerHTML=''; msg.classList.remove('hidden'); msg.textContent='חסר מפתח GIPHY בקובץ config.json'; return; }
+    msg.classList.add('hidden');
+    const url = q ? `https://api.giphy.com/v1/gifs/search?api_key=${encodeURIComponent(cfg.GIPHY_KEY)}&q=${encodeURIComponent(q)}&limit=30&rating=g&lang=he`
+                  : `https://api.giphy.com/v1/gifs/trending?api_key=${encodeURIComponent(cfg.GIPHY_KEY)}&limit=30&rating=g`;
+    try{
+      const r = await (await fetch(url)).json();
+      grid.innerHTML='';
+      (r.data||[]).forEach(g => {
+        const img = document.createElement('img');
+        img.src = g.images.fixed_height_small.url; img.loading='lazy'; img.alt = g.title||'gif';
+        img.onclick = () => { sendPayload({kind:'gif', url: g.images.fixed_height.url}); $('panel').classList.add('hidden'); };
+        grid.appendChild(img);
+      });
+      if(!r.data || !r.data.length){ msg.classList.remove('hidden'); msg.textContent='לא נמצא כלום 🤷'; }
+    }catch(e){ msg.classList.remove('hidden'); msg.textContent='שגיאה בטעינת גיפים'; }
+  }
+
+  // ===== שיחות וידאו/קול (WebRTC) =====
+  // המדיה עוברת ישירות בין המכשירים ומוצפנת ב-DTLS-SRTP. ההודעות שמקימות את השיחה (SDP/ICE, כולל
+  // טביעות האצבע של מפתחות ההצפנה) מוצפנות ב-AES-GCM עם מפתח הצ'אט - כך שהשרת לא יכול לקרוא אותן
+  // או להתחזות לצד השני (MITM).
+  const SID = hex(crypto.getRandomValues(new Uint8Array(8)));
+  const ICE = () => (cfg.ICE_SERVERS && cfg.ICE_SERVERS.length) ? cfg.ICE_SERVERS
+    : [{urls:'stun:stun.cloudflare.com:3478'},{urls:'stun:stun.l.google.com:19302'}];
+  let call = null;
+
+  async function sendSig(o){
+    if(!ws || ws.readyState !== 1) return;
+    const e = await encrypt(Object.assign({sid: SID, ts: Date.now()}, o));
+    ws.send(JSON.stringify({type:'sig', iv:e.iv, ct:e.ct}));
+  }
+  async function getMedia(video, facing){
+    return navigator.mediaDevices.getUserMedia({
+      audio: {echoCancellation:true, noiseSuppression:true},
+      video: video ? {facingMode: facing || 'user', width:{ideal:1280}, height:{ideal:720}} : false,
+    });
+  }
+  function callUI(state){
+    $('call').classList.remove('hidden');
+    $('callName').textContent = call.peerName || 'שיחה';
+    $('callState').textContent = state;
+    const incoming = call.state === 'ringing';
+    $('inBtns').classList.toggle('hidden', !incoming);
+    $('activeBtns').classList.toggle('hidden', incoming);
+    $('acceptBtn').textContent = call.video ? '📹' : '📞';
+    $('camBtn').classList.toggle('hidden', !call.video);
+    $('flipBtn').classList.toggle('hidden', !call.video);
+    $('localV').classList.toggle('hidden', !call.video || !call.local);
+    const live = call.state === 'active' && call.video;
+    $('callAvatar').classList.toggle('hidden', live);
+    $('remoteV').style.visibility = live ? 'visible' : 'hidden';
+  }
+  let ringCtx = null, ringTimer = null;
+  function ring(on){
+    clearInterval(ringTimer); ringTimer = null;
+    if(navigator.vibrate) navigator.vibrate(on ? [400,200,400] : 0);
+    if(!on) return;
+    const beep = () => {
+      try{
+        ringCtx = ringCtx || new (window.AudioContext || window.webkitAudioContext)();
+        const o = ringCtx.createOscillator(), g = ringCtx.createGain();
+        o.frequency.value = 660; g.gain.value = .08; o.connect(g); g.connect(ringCtx.destination);
+        o.start(); o.stop(ringCtx.currentTime + .35);
+      }catch(e){}
+      if(navigator.vibrate) navigator.vibrate([400,200,400]);
+    };
+    beep(); ringTimer = setInterval(beep, 1500);
+  }
+
+  async function startCall(video){
+    if(call) return;
+    if(!ws || ws.readyState !== 1){ alert('אין חיבור לשרת כרגע'); return; }
+    if(!window.RTCPeerConnection || !navigator.mediaDevices){ alert('הדפדפן לא תומך בשיחות'); return; }
+    let local;
+    try{ local = await getMedia(video); }catch(e){ alert('אין גישה למצלמה/מיקרופון. צריך לאשר בדפדפן 🙏'); return; }
+    call = {id: hex(crypto.getRandomValues(new Uint8Array(8))), state:'calling', video, local, mine:true,
+            facing:'user', ice:[], peerName: myName === OWNER ? '' : OWNER};
+    $('localV').srcObject = local;
+    callUI('מתקשר... 📳');
+    sendSig({t:'call', id: call.id, from: myName, video});
+    call.timeout = setTimeout(() => { if(call && call.state === 'calling') endCall(true, 'אין מענה', true); }, 45000);
+  }
+
+  async function acceptCall(){
+    if(!call || call.state !== 'ringing') return;
+    ring(false);
+    try{ call.local = await getMedia(call.video); }
+    catch(e){ alert('אין גישה למצלמה/מיקרופון. צריך לאשר בדפדפן 🙏'); endCall(true); return; }
+    $('localV').srcObject = call.local;
+    call.state = 'connecting'; callUI('מתחבר... 🔐');
+    makePC();
+    sendSig({t:'accept', id: call.id, to: call.peer, from: myName});
+  }
+
+  function makePC(){
+    const c = call;
+    const pc = c.pc = new RTCPeerConnection({iceServers: ICE()});
+    c.local.getTracks().forEach(t => pc.addTrack(t, c.local));
+    pc.ontrack = e => { $('remoteV').srcObject = e.streams[0]; $('remoteV').play().catch(()=>{}); };
+    pc.onicecandidate = e => { if(e.candidate && call === c) sendSig({t:'ice', id:c.id, to:c.peer, cand:e.candidate.toJSON()}); };
+    pc.onconnectionstatechange = () => {
+      if(call !== c) return;
+      const st = pc.connectionState;
+      if(st === 'connected'){
+        if(c.state !== 'active'){ c.state = 'active'; c.started = Date.now(); }
+        clearInterval(c.clock);
+        const tick = () => { if(call === c) $('callState').textContent = clock(Date.now() - c.started); };
+        callUI(''); tick(); c.clock = setInterval(tick, 1000);
+      } else if(st === 'disconnected'){ $('callState').textContent = 'החיבור חלש... 📶'; }
+      else if(st === 'failed'){ endCall(true, 'החיבור נכשל (רשת חסומה?)'); }
+    };
+    return pc;
+  }
+  const clock = ms => { const s = Math.floor(ms/1000); return Math.floor(s/60) + ':' + String(s%60).padStart(2,'0'); };
+  async function flushIce(){ const c = call; for(const x of c.ice.splice(0)) try{ await c.pc.addIceCandidate(x); }catch(e){} }
+
+  function endCall(notify, reason, missed){
+    const c = call; if(!c) return;
+    call = null;
+    ring(false);
+    if(notify) sendSig({t:'hangup', id:c.id, to:c.peer});
+    clearTimeout(c.timeout); clearInterval(c.clock);
+    if(c.local) c.local.getTracks().forEach(t => t.stop());
+    if(c.pc) try{ c.pc.close(); }catch(e){}
+    $('remoteV').srcObject = null; $('localV').srcObject = null;
+    // רישום השיחה בצ'אט (מוצפן כמו כל הודעה) - רק מי שהתקשר רושם, כדי שלא יהיה כפול
+    if(c.mine && (c.started || missed)) sendPayload({kind:'call', video:c.video, ms: c.started ? Date.now()-c.started : 0, missed: !c.started});
+    if(reason){ $('callState').textContent = reason; $('inBtns').classList.add('hidden'); $('activeBtns').classList.add('hidden'); setTimeout(()=>{ if(!call) $('call').classList.add('hidden'); }, 1800); }
+    else $('call').classList.add('hidden');
+  }
+
+  async function onSignal(p){
+    if(p.sid === SID || Math.abs(Date.now() - (p.ts||0)) > 120000) return; // מתעלם מהודעות ישנות (replay)
+    if(p.to && p.to !== SID && p.t !== 'accept') return;
+    if(p.t === 'seen'){ if(p.from !== myName) applySeen(Number(p.upTo)||0); return; }
+    if(p.t === 'typing'){ if(p.from !== myName) showTyping(p.from); return; }
+    if(p.t && p.t.startsWith('cam-')){ onCamSignal(p); return; }
+    const c = call;
+    switch(p.t){
+      case 'call':
+        if(p.from === myName) return; // טאב אחר שלי
+        if(c){ sendSig({t:'busy', id:p.id, to:p.sid}); return; }
+        call = {id:p.id, state:'ringing', video:!!p.video, peer:p.sid, peerName:p.from, ice:[], facing:'user'};
+        callUI(p.video ? 'שיחת וידאו נכנסת 📹' : 'שיחה נכנסת 📞');
+        ring(true);
+        if(document.hidden && window.Notification && Notification.permission === 'granted')
+          try{ new Notification('📞 ' + p.from + ' מתקשר/ת', {tag:'love-chat-call', requireInteraction:true}); }catch(e){}
+        call.timeout = setTimeout(() => { if(call && call.state === 'ringing') endCall(false); }, 45000);
+        return;
+      case 'accept':
+        if(!c || c.id !== p.id) return;
+        if(c.state === 'ringing'){ endCall(false, 'נענתה במכשיר אחר'); return; }
+        if(c.state !== 'calling' || p.to !== SID) return;
+        clearTimeout(c.timeout);
+        c.peer = p.sid; if(p.from) c.peerName = p.from; c.state = 'connecting'; callUI('מתחבר... 🔐');
+        { const pc = makePC(); const offer = await pc.createOffer(); await pc.setLocalDescription(offer);
+          sendSig({t:'offer', id:c.id, to:c.peer, sdp: pc.localDescription.toJSON()}); }
+        return;
+      case 'offer':
+        if(!c || c.id !== p.id || !c.pc) return;
+        await c.pc.setRemoteDescription(p.sdp); await flushIce();
+        { const ans = await c.pc.createAnswer(); await c.pc.setLocalDescription(ans);
+          sendSig({t:'answer', id:c.id, to:c.peer, sdp: c.pc.localDescription.toJSON()}); }
+        return;
+      case 'answer':
+        if(!c || c.id !== p.id || !c.pc) return;
+        await c.pc.setRemoteDescription(p.sdp); await flushIce();
+        return;
+      case 'ice':
+        if(!c || c.id !== p.id) return;
+        if(c.pc && c.pc.remoteDescription) try{ await c.pc.addIceCandidate(p.cand); }catch(e){}
+        else c.ice.push(p.cand);
+        return;
+      case 'busy': case 'decline':
+        if(c && c.id === p.id && c.state === 'calling') endCall(true, p.t === 'busy' ? 'בשיחה אחרת' : 'השיחה נדחתה', true);
+        return;
+      case 'hangup':
+        if(c && c.id === p.id) endCall(false, c.state === 'ringing' ? 'שיחה שלא נענתה' : 'השיחה הסתיימה');
+        return;
+    }
+  }
+
+  $('voiceBtn').onclick = () => startCall(false);
+  $('videoBtn').onclick = () => startCall(true);
+  $('acceptBtn').onclick = acceptCall;
+  $('declineBtn').onclick = () => { if(call){ sendSig({t:'decline', id:call.id, to:call.peer}); endCall(false); } };
+  $('hangBtn').onclick = () => endCall(true);
+  $('muteBtn').onclick = () => {
+    if(!call || !call.local) return;
+    const t = call.local.getAudioTracks()[0]; if(!t) return;
+    t.enabled = !t.enabled; $('muteBtn').classList.toggle('off', !t.enabled); $('muteBtn').textContent = t.enabled ? '🎤' : '🔇';
+  };
+  $('camBtn').onclick = () => {
+    if(!call || !call.local) return;
+    const t = call.local.getVideoTracks()[0]; if(!t) return;
+    t.enabled = !t.enabled; $('camBtn').classList.toggle('off', !t.enabled);
+  };
+  $('flipBtn').onclick = async () => {
+    if(!call || !call.local || !call.video) return;
+    const facing = call.facing === 'user' ? 'environment' : 'user';
+    try{
+      const s = await navigator.mediaDevices.getUserMedia({video:{facingMode: facing}});
+      const nt = s.getVideoTracks()[0], old = call.local.getVideoTracks()[0];
+      const sender = call.pc && call.pc.getSenders().find(x => x.track && x.track.kind === 'video');
+      if(sender) await sender.replaceTrack(nt);
+      if(old){ call.local.removeTrack(old); old.stop(); }
+      call.local.addTrack(nt); call.facing = facing;
+      $('localV').classList.toggle('back', facing !== 'user');
+    }catch(e){ alert('אין מצלמה נוספת'); }
+  };
+  window.addEventListener('pagehide', () => { if(call) endCall(true); });
+
+  // ===== מצלמת בית - שידור חי 24/7, מוצפן מקצה לקצה =====
+  // את השידור אפשר להפעיל רק מהמכשיר שמצלם (לא מרחוק), ובמסך שלו תמיד רואים "LIVE" וכמה צופים כרגע.
+  // הווידאו עובר ישירות למי שצופה (WebRTC, DTLS-SRTP); השרת מעביר רק אותות מוצפנים ולא שומר כלום.
+  let camLive = null;   // {sid, from} - שידור פעיל במכשיר אחר
+  let bc = null;        // אני המשדר: {stream, viewers: Map(sid -> {pc, name, ice}), mic}
+  let vw = null;        // אני צופה: {pc, id, ice, retry, rec}
+  let wakeLock = null;
+
+  function camUI(){
+    $('cam').classList.remove('hidden');
+    $('camMic').classList.toggle('hidden', !bc);
+    $('camSound').classList.toggle('hidden', !vw);
+    $('camRec').classList.toggle('hidden', !vw);
+    $('camShot').classList.toggle('hidden', !vw);
+    $('camV').classList.toggle('self', !!bc);
+    $('camV').muted = !!bc || !vw || !vw.sound;
+  }
+  function bcInfo(){
+    if(!bc) return;
+    const names = [...bc.viewers.values()].filter(v => v.connected).map(v => v.name);
+    $('camTitle').textContent = 'משדר/ת בשידור חי מהמכשיר הזה';
+    $('camInfo').textContent = names.length ? '👀 צופים כרגע: ' + names.join(', ') : 'אף אחד לא צופה כרגע';
+    $('camMic').textContent = bc.mic ? '🎤' : '🔇';
+    $('camMic').classList.toggle('off', !bc.mic);
+  }
+  async function keepAwake(){
+    try{ if('wakeLock' in navigator && !document.hidden) wakeLock = await navigator.wakeLock.request('screen'); }catch(e){}
+  }
+  document.addEventListener('visibilitychange', () => { if(bc && !document.hidden) keepAwake(); });
+
+  async function startBroadcast(){
+    $('menu').classList.add('hidden');
+    if(bc) { camUI(); bcInfo(); return; }
+    let stream;
+    try{ stream = await navigator.mediaDevices.getUserMedia({video:{width:{ideal:1280}, height:{ideal:720}}, audio:{echoCancellation:true, noiseSuppression:true}}); }
+    catch(e){
+      try{ stream = await navigator.mediaDevices.getUserMedia({video:true}); }
+      catch(e2){ alert('אין גישה למצלמה. צריך לאשר בדפדפן 🙏'); return; }
+    }
+    stream.getAudioTracks().forEach(t => t.enabled = false); // מיקרופון כבוי כברירת מחדל
+    bc = {stream, viewers: new Map(), mic: false};
+    watchTracks();
+    $('camV').srcObject = stream;
+    $('camMsg').textContent = '';
+    camUI(); bcInfo(); keepAwake();
+    $('camBadge').classList.add('onair');
+    sendSig({t:'cam-on', from: myName});
+  }
+  // אם המצלמה מתנתקת (USB, שינה) - מנסים להחזיר אותה כל 10 שניות, בלי לנתק את הצופים
+  function watchTracks(){
+    bc.stream.getVideoTracks().forEach(t => t.onended = () => { if(bc) reacquire(); });
+  }
+  async function reacquire(){
+    if(!bc) return;
+    $('camMsg').textContent = 'המצלמה התנתקה, מנסה שוב... 🔄';
+    try{
+      const s = await navigator.mediaDevices.getUserMedia({video:{width:{ideal:1280}, height:{ideal:720}}});
+      const nt = s.getVideoTracks()[0];
+      bc.stream.getVideoTracks().forEach(t => bc.stream.removeTrack(t));
+      bc.stream.addTrack(nt);
+      for(const v of bc.viewers.values()){
+        const tr = v.pc.getTransceivers().find(t => t.receiver.track && t.receiver.track.kind === 'video');
+        if(tr) await tr.sender.replaceTrack(nt);
+      }
+      $('camV').srcObject = bc.stream; $('camMsg').textContent = '';
+      watchTracks();
+    }catch(e){ setTimeout(reacquire, 10000); }
+  }
+  function stopBroadcast(){
+    if(!bc) return;
+    for(const [sid, v] of bc.viewers){ try{ v.pc.close(); }catch(e){} sendSig({t:'cam-end', to: sid}); }
+    bc.stream.getTracks().forEach(t => t.stop());
+    bc = null;
+    sendSig({t:'cam-off', from: myName});
+    try{ wakeLock && wakeLock.release(); }catch(e){}
+    $('camV').srcObject = null; $('cam').classList.add('hidden');
+    $('camBadge').classList.toggle('onair', !!camLive);
+  }
+  async function bcAddViewer(p){
+    const old = bc.viewers.get(p.sid); if(old) try{ old.pc.close(); }catch(e){}
+    const pc = new RTCPeerConnection({iceServers: ICE()});
+    const v = {pc, name: p.from || '?', ice: [], connected: false};
+    bc.viewers.set(p.sid, v);
+    bc.stream.getTracks().forEach(t => pc.addTrack(t, bc.stream));
+    pc.onicecandidate = e => { if(e.candidate) sendSig({t:'cam-ice', to: p.sid, cand: e.candidate.toJSON()}); };
+    pc.onconnectionstatechange = () => {
+      const st = pc.connectionState;
+      v.connected = st === 'connected';
+      if(st === 'failed' || st === 'closed'){ if(bc && bc.viewers.get(p.sid) === v) bc.viewers.delete(p.sid); }
+      bcInfo();
+    };
+    const offer = await pc.createOffer(); await pc.setLocalDescription(offer);
+    sendSig({t:'cam-offer', to: p.sid, sdp: pc.localDescription.toJSON()});
+  }
+
+  function openViewer(){
+    $('menu').classList.add('hidden');
+    if(bc){ camUI(); bcInfo(); return; }
+    vw = vw || {sound: false};
+    $('camTitle').textContent = camLive ? '🏠 שידור חי מ' + camLive.from : '🏠 מצלמת הבית';
+    $('camInfo').textContent = '🔒 מוצפן מקצה לקצה';
+    camUI();
+    watch();
+  }
+  function watch(){
+    if(!vw) return;
+    clearTimeout(vw.retry);
+    if(vw.pc) try{ vw.pc.close(); }catch(e){}
+    vw.pc = null; vw.ice = [];
+    if(!camLive){ $('camMsg').textContent = 'המצלמה כבויה כרגע 📴\nכשהיא תידלק, השידור יופיע כאן לבד'; $('camV').srcObject = null; return; }
+    $('camMsg').textContent = 'מתחבר לשידור... 🔐';
+    sendSig({t:'cam-watch', to: camLive.sid, from: myName});
+    vw.retry = setTimeout(watch, 12000); // אין תשובה - מנסים שוב
+  }
+  async function vwOffer(p){
+    if(!vw || !camLive || p.sid !== camLive.sid) return;
+    clearTimeout(vw.retry);
+    if(vw.pc) try{ vw.pc.close(); }catch(e){}
+    const pc = vw.pc = new RTCPeerConnection({iceServers: ICE()});
+    vw.ice = [];
+    pc.ontrack = e => { $('camV').srcObject = e.streams[0]; $('camV').muted = !vw.sound; $('camV').play().catch(()=>{}); };
+    pc.onicecandidate = e => { if(e.candidate) sendSig({t:'cam-ice', to: p.sid, cand: e.candidate.toJSON()}); };
+    pc.onconnectionstatechange = () => {
+      if(!vw || vw.pc !== pc) return;
+      const st = pc.connectionState;
+      if(st === 'connected'){ $('camMsg').textContent = ''; vw.since = vw.since || Date.now(); }
+      else if(st === 'disconnected'){ $('camMsg').textContent = 'החיבור חלש... 📶'; vw.retry = setTimeout(watch, 8000); }
+      else if(st === 'failed'){ $('camMsg').textContent = 'החיבור נפל, מתחבר מחדש... 🔄'; vw.retry = setTimeout(watch, 3000); }
+    };
+    await pc.setRemoteDescription(p.sdp);
+    for(const x of vw.ice.splice(0)) try{ await pc.addIceCandidate(x); }catch(e){}
+    const ans = await pc.createAnswer(); await pc.setLocalDescription(ans);
+    sendSig({t:'cam-answer', to: p.sid, sdp: pc.localDescription.toJSON()});
+  }
+  function closeViewer(){
+    if(!vw) return;
+    if(vw.rec) stopCamRec();
+    clearTimeout(vw.retry);
+    if(vw.pc) try{ vw.pc.close(); }catch(e){}
+    if(camLive) sendSig({t:'cam-leave', to: camLive.sid});
+    vw = null;
+    $('camV').srcObject = null; $('cam').classList.add('hidden');
+  }
+  function setCamLive(v){
+    const changed = (camLive && camLive.sid) !== (v && v.sid);
+    camLive = v;
+    $('camBadge').classList.toggle('onair', !!v || !!bc);
+    // אותו משדר שרק התחבר מחדש לשרת - החיבור הישיר ממשיך לעבוד, לא מתחילים מחדש
+    if(vw && (changed || !vw.pc || vw.pc.connectionState !== 'connected')) watch();
+  }
+
+  async function onCamSignal(p){
+    switch(p.t){
+      case 'cam-on': setCamLive({sid: p.sid, from: p.from}); if(!vw && !bc && !p.quiet) notify('🏠 ' + p.from, 'מצלמת הבית שידור חי'); return;
+      case 'cam-off': if(camLive && camLive.sid === p.sid) setCamLive(null); return;
+      case 'cam-query': if(bc) sendSig({t:'cam-on', from: myName, to: p.sid, quiet: true}); return;
+      case 'cam-watch': if(bc) bcAddViewer(p); return;
+      case 'cam-leave': if(bc){ const v = bc.viewers.get(p.sid); if(v){ try{ v.pc.close(); }catch(e){} bc.viewers.delete(p.sid); bcInfo(); } } return;
+      case 'cam-end': if(vw){ setCamLive(null); } return;
+      case 'cam-offer': vwOffer(p); return;
+      case 'cam-answer': if(bc){ const v = bc.viewers.get(p.sid); if(v){ await v.pc.setRemoteDescription(p.sdp); for(const x of v.ice.splice(0)) try{ await v.pc.addIceCandidate(x); }catch(e){} } } return;
+      case 'cam-ice': {
+        const pc = bc ? (bc.viewers.get(p.sid) || {}).pc : (vw && vw.pc);
+        const q = bc ? (bc.viewers.get(p.sid) || {}).ice : (vw && vw.ice);
+        if(pc && pc.remoteDescription) try{ await pc.addIceCandidate(p.cand); }catch(e){}
+        else if(q) q.push(p.cand);
+        return;
+      }
+    }
+  }
+  // אחרי חיבור/חיבור מחדש לשרת: המשדר מכריז שהוא חי, וכולם שואלים אם יש שידור
+  function onCamReconnect(){
+    if(bc) sendSig({t:'cam-on', from: myName});
+    sendSig({t:'cam-query'});
+  }
+
+  // הקלטת השידור אצל הצופה - נשמר כקובץ במכשיר שלו בלבד
+  function startCamRec(){
+    const st = $('camV').srcObject; if(!st || !window.MediaRecorder) return;
+    const type = ['video/webm;codecs=vp9,opus','video/webm','video/mp4'].find(t => MediaRecorder.isTypeSupported(t)) || '';
+    const mr = new MediaRecorder(st, type ? {mimeType: type} : undefined);
+    const chunks = [];
+    mr.ondataavailable = e => { if(e.data.size) chunks.push(e.data); };
+    mr.onstop = () => {
+      const blob = new Blob(chunks, {type: mr.mimeType || 'video/webm'});
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+      a.download = 'home-' + new Date().toISOString().replace(/[:.]/g,'-') + (/mp4/.test(blob.type) ? '.mp4' : '.webm');
+      document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 60000);
+    };
+    mr.start(1000); vw.rec = mr;
+    $('camRec').classList.add('rec');
+  }
+  function stopCamRec(){ if(vw && vw.rec){ vw.rec.stop(); vw.rec = null; $('camRec').classList.remove('rec'); } }
+
+  $('camBadge').onclick = () => { if(bc) { camUI(); bcInfo(); } else openViewer(); };
+  $('camStartBtn').onclick = () => {
+    if(confirm(`להפעיל שידור חי מהמצלמה של המכשיר הזה?\nמי שנכנס לצ'אט יוכל לצפות. בכל רגע אפשר לעצור.`)) startBroadcast();
+  };
+  $('camClose').onclick = () => {
+    if(bc){ if(confirm('לעצור את השידור החי?')) stopBroadcast(); }
+    else closeViewer();
+  };
+  $('camMic').onclick = () => { if(!bc) return; bc.mic = !bc.mic; bc.stream.getAudioTracks().forEach(t => t.enabled = bc.mic); bcInfo(); };
+  $('camSound').onclick = () => { if(!vw) return; vw.sound = !vw.sound; $('camV').muted = !vw.sound; $('camSound').textContent = vw.sound ? '🔊' : '🔇'; };
+  $('camRec').onclick = () => { if(!vw) return; vw.rec ? stopCamRec() : startCamRec(); };
+  $('camShot').onclick = () => {
+    const v = $('camV'); if(!v.videoWidth) return;
+    const c = document.createElement('canvas'); c.width = v.videoWidth; c.height = v.videoHeight;
+    c.getContext('2d').drawImage(v, 0, 0);
+    const a = document.createElement('a'); a.href = c.toDataURL('image/jpeg', .9); a.download = 'home-' + Date.now() + '.jpg'; a.click();
+  };
+  window.addEventListener('pagehide', () => { if(bc) sendSig({t:'cam-off', from: myName}); });
+
+  function showErr(t){ $('loginErr').textContent = t; }
+  function showLogin(t){ $('app').classList.add('hidden'); $('login').classList.remove('hidden'); showErr(t||''); }
+
+  async function login(){
+    const name = $('nameIn').value.trim(), pass = $('passIn').value;
+    if(!name || !pass){ showErr('צריך שם וסיסמה'); return; }
+    showErr('מתחבר... 💞');
+    myName = name;
+    const bits = await derive(pass); await useBits(bits);
+    if(cfg.SETUP){ // השרת עוד לא מוגדר: מציגים את הקוד שצריך להדביק ב-Cloudflare
+      $('setupTok').value = token; $('setup').classList.remove('hidden'); showErr(''); token = ''; key = null;
+      return;
+    }
+    $('passIn').value = '';
+    store.set('lc_name', name); store.set('lc_key', hex(bits));
+    retry = 0; connect();
+  }
+  function logout(){
+    if(!confirm('לצאת? תצטרך להקליד שוב את הסיסמה')) return;
+    store.del('lc_key'); store.del('lc_pass');
+    location.reload();
+  }
+
+  $('goBtn').onclick = login;
+  $('passIn').addEventListener('keydown', e => { if(e.key==='Enter') login(); });
+  $('send').onclick = () => sendText();
+  $('input').addEventListener('keydown', e => { if(e.key==='Enter' && !e.shiftKey && !('ontouchstart' in window)){ e.preventDefault(); sendText(true); } });
+  $('input').addEventListener('input', e => { e.target.style.height='auto'; e.target.style.height=Math.min(e.target.scrollHeight,120)+'px'; });
+  $('emojiBtn').onclick = () => togglePanel('emoji');
+  $('gifBtn').onclick = () => togglePanel('gif');
+  $('gifQ').addEventListener('input', e => { clearTimeout(gifTimer); gifTimer = setTimeout(()=>gifSearch(e.target.value.trim()), 400); });
+
+  $('logoutBtn').onclick = logout;
+  $('setupCopy').onclick = async () => { const t = $('setupTok'); t.select(); try{ await navigator.clipboard.writeText(t.value); $('setupCopy').textContent = '✅ הועתק'; }catch(e){ document.execCommand('copy'); } };
+  $('menuBtn').onclick = e => { e.stopPropagation(); $('menu').classList.toggle('hidden'); };
+  document.addEventListener('click', e => { if(!$('menu').contains(e.target)) $('menu').classList.add('hidden'); });
+  $('loveFab').onclick = () => { hearts(10); if(navigator.vibrate) navigator.vibrate(60); sendPayload({kind:'love'}); };
+  $('photoBtn').onclick = () => $('photoIn').click();
+  $('photoIn').onchange = e => { sendPhoto(e.target.files[0]); e.target.value = ''; };
+  $('recCancel').onclick = () => stopVoice(false);
+  $('recSend').onclick = () => stopVoice(true);
+  $('viewer').onclick = () => $('viewer').classList.add('hidden');
+  $('input').addEventListener('input', () => {
+    updateSendBtn();
+    if(Date.now() - lastTypingSent > 2500 && $('input').value.trim()){ lastTypingSent = Date.now(); sendSig({t:'typing', from: myName}); }
+  });
+  document.addEventListener('visibilitychange', () => { if(!document.hidden) markSeen(); });
+  setInterval(renderTogether, 60 * 60 * 1000);
+  $('notifBtn').onclick = async () => {
+    if(!window.Notification){ alert('הדפדפן לא תומך בהתראות'); return; }
+    const r = await Notification.requestPermission();
+    alert(r === 'granted' ? 'התראות הופעלו 🔔' : 'ההתראות חסומות בהגדרות הדפדפן');
+    $('menu').classList.add('hidden');
+  };
+  if(!window.Notification || Notification.permission !== 'default') $('notifBtn').classList.add('hidden');
+
+  const sn = store.get('lc_name'), sk = store.get('lc_key');
+  store.del('lc_pass'); // גרסה ישנה שמרה את הסיסמה עצמה - מוחקים
+  if(sn) $('nameIn').value = sn;
+  if(cfg.SETUP) showErr('הגדרה ראשונה: הכנס שם וסיסמה משותפת 🛠️');
+  else if(sn && sk && sk.length === 128){
+    myName = sn; showErr('מתחבר... 💞');
+    useBits(unhex(sk)).then(connect);
+  }
+  // ?cam=1 - מכשיר קבוע בבית: מתחיל לשדר לבד אחרי הכניסה (עם LIVE גלוי על המסך)
+  if(new URLSearchParams(location.search).get('cam') === '1'){
+    const iv = setInterval(() => { if(authed){ clearInterval(iv); startBroadcast(); } }, 500);
+  }
+})();
+</script>
+</body>
+</html>

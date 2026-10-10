@@ -1,0 +1,25 @@
+// Cloudflare Workers deployment of love-chat (24/7, no PC needed). See README > "Cloudflare".
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "love-chat",
+  "main": "worker/index.js",
+  "compatibility_date": "2025-09-01",
+  "assets": {
+    "directory": "./docs",
+    "binding": "ASSETS",
+    "run_worker_first": ["/ws", "/config.js", "/health"]
+  },
+  "durable_objects": {
+    "bindings": [{ "name": "CHAT", "class_name": "ChatRoom" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["ChatRoom"] }],
+  // Public settings. The password never goes here: set the derived token as a secret
+  // (npm run token, then: npx wrangler secret put AUTH_TOKEN).
+  "vars": {
+    "OWNER_NAME": "ראובן",
+    "RETENTION_DAYS": "3",
+    "TOGETHER_SINCE": "",
+    "GIPHY_KEY": ""
+  },
+  "observability": { "enabled": true }
+}
